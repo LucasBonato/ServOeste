@@ -1,4 +1,4 @@
-package com.sev.oeste.Models;
+package com.sev.oeste.Tecnico.Models;
 
 import jakarta.persistence.*;
 import lombok.Data;

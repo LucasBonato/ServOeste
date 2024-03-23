@@ -1,4 +1,4 @@
-package com.sev.oeste.Models;
+package com.sev.oeste.Tecnico.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
