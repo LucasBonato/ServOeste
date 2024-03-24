@@ -7,15 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class GetAllTecnicosQueryHandler implements Query<Void, List<Tecnico>> {
+public class GetTecnicoQueryHandler implements Query<Integer, Tecnico> {
 
     @Autowired private TecnicoRepository tecnicoRepository;
     @Override
-    public ResponseEntity<List<Tecnico>> execute(Void input) {
-        List<Tecnico> tecnicos = tecnicoRepository.findAll();
-        return ResponseEntity.ok(tecnicos);
+    public ResponseEntity<Tecnico> execute(Integer id) {
+        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
+        if(tecnicoOptional.isEmpty()){
+            throw new RuntimeException();
+        }
+        return ResponseEntity.ok(tecnicoOptional.get());
     }
 }
