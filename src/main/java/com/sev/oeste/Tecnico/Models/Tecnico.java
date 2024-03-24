@@ -1,13 +1,17 @@
 package com.sev.oeste.Tecnico.Models;
 
+import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Tecnico")
 @Data
+@NoArgsConstructor
 public class Tecnico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,4 +37,11 @@ public class Tecnico {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "Tecnico_Especialidade", joinColumns = @JoinColumn(name = "Id_Tecnico"), inverseJoinColumns = @JoinColumn(name = "Id_Especialidade"))
     private List<Especialidade> especialidades;
+
+    public Tecnico(TecnicoDTO tecnico){
+        this.nome = tecnico.getNome();
+        this.sobrenome = tecnico.getSobrenome();
+        this.telefoneFixo = tecnico.getTelefoneFixo();
+        this.telefoneCelular = tecnico.getTelefoneCelular();
+    }
 }
