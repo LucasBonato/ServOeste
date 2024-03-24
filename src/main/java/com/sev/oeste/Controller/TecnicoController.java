@@ -6,6 +6,8 @@ import com.sev.oeste.Tecnico.Command.CommandHandler.Models.UpdateTecnicoCommand;
 import com.sev.oeste.Tecnico.Command.CommandHandler.UpdateTecnicoCommandHandler;
 import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
 import com.sev.oeste.Tecnico.Models.Tecnico;
+import com.sev.oeste.Tecnico.Query.QueryHandlers.GetAllTecnicosDesativadosQueryHandler;
+import com.sev.oeste.Tecnico.Query.QueryHandlers.GetAllTecnicosLicencaQueryHandler;
 import com.sev.oeste.Tecnico.Query.QueryHandlers.GetAllTecnicosQueryHandler;
 import com.sev.oeste.Tecnico.Query.QueryHandlers.GetTecnicoQueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import java.util.List;
 public class TecnicoController {
 
     @Autowired private GetAllTecnicosQueryHandler getAllTecnicos;
+    @Autowired private GetAllTecnicosLicencaQueryHandler getAllLicenca;
+    @Autowired private GetAllTecnicosDesativadosQueryHandler getAllDesativados;
     @Autowired private GetTecnicoQueryHandler getTecnico;
     @Autowired private CreateTecnicoCommandHandler createTecnico;
     @Autowired private UpdateTecnicoCommandHandler updateTecnico;
@@ -28,12 +32,12 @@ public class TecnicoController {
         return getAllTecnicos.execute(null);
     }
     @GetMapping("/licenca")
-    public ResponseEntity<Tecnico> getAllLicenca(@PathVariable Integer id){
-        return getAllLicenca.execute();
+    public ResponseEntity<List<Tecnico>> getAllLicenca(){
+        return getAllLicenca.execute(null);
     }
     @GetMapping("/desativado")
-    public ResponseEntity<Tecnico> getAllDesativados(@PathVariable Integer id){
-        return getAllDesativados.execute(id);
+    public ResponseEntity<List<Tecnico>> getAllDesativados(){
+        return getAllDesativados.execute(null);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
