@@ -1,6 +1,8 @@
 package com.sev.oeste.Controller;
 
 import com.sev.oeste.Tecnico.Command.CommandHandler.CreateTecnicoCommandHandler;
+import com.sev.oeste.Tecnico.Command.CommandHandler.Models.UpdateTecnicoCommand;
+import com.sev.oeste.Tecnico.Command.CommandHandler.UpdateTecnicoCommandHandler;
 import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
 import com.sev.oeste.Tecnico.Models.Tecnico;
 import com.sev.oeste.Tecnico.Query.QueryHandlers.GetAllTecnicosQueryHandler;
@@ -18,6 +20,7 @@ public class TecnicoController {
     @Autowired private GetAllTecnicosQueryHandler getAllTecnicos;
     @Autowired private GetTecnicoQueryHandler getTecnico;
     @Autowired private CreateTecnicoCommandHandler createTecnico;
+    @Autowired private UpdateTecnicoCommandHandler updateTecnico;
     @GetMapping
     public ResponseEntity<List<Tecnico>> getAllT(){
         return getAllTecnicos.execute(null);
@@ -29,5 +32,9 @@ public class TecnicoController {
     @PostMapping
     public ResponseEntity create(@RequestBody TecnicoDTO tecnicoDTO){
         return createTecnico.execute(tecnicoDTO);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
+        return updateTecnico.execute(new UpdateTecnicoCommand(id, tecnicoDTO));
     }
 }

@@ -49,6 +49,9 @@ public class CreateTecnicoCommandHandler implements Command<TecnicoDTO, Void> {
     }
 
     private List<Especialidade> getEspecialidades(TecnicoDTO tecnico){
+        if(tecnico.getEspecialidades_Ids().isEmpty()){
+            throw new RuntimeException();
+        }
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
