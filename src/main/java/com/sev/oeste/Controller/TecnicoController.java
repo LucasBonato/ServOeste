@@ -27,6 +27,14 @@ public class TecnicoController {
     public ResponseEntity<List<Tecnico>> getAll(){
         return getAllTecnicos.execute(null);
     }
+    @GetMapping("/licenca")
+    public ResponseEntity<Tecnico> getAllLicenca(@PathVariable Integer id){
+        return getAllLicenca.execute();
+    }
+    @GetMapping("/desativado")
+    public ResponseEntity<Tecnico> getAllDesativados(@PathVariable Integer id){
+        return getAllDesativados.execute(id);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
         return getTecnico.execute(id);
