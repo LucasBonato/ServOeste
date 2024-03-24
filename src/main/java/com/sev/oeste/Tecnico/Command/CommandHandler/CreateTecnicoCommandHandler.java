@@ -25,12 +25,12 @@ public class CreateTecnicoCommandHandler implements Command<TecnicoDTO, Void> {
     public ResponseEntity<Void> execute(TecnicoDTO tecnicoDTO) {
         Tecnico tecnico = new Tecnico(tecnicoDTO);
         tecnico.setEspecialidades(getEspecialidades(tecnicoDTO));
-        verificationTecnico(tecnico);
+        verifyTecnico(tecnico);
         tecnicoRepository.save(tecnico);
         return ResponseEntity.ok().build();
     }
 
-    private void verificationTecnico(Tecnico tecnico){
+    private void verifyTecnico(Tecnico tecnico){
         if(StringUtils.isBlank(tecnico.getNome())) {
             throw new RuntimeException();
         }
