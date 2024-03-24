@@ -1,5 +1,6 @@
 package com.sev.oeste.Tecnico.Query.QueryHandlers;
 
+import com.sev.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.sev.oeste.Repository.TecnicoRepository;
 import com.sev.oeste.Tecnico.Models.Tecnico;
 import com.sev.oeste.Tecnico.Query.Query;
@@ -19,7 +20,7 @@ public class GetTecnicoQueryHandler implements Query<Integer, Tecnico> {
     public ResponseEntity<Tecnico> execute(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
         if(tecnicoOptional.isEmpty()){
-            throw new RuntimeException();
+            throw new TecnicoNotFoundException();
         }
         return ResponseEntity.ok(tecnicoOptional.get());
     }
