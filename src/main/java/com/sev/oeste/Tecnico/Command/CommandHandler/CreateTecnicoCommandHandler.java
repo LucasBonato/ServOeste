@@ -24,7 +24,7 @@ public class CreateTecnicoCommandHandler implements Command<TecnicoDTO, Void> {
     @Override
     public ResponseEntity<Void> execute(TecnicoDTO tecnicoDTO) {
         Tecnico tecnico = new Tecnico(tecnicoDTO);
-        tecnico.setEspecialidades(setEspecialidadeId(tecnicoDTO));
+        tecnico.setEspecialidades(getEspecialidades(tecnicoDTO));
         verificationTecnico(tecnico);
         tecnicoRepository.save(tecnico);
         return ResponseEntity.ok().build();
@@ -48,7 +48,7 @@ public class CreateTecnicoCommandHandler implements Command<TecnicoDTO, Void> {
         }
     }
 
-    private List<Especialidade> setEspecialidadeId(TecnicoDTO tecnico){
+    private List<Especialidade> getEspecialidades(TecnicoDTO tecnico){
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
