@@ -1,9 +1,6 @@
 package com.sev.oeste.Tecnico.Command.CommandHandler.Models;
 
-import com.sev.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
-import com.sev.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
-import com.sev.oeste.Exception.Tecnico.SituacaoNotFoundException;
-import com.sev.oeste.Exception.Tecnico.TecnicoNotFoundException;
+import com.sev.oeste.Exception.Tecnico.*;
 import com.sev.oeste.Repository.EspecialidadeRepository;
 import com.sev.oeste.Repository.TecnicoRepository;
 import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
@@ -20,6 +17,7 @@ import java.util.Optional;
 public class BaseCommand {
     @Autowired protected TecnicoRepository tecnicoRepository;
     @Autowired protected EspecialidadeRepository especialidadeRepository;
+    private final int MINIMO_DE_CARACTERES_ACEITO = 2;
 
     protected Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
         switch (tecnicoDTO.getSituacao()){
@@ -51,19 +49,22 @@ public class BaseCommand {
     }
     protected void verifyFieldsOfTecnico(Tecnico tecnico){
         if(StringUtils.isBlank(tecnico.getNome())) {
-            throw new RuntimeException();
+            throw new TecnicoNotValidException("O 'nome' do técnico não pode ser vazio!");
+        }
+        if(tecnico.getNome().length() < MINIMO_DE_CARACTERES_ACEITO){
+            throw new TecnicoNotValidException(String.format("O 'nome' do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
         }
         if(StringUtils.isBlank(tecnico.getSobrenome())) {
-            throw new RuntimeException();
+            throw new TecnicoNotValidException("O 'sobrenome' do técnico não pode ser vazio!");
         }
-        if(tecnico.getEspecialidades().isEmpty()) {
-            throw new RuntimeException();
+        if(tecnico.getSobrenome().length() < MINIMO_DE_CARACTERES_ACEITO){
+            throw new TecnicoNotValidException(String.format("O 'sobrenome' do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
         }
         if(tecnico.getTelefoneCelular().isBlank() && tecnico.getTelefoneFixo().isBlank()) {
-            throw new RuntimeException();
+            throw new TecnicoNotValidException("O técnico precisa ter no mínimo um telefone cadastrado, celular ou Fixo!");
         }
         if((!tecnico.getTelefoneCelular().isEmpty() && tecnico.getTelefoneCelular().length() < 11) || (!tecnico.getTelefoneFixo().isEmpty() && tecnico.getTelefoneFixo().length() < 11)) {
-            throw new RuntimeException();
+            throw new TecnicoNotValidException("O telefone precisa ter 11 números!");
         }
     }
 }
