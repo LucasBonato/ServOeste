@@ -1,5 +1,7 @@
 package com.sev.oeste.Tecnico.Command.CommandHandler.Models;
 
+import com.sev.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
+import com.sev.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
 import com.sev.oeste.Exception.Tecnico.SituacaoNotFoundException;
 import com.sev.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.sev.oeste.Repository.EspecialidadeRepository;
@@ -29,13 +31,13 @@ public class BaseCommand {
     }
     protected List<Especialidade> getEspecialidadesTecnico(TecnicoDTO tecnico){
         if(tecnico.getEspecialidades_Ids().isEmpty()){
-            throw new RuntimeException();
+            throw new EspecialidadesTecnicoEmptyException();
         }
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
             if (especialidadeOptional.isEmpty()){
-                throw new RuntimeException();
+                throw new EspecialidadeNotFoundException();
             }
             especialidades.add(especialidadeOptional.get());
         }
