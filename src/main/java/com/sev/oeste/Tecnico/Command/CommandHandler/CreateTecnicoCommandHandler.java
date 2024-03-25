@@ -18,6 +18,6 @@ public class CreateTecnicoCommandHandler extends BaseCommand implements Command<
         verifyFieldsOfTecnico(tecnico);
 
         tecnicoRepository.save(tecnico);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
