@@ -4,6 +4,7 @@ import com.sev.oeste.Tecnico.Command.Command;
 import com.sev.oeste.Tecnico.Command.CommandHandler.Models.BaseCommand;
 import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
 import com.sev.oeste.Tecnico.Models.Tecnico;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

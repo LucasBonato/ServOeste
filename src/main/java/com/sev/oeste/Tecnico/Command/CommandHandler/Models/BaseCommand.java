@@ -1,5 +1,7 @@
 package com.sev.oeste.Tecnico.Command.CommandHandler.Models;
 
+import com.sev.oeste.Exception.Tecnico.SituacaoNotFoundException;
+import com.sev.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.sev.oeste.Repository.EspecialidadeRepository;
 import com.sev.oeste.Repository.TecnicoRepository;
 import com.sev.oeste.Tecnico.Models.DTOs.TecnicoDTO;
@@ -23,9 +25,8 @@ public class BaseCommand {
             case "licença" -> { return Situacao.LICENCA;}
             case "desativado" -> { return Situacao.DESATIVADO;}
         }
-        throw new RuntimeException();
+        throw new SituacaoNotFoundException();
     }
-
     protected List<Especialidade> getEspecialidadesTecnico(TecnicoDTO tecnico){
         if(tecnico.getEspecialidades_Ids().isEmpty()){
             throw new RuntimeException();
@@ -40,14 +41,12 @@ public class BaseCommand {
         }
         return especialidades;
     }
-
     protected void verifyIfTecnicoExists(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
         if(tecnicoOptional.isEmpty()){
-            throw new RuntimeException();
+            throw new TecnicoNotFoundException();
         }
     }
-
     protected void verifyFieldsOfTecnico(Tecnico tecnico){
         if(StringUtils.isBlank(tecnico.getNome())) {
             throw new RuntimeException();
