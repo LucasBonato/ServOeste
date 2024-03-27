@@ -1,5 +1,6 @@
 package com.sev.oeste.TecnicoControllerTest;
 
+import com.sev.oeste.Exception.Tecnico.TecnicoNotValidException;
 import com.sev.oeste.OesteApplication;
 import com.sev.oeste.Repository.EspecialidadeRepository;
 import com.sev.oeste.Repository.TecnicoRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = OesteApplication.class)
@@ -41,6 +43,20 @@ public class CreateTecnicoCommandHandlerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
+    @Test
+    public void createTecnico_invalidTecnico_returnsTecnicoNotValidExceptionNome(){
+        List<Integer> ids = new ArrayList<>();
+        List<String> conhecimentos = new ArrayList<>();
+        ids.add(1);
+        conhecimentos.add("Outros");
+        TecnicoDTO tecnicoDTO = getTecnicoDTO("", "Cleiton", "", "11853475235", ids, conhecimentos);
+
+        TecnicoNotValidException exception = assertThrows(
+                TecnicoNotValidException.class,
+                () -> createTecnico.execute(tecnicoDTO)
+        );
+        assertEquals("O 'nome' do técnico não pode ser vazio!", exception.getExceptionResponse().getMessage());
+    }
 
     private TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids, List<String> conhecimentos) {
         TecnicoDTO tecnicoDTO = new TecnicoDTO();
@@ -63,6 +79,4 @@ public class CreateTecnicoCommandHandlerTest {
         }
         return tecnicoDTO;
     }
-
-
 }
