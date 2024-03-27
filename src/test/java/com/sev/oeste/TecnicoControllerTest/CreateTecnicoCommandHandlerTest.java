@@ -1,5 +1,6 @@
 package com.sev.oeste.TecnicoControllerTest;
 
+import com.sev.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
 import com.sev.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
 import com.sev.oeste.Exception.Tecnico.TecnicoNotValidException;
 import com.sev.oeste.OesteApplication;
@@ -87,6 +88,18 @@ public class CreateTecnicoCommandHandlerTest {
         );
         assertEquals("Técnico precisa possuir no mínimo uma especialidade!", exception.getExceptionResponse().getMessage());
     }
+    @Test
+    public void createTecnico_invalidTecnico_returnsEspeciliadeNotFound() {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(1);
+        TecnicoDTO tecnicoDTO = getTecnicoDTO("Bla", "Bla", "11976258312", "", ids);
+
+        EspecialidadeNotFoundException exception = assertThrows(
+                EspecialidadeNotFoundException.class,
+                () -> createTecnico.execute(tecnicoDTO)
+        );
+        assertEquals("Especialidade não encontrada!", exception.getExceptionResponse().getMessage());
+    }
 
     private TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids, List<String> conhecimentos) {
         TecnicoDTO tecnicoDTO = new TecnicoDTO();
@@ -106,6 +119,26 @@ public class CreateTecnicoCommandHandlerTest {
 
         for(int i = 0; i < tecnicoDTO.getEspecialidades_Ids().size(); i++){
             when(especialidadeRepository.findById(tecnicoDTO.getEspecialidades_Ids().get(i))).thenReturn(Optional.of(especialidades.get(i)));
+        }
+        return tecnicoDTO;
+    }
+    private TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids) {
+        TecnicoDTO tecnicoDTO = new TecnicoDTO();
+        tecnicoDTO.setNome(nome);
+        tecnicoDTO.setSobrenome(sobrenome);
+        tecnicoDTO.setTelefoneCelular(telefoneC);
+        tecnicoDTO.setTelefoneFixo(telefoneF);
+        tecnicoDTO.setEspecialidades_Ids(ids);
+
+        List<Especialidade> especialidades = new ArrayList<>();
+        Especialidade especialidade = new Especialidade();
+        for(int i = 0; i < ids.size(); i++){
+            especialidade.setId(ids.get(i));
+            especialidades.add(especialidade);
+        }
+
+        for(int i = 0; i < tecnicoDTO.getEspecialidades_Ids().size(); i++){
+            when(especialidadeRepository.findById(tecnicoDTO.getEspecialidades_Ids().get(i))).thenReturn(Optional.empty());
         }
         return tecnicoDTO;
     }
