@@ -1,5 +1,6 @@
 package com.sev.oeste.TecnicoControllerTest;
 
+import com.sev.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
 import com.sev.oeste.Exception.Tecnico.TecnicoNotValidException;
 import com.sev.oeste.OesteApplication;
 import com.sev.oeste.Repository.EspecialidadeRepository;
@@ -71,6 +72,20 @@ public class CreateTecnicoCommandHandlerTest {
                 () -> createTecnico.execute(tecnicoDTO)
         );
         assertEquals("O 'nome' do técnico precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
+    }
+
+    @Test
+    public void createTecnico_invalidTecnico_returnsEspeciliadesEmptyException() {
+        List<Integer> ids = new ArrayList<>();
+        List<String> conhecimentos = new ArrayList<>();
+        conhecimentos.add("Outros");
+        TecnicoDTO tecnicoDTO = getTecnicoDTO("Bla", "Bla", "11976258312", "", ids, conhecimentos);
+
+        EspecialidadesTecnicoEmptyException exception = assertThrows(
+                EspecialidadesTecnicoEmptyException.class,
+                () -> createTecnico.execute(tecnicoDTO)
+        );
+        assertEquals("Técnico precisa possuir no mínimo uma especialidade!", exception.getExceptionResponse().getMessage());
     }
 
     private TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids, List<String> conhecimentos) {
