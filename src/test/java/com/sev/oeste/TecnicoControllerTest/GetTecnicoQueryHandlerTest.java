@@ -4,7 +4,6 @@ import com.sev.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.sev.oeste.OesteApplication;
 import com.sev.oeste.Repository.TecnicoRepository;
 import com.sev.oeste.Tecnico.Models.Especialidade;
-import com.sev.oeste.Tecnico.Models.Situacao;
 import com.sev.oeste.Tecnico.Models.Tecnico;
 import com.sev.oeste.Tecnico.Query.QueryHandlers.GetTecnicoQueryHandler;
 import org.junit.jupiter.api.Test;
