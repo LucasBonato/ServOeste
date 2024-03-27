@@ -1,7 +1,5 @@
 package com.sev.oeste.Tecnico.Models.DTOs;
 
-import com.sev.oeste.Tecnico.Models.Situacao;
-import com.sev.oeste.Tecnico.Models.Tecnico;
 import lombok.Data;
 
 import java.util.List;

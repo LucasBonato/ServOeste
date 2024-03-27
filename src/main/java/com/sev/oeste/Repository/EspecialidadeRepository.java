@@ -7,6 +7,4 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EspecialidadeRepository extends JpaRepository<Especialidade, Integer> {
-    Especialidade findByConhecimento(String conhecimento);
-}
+public interface EspecialidadeRepository extends JpaRepository<Especialidade, Integer> { }

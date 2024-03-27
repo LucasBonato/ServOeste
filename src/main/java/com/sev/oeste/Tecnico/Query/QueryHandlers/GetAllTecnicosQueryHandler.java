@@ -17,6 +17,6 @@ public class GetAllTecnicosQueryHandler implements Query<Void, List<Tecnico>> {
     @Override
     public ResponseEntity<List<Tecnico>> execute(Void input) {
         List<Tecnico> tecnicos = tecnicoRepository.findAllBySituacao(Situacao.ATIVO);
-        return ResponseEntity.ok(tecnicos);
+        return ResponseEntity.ok().body(tecnicos);
     }
 }
