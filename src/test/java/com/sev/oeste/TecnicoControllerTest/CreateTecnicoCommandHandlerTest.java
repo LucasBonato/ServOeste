@@ -58,6 +58,21 @@ public class CreateTecnicoCommandHandlerTest {
         assertEquals("O 'nome' do técnico não pode ser vazio!", exception.getExceptionResponse().getMessage());
     }
 
+    @Test
+    public void createTecnico_invalidTecnico_returnsTecnicoNotValidExceptionMinimoDeCaracteres(){
+        List<Integer> ids = new ArrayList<>();
+        List<String> conhecimentos = new ArrayList<>();
+        ids.add(1);
+        conhecimentos.add("Outros");
+        TecnicoDTO tecnicoDTO = getTecnicoDTO("J", "Cleiton", "", "11853475235", ids, conhecimentos);
+
+        TecnicoNotValidException exception = assertThrows(
+                TecnicoNotValidException.class,
+                () -> createTecnico.execute(tecnicoDTO)
+        );
+        assertEquals("O 'nome' do técnico precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
+    }
+
     private TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids, List<String> conhecimentos) {
         TecnicoDTO tecnicoDTO = new TecnicoDTO();
         tecnicoDTO.setNome(nome);
