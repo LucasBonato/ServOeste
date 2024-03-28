@@ -44,7 +44,6 @@ public class CreateTecnicoCommandHandlerTest {
         ResponseEntity response = createTecnico.execute(tecnicoDTO);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
-
     @Test
     public void createTecnico_invalidTecnico_returnsTecnicoNotValidExceptionNome(){
         List<Integer> ids = new ArrayList<>();
@@ -59,7 +58,6 @@ public class CreateTecnicoCommandHandlerTest {
         );
         assertEquals("O 'nome' do técnico não pode ser vazio!", exception.getExceptionResponse().getMessage());
     }
-
     @Test
     public void createTecnico_invalidTecnico_returnsTecnicoNotValidExceptionMinimoDeCaracteres(){
         List<Integer> ids = new ArrayList<>();
@@ -74,7 +72,6 @@ public class CreateTecnicoCommandHandlerTest {
         );
         assertEquals("O 'nome' do técnico precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
     }
-
     @Test
     public void createTecnico_invalidTecnico_returnsEspeciliadesEmptyException() {
         List<Integer> ids = new ArrayList<>();
