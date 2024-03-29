@@ -31,11 +31,12 @@ public class UpdateTecnicoCommandHandlerTest {
     @Mock private TecnicoRepository tecnicoRepository;
     @Mock private EspecialidadeRepository especialidadeRepository;
 
+    private Integer id = 1;
+    private List<Integer> ids = new ArrayList<>();
+    private List<String> conhecimentos = new ArrayList<>();
+
     @Test
     public void UpdateTecnico_validObject_returnsOk(){
-        Integer id = 1;
-        List<Integer> ids = new ArrayList<>();
-        List<String> conhecimentos = new ArrayList<>();
         ids.add(1);
         conhecimentos.add("Outros");
         TecnicoDTO tecnicoDTO = getTecnicoDTO(id, "João", "Pedro", "11972761092", "", "ativo", ids, conhecimentos);
@@ -47,9 +48,6 @@ public class UpdateTecnicoCommandHandlerTest {
     }
     @Test
     public void UpdateTecnico_invalidId_returnsNotFoundException(){
-        Integer id = 1;
-        List<Integer> ids = new ArrayList<>();
-        List<String> conhecimentos = new ArrayList<>();
         ids.add(1);
         conhecimentos.add("Outros");
         TecnicoDTO tecnicoDTO = getTecnicoDTO(id, "João", "Pedro", "11972761092", "", "ativo", ids, conhecimentos);
