@@ -3,12 +3,14 @@ package com.sev.oeste.Tecnico.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Especialidade")
 @Data
+@NoArgsConstructor
 public class Especialidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +23,9 @@ public class Especialidade {
     @ManyToMany(mappedBy = "especialidades")
     @JsonIgnore
     private List<Tecnico> tecnicos;
+
+    public Especialidade(Integer id, String conhecimento){
+        this.id = id;
+        this.conhecimento = conhecimento;
+    }
 }
