@@ -1,7 +1,6 @@
 package com.serv.oeste.Tecnico.Command.CommandHandler.Models;
 
 import com.serv.oeste.Exception.Tecnico.*;
-import com.sev.oeste.Exception.Tecnico.*;
 import com.serv.oeste.Repository.EspecialidadeRepository;
 import com.serv.oeste.Repository.TecnicoRepository;
 import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
