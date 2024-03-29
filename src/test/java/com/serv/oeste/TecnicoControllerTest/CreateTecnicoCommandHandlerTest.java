@@ -4,26 +4,20 @@ import com.serv.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
 import com.serv.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
 import com.serv.oeste.Exception.Tecnico.TecnicoNotValidException;
 import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Repository.EspecialidadeRepository;
-import com.serv.oeste.Repository.TecnicoRepository;
 import com.serv.oeste.Tecnico.Command.CommandHandler.CreateTecnicoCommandHandler;
 import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Tecnico.Models.Especialidade;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = OesteApplication.class)
 public class CreateTecnicoCommandHandlerTest extends BaseTest{

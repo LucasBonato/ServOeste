@@ -16,7 +16,11 @@ import static org.mockito.Mockito.when;
 
 public class BaseTest {
     @Mock private EspecialidadeRepository especialidadeRepository;
-    @Mock private TecnicoRepository tecnicoRepository;
+    @Mock protected TecnicoRepository tecnicoRepository;
+
+    protected Integer id = 1;
+    protected List<Integer> ids = new ArrayList<>();
+    protected List<String> conhecimentos = new ArrayList<>();
 
     protected TecnicoDTO getTecnicoDTO(String nome, String sobrenome, String telefoneC, String telefoneF, List<Integer> ids, List<String> conhecimentos) {
         TecnicoDTO tecnicoDTO = new TecnicoDTO();
