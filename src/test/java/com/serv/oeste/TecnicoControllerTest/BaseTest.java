@@ -2,11 +2,10 @@ package com.serv.oeste.TecnicoControllerTest;
 
 import com.serv.oeste.Repository.EspecialidadeRepository;
 import com.serv.oeste.Repository.TecnicoRepository;
-import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Tecnico.Models.Especialidade;
-import com.serv.oeste.Tecnico.Models.Tecnico;
+import com.serv.oeste.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.Models.Especialidade;
+import com.serv.oeste.Models.Tecnico;
 import org.mockito.Mock;
-import org.springframework.jmx.export.annotation.ManagedOperation;
 
 import java.util.ArrayList;
 import java.util.List;

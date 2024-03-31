@@ -4,8 +4,8 @@ import com.serv.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
 import com.serv.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
 import com.serv.oeste.Exception.Tecnico.TecnicoNotValidException;
 import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Tecnico.Command.CommandHandler.CreateTecnicoCommandHandler;
-import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.Service.TecnicoService;
+import com.serv.oeste.Models.DTOs.TecnicoDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = OesteApplication.class)
 public class CreateTecnicoCommandHandlerTest extends BaseTest{
-    @InjectMocks private CreateTecnicoCommandHandler createTecnico;
+    @InjectMocks private TecnicoService tecnicoService;
 
     @Test
     public void createTecnico_validTecnico_returnsCREATED(){
@@ -33,7 +33,7 @@ public class CreateTecnicoCommandHandlerTest extends BaseTest{
         conhecimentos.add("Geladeira");
         TecnicoDTO tecnicoDTO = getTecnicoDTO("Bla", "Bla", "11976258312", "", ids, conhecimentos);
 
-        ResponseEntity response = createTecnico.execute(tecnicoDTO);
+        ResponseEntity response = tecnicoService.create(tecnicoDTO);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
     @Test
@@ -46,7 +46,7 @@ public class CreateTecnicoCommandHandlerTest extends BaseTest{
 
         TecnicoNotValidException exception = assertThrows(
                 TecnicoNotValidException.class,
-                () -> createTecnico.execute(tecnicoDTO)
+                () -> tecnicoService.create(tecnicoDTO)
         );
         Assertions.assertEquals("O 'nome' do técnico não pode ser vazio!", exception.getExceptionResponse().getMessage());
     }
@@ -60,7 +60,7 @@ public class CreateTecnicoCommandHandlerTest extends BaseTest{
 
         TecnicoNotValidException exception = assertThrows(
                 TecnicoNotValidException.class,
-                () -> createTecnico.execute(tecnicoDTO)
+                () -> tecnicoService.create(tecnicoDTO)
         );
         Assertions.assertEquals("O 'nome' do técnico precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
     }
@@ -73,7 +73,7 @@ public class CreateTecnicoCommandHandlerTest extends BaseTest{
 
         EspecialidadesTecnicoEmptyException exception = assertThrows(
                 EspecialidadesTecnicoEmptyException.class,
-                () -> createTecnico.execute(tecnicoDTO)
+                () -> tecnicoService.create(tecnicoDTO)
         );
         Assertions.assertEquals("Técnico precisa possuir no mínimo uma especialidade!", exception.getExceptionResponse().getMessage());
     }
@@ -85,7 +85,7 @@ public class CreateTecnicoCommandHandlerTest extends BaseTest{
 
         EspecialidadeNotFoundException exception = assertThrows(
                 EspecialidadeNotFoundException.class,
-                () -> createTecnico.execute(tecnicoDTO)
+                () -> tecnicoService.create(tecnicoDTO)
         );
         Assertions.assertEquals("Especialidade não encontrada!", exception.getExceptionResponse().getMessage());
     }

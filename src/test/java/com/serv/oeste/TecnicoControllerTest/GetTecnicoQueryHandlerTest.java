@@ -3,9 +3,9 @@ package com.serv.oeste.TecnicoControllerTest;
 import com.serv.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.serv.oeste.OesteApplication;
 import com.serv.oeste.Repository.TecnicoRepository;
-import com.serv.oeste.Tecnico.Models.Especialidade;
-import com.serv.oeste.Tecnico.Models.Tecnico;
-import com.serv.oeste.Tecnico.Query.QueryHandlers.GetTecnicoQueryHandler;
+import com.serv.oeste.Models.Especialidade;
+import com.serv.oeste.Models.Tecnico;
+import com.serv.oeste.Service.TecnicoService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = OesteApplication.class)
 public class GetTecnicoQueryHandlerTest {
 
-    @InjectMocks private GetTecnicoQueryHandler getTecnicoQueryHandler;
+    @InjectMocks private TecnicoService tecnicoService;
 
     @Mock private TecnicoRepository tecnicoRepository;
 
@@ -49,7 +49,7 @@ public class GetTecnicoQueryHandlerTest {
 
         when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.of(tecnico));
 
-        ResponseEntity<Tecnico> response = getTecnicoQueryHandler.execute(tecnico.getId());
+        ResponseEntity<Tecnico> response = tecnicoService.getOne(tecnico.getId());
         assertEquals(tecnico, response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -73,7 +73,7 @@ public class GetTecnicoQueryHandlerTest {
 
         when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.of(tecnico));
 
-        ResponseEntity<Tecnico> response = getTecnicoQueryHandler.execute(1);
+        ResponseEntity<Tecnico> response = tecnicoService.getOne(1);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -98,7 +98,7 @@ public class GetTecnicoQueryHandlerTest {
 
         TecnicoNotFoundException exception = assertThrows(
                 TecnicoNotFoundException.class,
-                () -> getTecnicoQueryHandler.execute(tecnico.getId())
+                () -> tecnicoService.getOne(tecnico.getId())
         );
         Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }

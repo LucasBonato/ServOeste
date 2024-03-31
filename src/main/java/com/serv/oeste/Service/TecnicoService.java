@@ -1,25 +1,83 @@
-package com.serv.oeste.Tecnico.Command.CommandHandler.Models;
+package com.serv.oeste.Service;
 
 import com.serv.oeste.Exception.Tecnico.*;
 import com.serv.oeste.Repository.EspecialidadeRepository;
 import com.serv.oeste.Repository.TecnicoRepository;
-import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Tecnico.Models.Especialidade;
-import com.serv.oeste.Tecnico.Models.Situacao;
-import com.serv.oeste.Tecnico.Models.Tecnico;
+import com.serv.oeste.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.Models.Especialidade;
+import com.serv.oeste.Models.Situacao;
+import com.serv.oeste.Models.Tecnico;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BaseCommand {
-    @Autowired protected TecnicoRepository tecnicoRepository;
-    @Autowired protected EspecialidadeRepository especialidadeRepository;
+@Service
+public class TecnicoService {
     private final int MINIMO_DE_CARACTERES_ACEITO = 2;
 
-    protected Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
+    @Autowired private TecnicoRepository tecnicoRepository;
+    @Autowired private EspecialidadeRepository especialidadeRepository;
+
+    public ResponseEntity<List<Tecnico>> getAllBySituacao(Situacao situacao) {
+        List<Tecnico> tecnicos = switch (situacao){
+            case ATIVO -> tecnicoRepository.findAllBySituacao(Situacao.ATIVO);
+            case LICENCA -> tecnicoRepository.findAllBySituacao(Situacao.LICENCA);
+            case DESATIVADO -> tecnicoRepository.findAllBySituacao(Situacao.DESATIVADO);
+        };
+        return ResponseEntity.ok(tecnicos);
+    }
+
+    @Cacheable("tecnicoCache")
+    public ResponseEntity<Tecnico> getOne(Integer id) {
+        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
+        if(tecnicoOptional.isEmpty()){
+            throw new TecnicoNotFoundException();
+        }
+        return ResponseEntity.ok(tecnicoOptional.get());
+    }
+
+    public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
+        Tecnico tecnico = new Tecnico(tecnicoDTO);
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
+
+        verifyFieldsOfTecnico(tecnico);
+
+        tecnicoRepository.save(tecnico);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    public ResponseEntity<Void> update(Integer id, TecnicoDTO tecnicoDTO) {
+        verifyIfTecnicoExists(id);
+
+        Tecnico tecnico = new Tecnico(tecnicoDTO);
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
+        tecnico.setSituacao(getSituacaoTecnico(tecnicoDTO));
+
+        verifyFieldsOfTecnico(tecnico);
+
+        tecnico.setId(id);
+        tecnicoRepository.save(tecnico);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<Void> disabled(Integer id) {
+        verifyIfTecnicoExists(id);
+
+        Tecnico tecnico = tecnicoRepository.findById(id).get();
+        tecnico.setSituacao(Situacao.DESATIVADO);
+
+        tecnicoRepository.save(tecnico);
+        return ResponseEntity.ok().build();
+    }
+
+    private Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
         switch (tecnicoDTO.getSituacao()){
             case "ativo" -> { return Situacao.ATIVO;}
             case "licença" -> { return Situacao.LICENCA;}
@@ -27,7 +85,7 @@ public class BaseCommand {
         }
         throw new SituacaoNotFoundException();
     }
-    protected List<Especialidade> getEspecialidadesTecnico(TecnicoDTO tecnico){
+    private List<Especialidade> getEspecialidadesTecnico(TecnicoDTO tecnico){
         if(tecnico.getEspecialidades_Ids().isEmpty()){
             throw new EspecialidadesTecnicoEmptyException();
         }
@@ -41,13 +99,13 @@ public class BaseCommand {
         }
         return especialidades;
     }
-    protected void verifyIfTecnicoExists(Integer id) {
+    private void verifyIfTecnicoExists(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
         if(tecnicoOptional.isEmpty()){
             throw new TecnicoNotFoundException();
         }
     }
-    protected void verifyFieldsOfTecnico(Tecnico tecnico){
+    private void verifyFieldsOfTecnico(Tecnico tecnico){
         if(StringUtils.isBlank(tecnico.getNome())) {
             throw new TecnicoNotValidException("O 'nome' do técnico não pode ser vazio!");
         }

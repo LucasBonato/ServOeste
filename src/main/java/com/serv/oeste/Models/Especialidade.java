@@ -1,4 +1,4 @@
-package com.serv.oeste.Tecnico.Models;
+package com.serv.oeste.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

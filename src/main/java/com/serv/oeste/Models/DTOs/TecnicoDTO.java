@@ -1,4 +1,4 @@
-package com.serv.oeste.Tecnico.Models.DTOs;
+package com.serv.oeste.Models.DTOs;
 
 import lombok.Data;
 

@@ -2,24 +2,20 @@ package com.serv.oeste.TecnicoControllerTest;
 
 import com.serv.oeste.Exception.Tecnico.TecnicoNotFoundException;
 import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Tecnico.Command.CommandHandler.Models.UpdateTecnicoCommand;
-import com.serv.oeste.Tecnico.Command.CommandHandler.UpdateTecnicoCommandHandler;
-import com.serv.oeste.Tecnico.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.Service.TecnicoService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = OesteApplication.class)
 public class UpdateTecnicoCommandHandlerTest extends BaseTest {
-    @InjectMocks private UpdateTecnicoCommandHandler updateTecnico;
+    @InjectMocks private TecnicoService tecnicoService;
 
     @Test
     public void UpdateTecnico_validObject_returnsOk(){
@@ -27,8 +23,7 @@ public class UpdateTecnicoCommandHandlerTest extends BaseTest {
         conhecimentos.add("Outros");
         TecnicoDTO tecnicoDTO = getTecnicoDTO(id, "João", "Pedro", "11972761092", "", "ativo", ids, conhecimentos);
 
-        UpdateTecnicoCommand updateTecnicoCommand = new UpdateTecnicoCommand(id, tecnicoDTO);
-        ResponseEntity response = updateTecnico.execute(updateTecnicoCommand);
+        ResponseEntity response = tecnicoService.update(id, tecnicoDTO);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -38,11 +33,9 @@ public class UpdateTecnicoCommandHandlerTest extends BaseTest {
         conhecimentos.add("Outros");
         TecnicoDTO tecnicoDTO = getTecnicoDTO(id, "João", "Pedro", "11972761092", "", "ativo", ids, conhecimentos);
 
-        UpdateTecnicoCommand updateTecnicoCommand = new UpdateTecnicoCommand(0, tecnicoDTO);
-
         TecnicoNotFoundException exception = assertThrows(
                 TecnicoNotFoundException.class,
-                () -> updateTecnico.execute(updateTecnicoCommand)
+                () -> tecnicoService.update(2, tecnicoDTO)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
