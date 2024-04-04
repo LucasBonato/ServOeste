@@ -43,6 +43,11 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicoOptional.get());
     }
 
+    public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
+        List<Tecnico> tecnicos = tecnicoRepository.findByNomeOuSobrenome(nomeOuSobrenome);
+        return ResponseEntity.ok(tecnicos);
+    }
+
     public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
         Tecnico tecnico = new Tecnico(tecnicoDTO);
         tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
@@ -125,4 +130,5 @@ public class TecnicoService {
             throw new TecnicoNotValidException("O telefone precisa ter 11 números!");
         }
     }
+
 }

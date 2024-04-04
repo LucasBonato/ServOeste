@@ -2,6 +2,7 @@ package com.serv.oeste.Models;
 
 import com.serv.oeste.Models.DTOs.TecnicoDTO;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,5 +43,14 @@ public class Tecnico {
         this.sobrenome = tecnico.getSobrenome();
         this.telefoneFixo = tecnico.getTelefoneFixo();
         this.telefoneCelular = tecnico.getTelefoneCelular();
+    }
+
+    public Tecnico(Integer id, String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao){
+        this.id = id;
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.telefoneFixo = telefoneFixo;
+        this.telefoneCelular = telefoneCelular;
+        this.situacao = situacao;
     }
 }

@@ -32,6 +32,10 @@ public class TecnicoController {
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
         return tecnicoService.getOne(id);
     }
+    @GetMapping("/nome")
+    public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
+        return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
+    }
     @PostMapping
     public ResponseEntity create(@RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.create(tecnicoDTO);
