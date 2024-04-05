@@ -45,6 +45,10 @@ public class TecnicoService {
 
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
         List<Tecnico> tecnicos = tecnicoRepository.findByNomeOuSobrenome(nomeOuSobrenome);
+        for(int i = 0; i < tecnicos.size(); i++){
+            List<Integer> ids_Especialidades = tecnicoRepository.findByIdEspecialidade(tecnicos.get(i).getId());
+            tecnicos.get(i).setEspecialidades(getEspecialidadesTecnico(ids_Especialidades));
+        }
         return ResponseEntity.ok(tecnicos);
     }
 
@@ -96,6 +100,17 @@ public class TecnicoService {
         }
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
+            Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
+            if (especialidadeOptional.isEmpty()){
+                throw new EspecialidadeNotFoundException();
+            }
+            especialidades.add(especialidadeOptional.get());
+        }
+        return especialidades;
+    }
+    private List<Especialidade> getEspecialidadesTecnico(List<Integer> ids_Especialidades){
+        List<Especialidade> especialidades = new ArrayList<>();
+        for (Integer id : ids_Especialidades) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
             if (especialidadeOptional.isEmpty()){
                 throw new EspecialidadeNotFoundException();
