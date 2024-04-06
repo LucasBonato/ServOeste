@@ -20,10 +20,13 @@ public class CacheConfiguration {
     public CacheManager cacheManager(){
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
         cacheManager.setAllowNullValues(false);
-        cacheManager.setCacheNames(Arrays.asList("tecnicoCache"));
+        cacheManager.setCacheNames(Arrays.asList("tecnicoCache", "allTecnicos"));
         return cacheManager;
     }
     @CacheEvict(value = "tecnicoCache", allEntries = true)
     @Scheduled(fixedDelay = CINCO_SEGUNDOS, initialDelay = 0)
     public void evictTecnicoCache(){ }
+    @CacheEvict(value = "allTecnicos", allEntries = true)
+    @Scheduled(fixedDelay = CINCO_SEGUNDOS, initialDelay = 0)
+    public void evictAllTecnicosCache(){ }
 }

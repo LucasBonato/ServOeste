@@ -25,6 +25,7 @@ public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
 
+    @Cacheable("allTecnicos")
     public ResponseEntity<List<Tecnico>> getAllBySituacao(Situacao situacao) {
         List<Tecnico> tecnicos = switch (situacao){
             case ATIVO -> tecnicoRepository.findAllBySituacao(Situacao.ATIVO);
