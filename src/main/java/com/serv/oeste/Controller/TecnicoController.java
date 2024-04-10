@@ -14,8 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/tecnico")
 public class TecnicoController {
-
     @Autowired private TecnicoService tecnicoService;
+
     @GetMapping
     public ResponseEntity<List<Tecnico>> getAll(){
         return tecnicoService.getAllBySituacao(Situacao.ATIVO);
@@ -35,6 +35,10 @@ public class TecnicoController {
     @GetMapping("/nome")
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
         return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
+    }
+    @GetMapping("/conhecimentos")
+    public ResponseEntity<List<String>> getAllConhecimentos(){
+        return tecnicoService.getAllConhecimentos();
     }
     @PostMapping
     public ResponseEntity create(@RequestBody TecnicoDTO tecnicoDTO){
