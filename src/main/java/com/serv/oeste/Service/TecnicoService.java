@@ -46,22 +46,22 @@ public class TecnicoService {
 
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
         List<Tecnico> tecnicos = tecnicoRepository.findByNomeOuSobrenome(nomeOuSobrenome);
-        for(int i = 0; i < tecnicos.size(); i++){
-            List<Integer> ids_Especialidades = tecnicoRepository.findByIdEspecialidade(tecnicos.get(i).getId());
-            tecnicos.get(i).setEspecialidades(getEspecialidadesTecnico(ids_Especialidades));
+        for (Tecnico tecnico : tecnicos) {
+            List<Integer> ids_Especialidades = tecnicoRepository.findByIdEspecialidade(tecnico.getId());
+            tecnico.setEspecialidades(getEspecialidadesTecnico(ids_Especialidades));
         }
         return ResponseEntity.ok(tecnicos);
     }
 
     public ResponseEntity<List<String>> getAllConhecimentos() {
-        return ResponseEntity.ok(especialidadeRepository.findAllConhecimentos());
+        return ResponseEntity.ok(especialidadeRepository.findAllConhecimento());
     }
 
     public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
         Tecnico tecnico = new Tecnico(tecnicoDTO);
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
-
         verifyFieldsOfTecnico(tecnico);
+
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
 
         tecnicoRepository.save(tecnico);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -71,10 +71,11 @@ public class TecnicoService {
         verifyIfTecnicoExists(id);
 
         Tecnico tecnico = new Tecnico(tecnicoDTO);
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
-        tecnico.setSituacao(getSituacaoTecnico(tecnicoDTO));
 
         verifyFieldsOfTecnico(tecnico);
+
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
+        tecnico.setSituacao(getSituacaoTecnico(tecnicoDTO));
 
         tecnico.setId(id);
         tecnicoRepository.save(tecnico);
@@ -131,23 +132,30 @@ public class TecnicoService {
         }
     }
     private void verifyFieldsOfTecnico(Tecnico tecnico){
+        final Integer CODIGO_NOME_SOBRENOME = 1;
+        final Integer CODIGO_TELEFONE_CELULAR = 2;
+        final Integer CODIGO_TELEFONE_FIXO = 3;
+        final Integer CODIGO_TELEFONES = 4;
         if(StringUtils.isBlank(tecnico.getNome())) {
-            throw new TecnicoNotValidException("O 'nome' do técnico não pode ser vazio!");
+            throw new TecnicoNotValidException("O Nome do técnico não pode ser vazio!", CODIGO_NOME_SOBRENOME);
         }
         if(tecnico.getNome().length() < MINIMO_DE_CARACTERES_ACEITO){
-            throw new TecnicoNotValidException(String.format("O 'nome' do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
+            throw new TecnicoNotValidException(String.format("O Nome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), CODIGO_NOME_SOBRENOME);
         }
         if(StringUtils.isBlank(tecnico.getSobrenome())) {
-            throw new TecnicoNotValidException("O 'sobrenome' do técnico não pode ser vazio!");
+            throw new TecnicoNotValidException("Digite Nome e Sobrenome!", CODIGO_NOME_SOBRENOME);
         }
         if(tecnico.getSobrenome().length() < MINIMO_DE_CARACTERES_ACEITO){
-            throw new TecnicoNotValidException(String.format("O 'sobrenome' do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
+            throw new TecnicoNotValidException(String.format("O Sobrenome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), CODIGO_NOME_SOBRENOME);
         }
         if(tecnico.getTelefoneCelular().isBlank() && tecnico.getTelefoneFixo().isBlank()) {
-            throw new TecnicoNotValidException("O técnico precisa ter no mínimo um telefone cadastrado, celular ou Fixo!");
+            throw new TecnicoNotValidException("O técnico precisa ter no mínimo um telefone cadastrado!", CODIGO_TELEFONES);
         }
-        if((!tecnico.getTelefoneCelular().isEmpty() && tecnico.getTelefoneCelular().length() < 11) || (!tecnico.getTelefoneFixo().isEmpty() && tecnico.getTelefoneFixo().length() < 11)) {
-            throw new TecnicoNotValidException("O telefone precisa ter 11 números!");
+        if(tecnico.getTelefoneCelular().length() < 11 && !tecnico.getTelefoneCelular().isEmpty()){
+            throw new TecnicoNotValidException("Telefone celular inválido!", CODIGO_TELEFONE_CELULAR);
+        }
+        if(tecnico.getTelefoneFixo().length() < 11 && !tecnico.getTelefoneFixo().isEmpty()) {
+            throw new TecnicoNotValidException("Telefone Fixo Inválido!", CODIGO_TELEFONE_FIXO);
         }
     }
 }

@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 
 public class SituacaoNotFoundException extends BaseException {
     public SituacaoNotFoundException() {
-        super(HttpStatus.NOT_FOUND, new ExceptionResponse("Situação do Técnico não encontrada ou inexistente!"));
+        super(HttpStatus.NOT_FOUND, new ExceptionResponse(0, "Situação do Técnico não encontrada ou inexistente!"));
     }
 }

@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 
 public class TecnicoNotFoundException extends BaseException {
     public TecnicoNotFoundException() {
-        super(HttpStatus.NOT_FOUND, new ExceptionResponse("Técnico não encontrado!"));
+        super(HttpStatus.NOT_FOUND, new ExceptionResponse(0, "Técnico não encontrado!"));
     }
 }

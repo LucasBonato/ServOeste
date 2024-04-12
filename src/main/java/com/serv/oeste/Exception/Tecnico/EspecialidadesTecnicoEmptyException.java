@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 
 public class EspecialidadesTecnicoEmptyException extends BaseException {
     public EspecialidadesTecnicoEmptyException() {
-        super(HttpStatus.BAD_REQUEST, new ExceptionResponse("Técnico precisa possuir no mínimo uma especialidade!"));
+        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(5,"Técnico precisa possuir no mínimo uma especialidade!"));
     }
 }
