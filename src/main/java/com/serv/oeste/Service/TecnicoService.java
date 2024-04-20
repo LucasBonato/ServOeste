@@ -37,6 +37,10 @@ public class TecnicoService {
     public ResponseEntity<List<Tecnico>> getLikeId(Integer id) {
         List<Tecnico> tecnicos = tecnicoRepository.findByIdLike(id);
 
+        for (Tecnico tecnico : tecnicos) {
+            verifyIfTecnicoExists(tecnico.getId());
+        }
+
         return ResponseEntity.ok(tecnicos);
     }
 

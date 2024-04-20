@@ -47,10 +47,13 @@ public class GetTecnicoQueryHandlerTest {
         tecnico.setTelefoneCelular("11938517043");
         tecnico.setEspecialidades(especialidades);
 
-        when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.of(tecnico));
+        List<Tecnico> tecnicos = new ArrayList<>();
+        tecnicos.add(tecnico);
 
-        ResponseEntity<Tecnico> response = tecnicoService.getOne(tecnico.getId());
-        assertEquals(tecnico, response.getBody());
+        when(tecnicoRepository.findByIdLike(tecnico.getId())).thenReturn(tecnicos);
+
+        ResponseEntity<List<Tecnico>> response = tecnicoService.getLikeId(tecnico.getId());
+        assertEquals(tecnicos, response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -71,9 +74,12 @@ public class GetTecnicoQueryHandlerTest {
         tecnico.setTelefoneCelular("11938517043");
         tecnico.setEspecialidades(especialidades);
 
-        when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.of(tecnico));
+        List<Tecnico> tecnicos = new ArrayList<>();
+        tecnicos.add(tecnico);
 
-        ResponseEntity<Tecnico> response = tecnicoService.getOne(1);
+        when(tecnicoRepository.findByIdLike(tecnico.getId())).thenReturn(tecnicos);
+
+        ResponseEntity<List<Tecnico>> response = tecnicoService.getLikeId(1);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -94,13 +100,16 @@ public class GetTecnicoQueryHandlerTest {
         tecnico.setTelefoneCelular("11938517043");
         tecnico.setEspecialidades(especialidades);
 
-        //when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.of(tecnico));
+        List<Tecnico> tecnicos = new ArrayList<>();
+        tecnicos.add(tecnico);
+
+        when(tecnicoRepository.findByIdLike(tecnico.getId())).thenReturn(tecnicos);
+        when(tecnicoRepository.findById(tecnico.getId())).thenReturn(Optional.empty());
 
         TecnicoNotFoundException exception = assertThrows(
                 TecnicoNotFoundException.class,
-                () -> tecnicoService.getOne(tecnico.getId())
+                () -> tecnicoService.getLikeId(tecnico.getId())
         );
         Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
-
 }
