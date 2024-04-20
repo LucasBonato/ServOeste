@@ -52,4 +52,8 @@ public class TecnicoController {
     public ResponseEntity desativando(@PathVariable Integer id){
         return tecnicoService.disabled(id);
     }
+    @DeleteMapping()
+    public ResponseEntity desativandoList(@RequestBody List<Integer> ids){
+        return tecnicoService.disableAList(ids);
+    }
 }

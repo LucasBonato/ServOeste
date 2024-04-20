@@ -92,6 +92,13 @@ public class TecnicoService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity disableAList(List<Integer> ids) {
+        for (Integer id : ids) {
+            disabled(id);
+        }
+        return ResponseEntity.ok().build();
+    }
+
     private Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
         switch (tecnicoDTO.getSituacao()){
             case "ativo" -> { return Situacao.ATIVO;}
