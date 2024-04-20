@@ -32,6 +32,10 @@ public class TecnicoController {
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
         return tecnicoService.getOne(id);
     }
+    @GetMapping("/findBy")
+    public ResponseEntity<List<Tecnico>> getLikeId(@RequestParam(value = "id") @PathVariable Integer id){
+        return tecnicoService.getLikeId(id);
+    }
     @GetMapping("/nome")
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
         return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
@@ -40,18 +44,22 @@ public class TecnicoController {
     public ResponseEntity<List<String>> getAllConhecimentos(){
         return tecnicoService.getAllConhecimentos();
     }
+
     @PostMapping
     public ResponseEntity create(@RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.create(tecnicoDTO);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.update(id, tecnicoDTO);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity desativando(@PathVariable Integer id){
         return tecnicoService.disabled(id);
     }
+
     @DeleteMapping()
     public ResponseEntity desativandoList(@RequestBody List<Integer> ids){
         return tecnicoService.disableAList(ids);

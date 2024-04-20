@@ -1,6 +1,5 @@
 package com.serv.oeste.Repository;
 
-import com.serv.oeste.Models.DTOs.TecnicoDTO;
 import com.serv.oeste.Models.Situacao;
 import com.serv.oeste.Models.Tecnico;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +19,12 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Integer> {
             LIKE %:nomeOuSobrenome%
         """)
     List<Tecnico> findByNomeOuSobrenome(@Param("nomeOuSobrenome") String nomeOuSobrenome);
+
+    @Query(value = """
+            SELECT * FROM Tecnico
+            WHERE Id Like %:id%
+        """, nativeQuery = true)
+    List<Tecnico> findByIdLike(@Param("id") Integer id);
 
     @Query(value = """
             SELECT te.id_especialidade FROM Tecnico t

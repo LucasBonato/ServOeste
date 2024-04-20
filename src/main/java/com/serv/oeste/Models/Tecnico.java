@@ -2,7 +2,6 @@ package com.serv.oeste.Models;
 
 import com.serv.oeste.Models.DTOs.TecnicoDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

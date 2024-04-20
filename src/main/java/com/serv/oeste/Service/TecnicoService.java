@@ -44,6 +44,12 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicoOptional.get());
     }
 
+    public ResponseEntity<List<Tecnico>> getLikeId(Integer id) {
+        List<Tecnico> tecnicos = tecnicoRepository.findByIdLike(id);
+
+        return ResponseEntity.ok(tecnicos);
+    }
+
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
         List<Tecnico> tecnicos = tecnicoRepository.findByNomeOuSobrenome(nomeOuSobrenome);
         for (Tecnico tecnico : tecnicos) {
