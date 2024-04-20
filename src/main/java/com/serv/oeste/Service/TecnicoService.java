@@ -20,8 +20,6 @@ import java.util.Optional;
 
 @Service
 public class TecnicoService {
-    private final int MINIMO_DE_CARACTERES_ACEITO = 2;
-
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
 
@@ -36,14 +34,6 @@ public class TecnicoService {
     }
 
     @Cacheable("tecnicoCache")
-    public ResponseEntity<Tecnico> getOne(Integer id) {
-        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
-        if(tecnicoOptional.isEmpty()){
-            throw new TecnicoNotFoundException();
-        }
-        return ResponseEntity.ok(tecnicoOptional.get());
-    }
-
     public ResponseEntity<List<Tecnico>> getLikeId(Integer id) {
         List<Tecnico> tecnicos = tecnicoRepository.findByIdLike(id);
 
@@ -57,10 +47,6 @@ public class TecnicoService {
             tecnico.setEspecialidades(getEspecialidadesTecnico(ids_Especialidades));
         }
         return ResponseEntity.ok(tecnicos);
-    }
-
-    public ResponseEntity<List<String>> getAllConhecimentos() {
-        return ResponseEntity.ok(especialidadeRepository.findAllConhecimento());
     }
 
     public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
@@ -88,19 +74,14 @@ public class TecnicoService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<Void> disabled(Integer id) {
-        verifyIfTecnicoExists(id);
-
-        Tecnico tecnico = tecnicoRepository.findById(id).get();
-        tecnico.setSituacao(Situacao.DESATIVADO);
-
-        tecnicoRepository.save(tecnico);
-        return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity disableAList(List<Integer> ids) {
+    public ResponseEntity<Void> disableAList(List<Integer> ids) {
         for (Integer id : ids) {
-            disabled(id);
+            verifyIfTecnicoExists(id);
+
+            Tecnico tecnico = tecnicoRepository.findById(id).get();
+            tecnico.setSituacao(Situacao.DESATIVADO);
+
+            tecnicoRepository.save(tecnico);
         }
         return ResponseEntity.ok().build();
     }
@@ -145,6 +126,7 @@ public class TecnicoService {
         }
     }
     private void verifyFieldsOfTecnico(Tecnico tecnico){
+        final int MINIMO_DE_CARACTERES_ACEITO = 2;
         final Integer CODIGO_NOME_SOBRENOME = 1;
         final Integer CODIGO_TELEFONE_CELULAR = 2;
         final Integer CODIGO_TELEFONE_FIXO = 3;

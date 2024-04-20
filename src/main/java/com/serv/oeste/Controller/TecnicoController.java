@@ -28,10 +28,6 @@ public class TecnicoController {
     public ResponseEntity<List<Tecnico>> getAllDesativados(){
         return tecnicoService.getAllBySituacao(Situacao.DESATIVADO);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
-        return tecnicoService.getOne(id);
-    }
     @GetMapping("/findBy")
     public ResponseEntity<List<Tecnico>> getLikeId(@RequestParam(value = "id") @PathVariable Integer id){
         return tecnicoService.getLikeId(id);
@@ -39,10 +35,6 @@ public class TecnicoController {
     @GetMapping("/nome")
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
         return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
-    }
-    @GetMapping("/conhecimentos")
-    public ResponseEntity<List<String>> getAllConhecimentos(){
-        return tecnicoService.getAllConhecimentos();
     }
 
     @PostMapping
@@ -53,11 +45,6 @@ public class TecnicoController {
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.update(id, tecnicoDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity desativando(@PathVariable Integer id){
-        return tecnicoService.disabled(id);
     }
 
     @DeleteMapping()
