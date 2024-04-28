@@ -8,6 +8,8 @@ import com.serv.oeste.Models.Especialidade;
 import com.serv.oeste.Models.Situacao;
 import com.serv.oeste.Models.Tecnico;
 import io.micrometer.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(TecnicoService.class);
+
     @Cacheable("allTecnicos")
     public ResponseEntity<List<Tecnico>> getAllBySituacao(Situacao situacao) {
         List<Tecnico> tecnicos = switch (situacao){
@@ -34,14 +38,41 @@ public class TecnicoService {
     }
 
     @Cacheable("tecnicoCache")
-    public ResponseEntity<List<Tecnico>> getLikeId(Integer id) {
-        List<Tecnico> tecnicos = tecnicoRepository.findByIdLike(id);
-
-        for (Tecnico tecnico : tecnicos) {
-            verifyIfTecnicoExists(tecnico.getId());
+    public ResponseEntity<Tecnico> getOne(Integer id) {
+        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
+        if(tecnicoOptional.isEmpty()){
+            throw new TecnicoNotFoundException();
         }
+        return ResponseEntity.ok(tecnicoOptional.get());
+    }
 
-        return ResponseEntity.ok(tecnicos);
+    public ResponseEntity<List<Tecnico>> getLike(String id, String nome, String situacao) {
+        Integer idInteger = (id.equals("null")) ? null : Integer.valueOf(id);
+        nome = (nome.equals("null")) ? null: nome;
+        situacao = (situacao.equals("null")) ? null: situacao;
+
+        if(idInteger == null && nome == null && situacao == null) {
+            return getAllBySituacao(Situacao.ATIVO);
+        } else if(idInteger != null && nome == null && situacao == null) {
+            return ResponseEntity.ok(tecnicoRepository.findByIdLike(idInteger));
+        } else if(idInteger == null && nome != null && situacao == null) {
+            return getByNomeOrSobrenome(nome);
+        } else if(idInteger == null && nome == null) {
+            return switch (situacao){
+                case "ativo" -> getAllBySituacao(Situacao.ATIVO);
+                case "licença" -> getAllBySituacao(Situacao.LICENCA);
+                case "desativado" -> getAllBySituacao(Situacao.DESATIVADO);
+                default -> throw new SituacaoNotFoundException();
+            };
+        } else if(idInteger != null && nome != null && situacao == null) {
+            return ResponseEntity.ok(tecnicoRepository.findByIdAndNomeLike(idInteger, nome));
+        } else if(idInteger != null && nome != null) {
+            return ResponseEntity.ok(tecnicoRepository.findByIdAndNomeAndSituacaoLike(idInteger, nome ,situacao));
+        } else if(idInteger == null) {
+            return ResponseEntity.ok(tecnicoRepository.findByNomeAndSituacaoLike(nome, situacao));
+        } else {
+            return ResponseEntity.ok(tecnicoRepository.findByIdAndSituacaoLike(idInteger, situacao));
+        }
     }
 
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {

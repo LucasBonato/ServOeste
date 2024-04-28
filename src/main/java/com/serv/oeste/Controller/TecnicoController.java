@@ -1,5 +1,6 @@
 package com.serv.oeste.Controller;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.serv.oeste.Service.TecnicoService;
 
 import com.serv.oeste.Models.DTOs.TecnicoDTO;
@@ -29,12 +30,19 @@ public class TecnicoController {
         return tecnicoService.getAllBySituacao(Situacao.DESATIVADO);
     }
     @GetMapping("/findBy")
-    public ResponseEntity<List<Tecnico>> getLikeId(@RequestParam(value = "id") @PathVariable Integer id){
-        return tecnicoService.getLikeId(id);
+    public ResponseEntity<List<Tecnico>> getLike(
+            @RequestParam(value = "id") @PathVariable String id,
+            @RequestParam(value = "n") @PathVariable String nome,
+            @RequestParam(value = "s") @PathVariable String situacao){
+        return tecnicoService.getLike(id, nome, situacao);
     }
     @GetMapping("/nome")
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
         return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
+        return tecnicoService.getOne(id);
     }
 
     @PostMapping

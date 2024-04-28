@@ -52,7 +52,7 @@ public class GetTecnicoQueryHandlerTest {
 
         when(tecnicoRepository.findByIdLike(tecnico.getId())).thenReturn(tecnicos);
 
-        ResponseEntity<List<Tecnico>> response = tecnicoService.getLikeId(tecnico.getId());
+        ResponseEntity<List<Tecnico>> response = tecnicoService.getLike(tecnico.getId(), null, null);
         assertEquals(tecnicos, response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -79,7 +79,7 @@ public class GetTecnicoQueryHandlerTest {
 
         when(tecnicoRepository.findByIdLike(tecnico.getId())).thenReturn(tecnicos);
 
-        ResponseEntity<List<Tecnico>> response = tecnicoService.getLikeId(1);
+        ResponseEntity<List<Tecnico>> response = tecnicoService.getLike(1, null, null);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -108,7 +108,7 @@ public class GetTecnicoQueryHandlerTest {
 
         TecnicoNotFoundException exception = assertThrows(
                 TecnicoNotFoundException.class,
-                () -> tecnicoService.getLikeId(tecnico.getId())
+                () -> tecnicoService.getLike(tecnico.getId(), null, null)
         );
         Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }

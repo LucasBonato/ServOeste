@@ -33,4 +33,33 @@ public interface TecnicoRepository extends JpaRepository<Tecnico, Integer> {
             WHERE t.Id = :Id_Especialidade
         """, nativeQuery = true)
     List<Integer> findByIdEspecialidade(@Param("Id_Especialidade") Integer id_Especialidade);
+
+    @Query(value = """
+            SELECT * FROM Tecnico
+            WHERE Id LIKE %:id%
+            AND CONCAT(nome, ' ', sobrenome) LIKE %:nomeOuSobrenome%
+        """, nativeQuery = true)
+    List<Tecnico> findByIdAndNomeLike(@Param(value = "id") Integer id, @Param(value = "nomeOuSobrenome")  String nome);
+
+    @Query(value = """
+            SELECT * FROM Tecnico
+            WHERE Id LIKE %:id%
+            AND CONCAT(nome, ' ', sobrenome) LIKE %:nomeOuSobrenome%
+            AND situacao = :situacao
+        """, nativeQuery = true)
+    List<Tecnico> findByIdAndNomeAndSituacaoLike(@Param(value = "id") Integer id, @Param(value = "nomeOuSobrenome") String nome, @Param(value = "situacao") String situacao);
+
+    @Query(value = """
+            SELECT * FROM Tecnico
+                WHERE CONCAT(nome, ' ', sobrenome) LIKE %:nomeOuSobrenome%
+                AND situacao = :situacao
+        """, nativeQuery = true)
+    List<Tecnico> findByNomeAndSituacaoLike(@Param(value = "nomeOuSobrenome") String nome, @Param(value = "situacao") String situacao);
+
+    @Query(value = """
+            SELECT * FROM Tecnico
+            WHERE Id LIKE %:id%
+            AND situacao = :situacao
+        """, nativeQuery = true)
+    List<Tecnico> findByIdAndSituacaoLike(@Param(value = "id") Integer id, @Param(value = "situacao") String situacao);
 }
