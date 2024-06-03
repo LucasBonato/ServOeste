@@ -1,10 +1,10 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.Repository.EspecialidadeRepository;
-import com.serv.oeste.Repository.TecnicoRepository;
-import com.serv.oeste.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Models.Especialidade;
-import com.serv.oeste.Models.Tecnico;
+import com.serv.oeste.repository.EspecialidadeRepository;
+import com.serv.oeste.repository.TecnicoRepository;
+import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.models.tecnico.Especialidade;
+import com.serv.oeste.models.tecnico.Tecnico;
 import org.mockito.Mock;
 
 import java.util.ArrayList;

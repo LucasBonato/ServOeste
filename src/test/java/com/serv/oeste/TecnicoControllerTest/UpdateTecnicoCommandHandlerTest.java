@@ -1,9 +1,9 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.Exception.Tecnico.TecnicoNotFoundException;
-import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Service.TecnicoService;
+import com.serv.oeste.exception.tecnico.TecnicoNotFoundException;
+import com.serv.oeste.ServOesteApplication;
+import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.service.TecnicoService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = OesteApplication.class)
+@SpringBootTest(classes = ServOesteApplication.class)
 public class UpdateTecnicoCommandHandlerTest extends BaseTest {
     @InjectMocks private TecnicoService tecnicoService;
 

@@ -1,11 +1,11 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.Exception.Tecnico.EspecialidadeNotFoundException;
-import com.serv.oeste.Exception.Tecnico.EspecialidadesTecnicoEmptyException;
-import com.serv.oeste.Exception.Tecnico.TecnicoNotValidException;
-import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Service.TecnicoService;
-import com.serv.oeste.Models.DTOs.TecnicoDTO;
+import com.serv.oeste.exception.tecnico.EspecialidadeNotFoundException;
+import com.serv.oeste.exception.tecnico.EspecialidadesTecnicoEmptyException;
+import com.serv.oeste.exception.tecnico.TecnicoNotValidException;
+import com.serv.oeste.ServOesteApplication;
+import com.serv.oeste.service.TecnicoService;
+import com.serv.oeste.models.dtos.TecnicoDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = OesteApplication.class)
+@SpringBootTest(classes = ServOesteApplication.class)
 public class CreateTecnicoCommandHandlerTest extends BaseTest{
     @InjectMocks private TecnicoService tecnicoService;
 

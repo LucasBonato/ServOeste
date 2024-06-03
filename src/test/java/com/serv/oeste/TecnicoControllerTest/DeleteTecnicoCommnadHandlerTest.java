@@ -1,8 +1,8 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.OesteApplication;
-import com.serv.oeste.Models.DTOs.TecnicoDTO;
-import com.serv.oeste.Service.TecnicoService;
+import com.serv.oeste.ServOesteApplication;
+import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.service.TecnicoService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = OesteApplication.class)
+@SpringBootTest(classes = ServOesteApplication.class)
 public class DeleteTecnicoCommnadHandlerTest extends BaseTest{
     @InjectMocks private TecnicoService tecnicoService;
 
