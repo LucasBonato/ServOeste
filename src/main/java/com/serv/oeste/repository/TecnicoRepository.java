@@ -3,6 +3,7 @@ package com.serv.oeste.repository;
 import com.serv.oeste.models.enums.Situacao;
 import com.serv.oeste.models.tecnico.Tecnico;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TecnicoRepository extends JpaRepository<Tecnico, Integer> {
+public interface TecnicoRepository extends JpaRepository<Tecnico, Integer>, JpaSpecificationExecutor<Tecnico> {
     List<Tecnico> findAllBySituacao(Situacao situacao);
     @Query("""
             SELECT new com.serv.oeste.models.tecnico.Tecnico(id, nome, sobrenome, telefoneFixo, telefoneCelular, situacao)

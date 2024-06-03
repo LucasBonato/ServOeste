@@ -1,5 +1,6 @@
 package com.serv.oeste.controller;
 
+import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.service.TecnicoService;
 import com.serv.oeste.models.dtos.TecnicoDTO;
 import com.serv.oeste.models.enums.Situacao;
@@ -27,12 +28,9 @@ public class TecnicoController {
     public ResponseEntity<List<Tecnico>> getAllDesativados(){
         return tecnicoService.getAllBySituacao(Situacao.DESATIVADO);
     }
-    @GetMapping("/findBy")
-    public ResponseEntity<List<Tecnico>> getLike(
-            @RequestParam(value = "id") @PathVariable String id,
-            @RequestParam(value = "n") @PathVariable String nome,
-            @RequestParam(value = "s") @PathVariable String situacao){
-        return tecnicoService.getLike(id, nome, situacao);
+    @GetMapping("/find")
+    public ResponseEntity<List<Tecnico>> getBy(@RequestBody TecnicoRequestFilter filter){
+        return tecnicoService.getBy(filter);
     }
     @GetMapping("/nome")
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){

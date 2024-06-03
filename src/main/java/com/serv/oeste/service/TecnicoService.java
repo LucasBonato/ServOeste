@@ -1,7 +1,12 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.exception.tecnico.*;
+import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.models.cliente.ClienteSpecifications;
+import com.serv.oeste.models.dtos.reponses.ClienteResponse;
+import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
+import com.serv.oeste.models.tecnico.TecnicoSpecifications;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
 import com.serv.oeste.models.dtos.TecnicoDTO;
@@ -13,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,34 +52,20 @@ public class TecnicoService {
         }
         return ResponseEntity.ok(tecnicoOptional.get());
     }
+    public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
+        Specification<Tecnico> specification = Specification.where(null);
 
-    public ResponseEntity<List<Tecnico>> getLike(String id, String nome, String situacao) {
-        Integer idInteger = (id.equals("null")) ? null : Integer.valueOf(id);
-        nome = (nome.equals("null")) ? null: nome;
-        situacao = (situacao.equals("null")) ? null: situacao;
-
-        if(idInteger == null && nome == null && situacao == null) {
-            return getAllBySituacao(Situacao.ATIVO);
-        } else if(idInteger != null && nome == null && situacao == null) {
-            return ResponseEntity.ok(tecnicoRepository.findByIdLike(idInteger));
-        } else if(idInteger == null && nome != null && situacao == null) {
-            return getByNomeOrSobrenome(nome);
-        } else if(idInteger == null && nome == null) {
-            return switch (situacao){
-                case "ativo" -> getAllBySituacao(Situacao.ATIVO);
-                case "licença" -> getAllBySituacao(Situacao.LICENCA);
-                case "desativado" -> getAllBySituacao(Situacao.DESATIVADO);
-                default -> throw new SituacaoNotFoundException();
-            };
-        } else if(idInteger != null && nome != null && situacao == null) {
-            return ResponseEntity.ok(tecnicoRepository.findByIdAndNomeLike(idInteger, nome));
-        } else if(idInteger != null && nome != null) {
-            return ResponseEntity.ok(tecnicoRepository.findByIdAndNomeAndSituacaoLike(idInteger, nome ,situacao));
-        } else if(idInteger == null) {
-            return ResponseEntity.ok(tecnicoRepository.findByNomeAndSituacaoLike(nome, situacao));
-        } else {
-            return ResponseEntity.ok(tecnicoRepository.findByIdAndSituacaoLike(idInteger, situacao));
+        if (filtroRequest.id() != null)
+            specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
+        if (StringUtils.isNotBlank(filtroRequest.nome())) {
+            specification = specification.and(TecnicoSpecifications.hasNome(filtroRequest.nome()));
+            specification = specification.and(TecnicoSpecifications.hasSobrenome(filtroRequest.nome()));
         }
+        if (StringUtils.isNotBlank(filtroRequest.situacao()))
+            specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
+
+        List<Tecnico> response = tecnicoRepository.findAll(specification);
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
