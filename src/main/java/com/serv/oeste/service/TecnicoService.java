@@ -11,8 +11,6 @@ import com.serv.oeste.models.tecnico.Especialidade;
 import com.serv.oeste.models.enums.Situacao;
 import com.serv.oeste.models.tecnico.Tecnico;
 import io.micrometer.common.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,18 +27,6 @@ public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(TecnicoService.class);
-
-    @Cacheable("allTecnicos")
-    public ResponseEntity<List<Tecnico>> getAllBySituacao(Situacao situacao) {
-        List<Tecnico> tecnicos = switch (situacao){
-            case ATIVO -> tecnicoRepository.findAllBySituacao(Situacao.ATIVO);
-            case LICENCA -> tecnicoRepository.findAllBySituacao(Situacao.LICENCA);
-            case DESATIVADO -> tecnicoRepository.findAllBySituacao(Situacao.DESATIVADO);
-        };
-        return ResponseEntity.ok(tecnicos);
-    }
-
     @Cacheable("tecnicoCache")
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
@@ -49,6 +35,7 @@ public class TecnicoService {
         }
         return ResponseEntity.ok(tecnicoOptional.get());
     }
+    @Cacheable("allTecnicos")
     public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = Specification.where(null);
 
@@ -62,15 +49,6 @@ public class TecnicoService {
 
         List<Tecnico> response = tecnicoRepository.findAll(specification);
         return ResponseEntity.ok(response);
-    }
-
-    public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(String nomeOuSobrenome) {
-        List<Tecnico> tecnicos = tecnicoRepository.findByNomeOuSobrenome(nomeOuSobrenome);
-        for (Tecnico tecnico : tecnicos) {
-            List<Integer> ids_Especialidades = tecnicoRepository.findByIdEspecialidade(tecnico.getId());
-            tecnico.setEspecialidades(getEspecialidadesTecnico(ids_Especialidades));
-        }
-        return ResponseEntity.ok(tecnicos);
     }
 
     public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
@@ -124,17 +102,6 @@ public class TecnicoService {
         }
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
-            Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
-            if (especialidadeOptional.isEmpty()){
-                throw new EspecialidadeNotFoundException();
-            }
-            especialidades.add(especialidadeOptional.get());
-        }
-        return especialidades;
-    }
-    private List<Especialidade> getEspecialidadesTecnico(List<Integer> ids_Especialidades){
-        List<Especialidade> especialidades = new ArrayList<>();
-        for (Integer id : ids_Especialidades) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
             if (especialidadeOptional.isEmpty()){
                 throw new EspecialidadeNotFoundException();
