@@ -20,7 +20,7 @@ public class ClienteController {
         return clienteService.getOne(id);
     }
 
-    @GetMapping("/find")
+    @PostMapping("/find")
     public ResponseEntity<List<ClienteResponse>> getBy(@RequestBody ClienteRequestFilter filter){
         return clienteService.getBy(filter);
     }

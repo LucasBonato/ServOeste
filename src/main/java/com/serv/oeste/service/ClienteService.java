@@ -8,8 +8,6 @@ import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
-import com.serv.oeste.models.enums.Situacao;
-import com.serv.oeste.models.tecnico.Tecnico;
 import com.serv.oeste.repository.ClienteRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +32,8 @@ public class ClienteService {
 
         if (StringUtils.isNotBlank(filtroRequest.nome()))
             specification = specification.and(ClienteSpecifications.hasNome(filtroRequest.nome()));
-        if (StringUtils.isNotBlank(filtroRequest.telefoneCelular()))
-            specification = specification.and(ClienteSpecifications.hasTelefoneCelular(filtroRequest.telefoneCelular()));
-        if (StringUtils.isNotBlank(filtroRequest.telefoneFixo()))
-            specification = specification.and(ClienteSpecifications.hasTelefoneFixo(filtroRequest.telefoneFixo()));
+        if (StringUtils.isNotBlank(filtroRequest.telefone()))
+            specification = specification.and(ClienteSpecifications.hasTelefone(filtroRequest.telefone()));
         if (StringUtils.isNotBlank(filtroRequest.endereco()))
             specification = specification.and(ClienteSpecifications.hasEndereco(filtroRequest.endereco()));
 
@@ -113,7 +109,10 @@ public class ClienteService {
                 cliente.getId(),
                 cliente.getNome(),
                 cliente.getTelefoneFixo(),
-                cliente.getTelefoneCelular()
+                cliente.getTelefoneCelular(),
+                cliente.getEndereco(),
+                cliente.getBairro(),
+                cliente.getMunicipio()
         );
     }
     private boolean contemNumero(String endereco) {

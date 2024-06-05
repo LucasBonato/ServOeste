@@ -304,7 +304,7 @@ Class Api{
 
 ---
 
-### Desativar ou Ativar Cliente
+### Desativar ou Ativar Técnico
 
 ![DELETE](https://img.shields.io/static/v1?label=&message=DEL&color=red&style=for-the-badge)
 
@@ -396,8 +396,7 @@ Class Api{
 
 ``` JSON
     "nome": "nomeESobrenomeDoCliente",
-    "telefoneFixo": "99999999999",
-    "telefoneCelular": "99999999999",
+    "telefone": "99999999999",
     "endereco": "Alguma parte do endereço do cliente"
 ```
 
@@ -410,7 +409,7 @@ Class Api{
     var client = http.Client();
     String baseUri = "https//localhost:8080/api/v1";
     
-    Future<List<Cliente>?> getClientes(String? nome, String? telefoneFixo, String? telefoneCelular, String? endereco) async{
+    Future<List<Cliente>?> getClientes(String? nome, String? telefone, String? endereco) async{
     var uri = Uri.parse("${baseUri}/cliente/find");
     var response = await client.post(
         uri,
@@ -419,8 +418,7 @@ Class Api{
         },
         body: jsonEncode({
           "nome": nome,
-          "telefoneFixo": telefoneFixo,
-          "telefoneCelular": telefoneCelular,
+          "telefone": telefone,
           "endereco": endereco
         }
     ));

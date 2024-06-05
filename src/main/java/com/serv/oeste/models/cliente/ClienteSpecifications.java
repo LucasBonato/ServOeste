@@ -7,12 +7,11 @@ public class ClienteSpecifications {
         return (root, query, cb) -> cb.like(root.get("nome"), "%" + nome + "%");
     }
 
-    public static Specification<Cliente> hasTelefoneCelular(String telefoneCelular) {
-        return (root, query, cb) -> cb.like(root.get("telefoneCelular"), "%" + telefoneCelular + "%");
-    }
-
-    public static Specification<Cliente> hasTelefoneFixo(String telefoneFixo) {
-        return (root, query, cb) -> cb.like(root.get("telefoneFixo"), "%" + telefoneFixo + "%");
+    public static Specification<Cliente> hasTelefone(String telefone) {
+        return (root, query, cb) -> cb.or(
+                cb.like(root.get("telefoneFixo"), "%" + telefone + "%"),
+                cb.like(root.get("telefoneCelular"), "%" + telefone + "%")
+        );
     }
 
     public static Specification<Cliente> hasEndereco(String endereco) {
