@@ -374,7 +374,7 @@ Class Api{
         dynamic jsonResponse = json.decode(responseBodyUtf8);
         Cliente cliente = Cliente.fromJson(jsonResponse);
         return cliente;
-  }
+    }
 }
 ~~~
 
@@ -533,17 +533,18 @@ Class Api{
     
     Future<dynamic> update(Cliente cliente) async{
         var response = await client.put(
-          Uri.parse("$baseUri/cliente?id=${tecnico.id}"),
+          Uri.parse("$baseUri/cliente?id=${cliente.id}"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode({
-            "nome": tecnico.nome,
-            "sobrenome": tecnico.sobrenome,
-            "telefoneFixo": tecnico.telefoneFixo,
-            "telefoneCelular": tecnico.telefoneCelular,
-            "situacao": tecnico.situacao,
-            "especialidades_Ids": tecnico.especialidadesIds,
+            "nome": cliente.nome,
+            "sobrenome": cliente.sobrenome,
+            "telefoneFixo": cliente.telefoneFixo,
+            "telefoneCelular": cliente.telefoneCelular,
+            "endereco": cliente.endereco,
+            "bairro": cliente.bairro,
+            "municipio": cliente.municipio
           }),
         );
         if(response.statusCode != 200){
