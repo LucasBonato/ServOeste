@@ -15,9 +15,9 @@ import java.util.List;
 public class ClienteController {
     @Autowired private ClienteService clienteService;
 
-    @GetMapping
-    public ResponseEntity<List<ClienteResponse>> getAll() {
-        return clienteService.getAll();
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> getOne(@PathVariable Integer id) {
+        return clienteService.getOne(id);
     }
 
     @GetMapping("/find")

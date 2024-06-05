@@ -25,13 +25,8 @@ import java.util.List;
 public class ClienteService {
     @Autowired private ClienteRepository clienteRepository;
 
-    public ResponseEntity<List<ClienteResponse>> getAll() {
-        List<ClienteResponse> response = new ArrayList<>();
-        clienteRepository
-                .findAll()
-                .forEach(cliente -> response.add(getClienteResponse(cliente)));
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ClienteResponse> getOne(Integer id) {
+        return ResponseEntity.ok(getClienteResponse(clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new)));
     }
 
     public ResponseEntity<List<ClienteResponse>> getBy(ClienteRequestFilter filtroRequest) {

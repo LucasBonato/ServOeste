@@ -20,6 +20,7 @@ public class TecnicoController {
     public ResponseEntity<List<Tecnico>> getBy(@RequestBody TecnicoRequestFilter filter){
         return tecnicoService.getBy(filter);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
         return tecnicoService.getOne(id);
