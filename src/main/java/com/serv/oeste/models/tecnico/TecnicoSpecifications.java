@@ -1,18 +1,22 @@
 package com.serv.oeste.models.tecnico;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TecnicoSpecifications {
-    public static Specification<Tecnico> hasId(Integer id) {
+    public static Specification<Tecnico> hasId(String id) {
         return (root, query, cb) -> cb.like(root.get("id").as(String.class), "%" + id + "%");
     }
 
-    public static Specification<Tecnico> hasNome(String nome) {
-        return (root, query, cb) -> cb.like(root.get("nome"), "%" + nome + "%");
-    }
-
-    public static Specification<Tecnico> hasSobrenome(String sobrenome) {
-        return (root, query, cb) -> cb.like(root.get("sobrenome"), "%" + sobrenome + "%");
+    public static Specification<Tecnico> hasNomeCompleto(String nomeCompleto) {
+        return (Root<Tecnico> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            Expression<String> nomeSobrenomeConcat = cb.concat(root.get("nome"), " ");
+            nomeSobrenomeConcat = cb.concat(nomeSobrenomeConcat, root.get("sobrenome"));
+            return cb.like(nomeSobrenomeConcat, "%" + nomeCompleto + "%");
+        };
     }
 
     public static Specification<Tecnico> hasSituacao(String situacao) {

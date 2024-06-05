@@ -1,7 +1,7 @@
 package com.serv.oeste.models.dtos.requests;
 
 public record TecnicoRequestFilter(
-        Integer id,
+        String id,
         String nome,
         String situacao
 ) { }

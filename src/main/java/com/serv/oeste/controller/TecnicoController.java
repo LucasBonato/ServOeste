@@ -16,25 +16,9 @@ import java.util.List;
 public class TecnicoController {
     @Autowired private TecnicoService tecnicoService;
 
-    @GetMapping
-    public ResponseEntity<List<Tecnico>> getAll(){
-        return tecnicoService.getAllBySituacao(Situacao.ATIVO);
-    }
-    @GetMapping("/licenca")
-    public ResponseEntity<List<Tecnico>> getAllLicenca(){
-        return tecnicoService.getAllBySituacao(Situacao.LICENCA);
-    }
-    @GetMapping("/desativado")
-    public ResponseEntity<List<Tecnico>> getAllDesativados(){
-        return tecnicoService.getAllBySituacao(Situacao.DESATIVADO);
-    }
-    @GetMapping("/find")
+    @PostMapping("/find")
     public ResponseEntity<List<Tecnico>> getBy(@RequestBody TecnicoRequestFilter filter){
         return tecnicoService.getBy(filter);
-    }
-    @GetMapping("/nome")
-    public ResponseEntity<List<Tecnico>> getByNomeOrSobrenome(@RequestParam(value = "n") @PathVariable String nomeOuSobrenome){
-        return tecnicoService.getByNomeOrSobrenome(nomeOuSobrenome);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){

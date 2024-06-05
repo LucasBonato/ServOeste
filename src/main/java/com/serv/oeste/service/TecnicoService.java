@@ -1,9 +1,6 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.exception.tecnico.*;
-import com.serv.oeste.models.cliente.Cliente;
-import com.serv.oeste.models.cliente.ClienteSpecifications;
-import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.tecnico.TecnicoSpecifications;
@@ -58,8 +55,7 @@ public class TecnicoService {
         if (filtroRequest.id() != null)
             specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
         if (StringUtils.isNotBlank(filtroRequest.nome())) {
-            specification = specification.and(TecnicoSpecifications.hasNome(filtroRequest.nome()));
-            specification = specification.and(TecnicoSpecifications.hasSobrenome(filtroRequest.nome()));
+            specification = specification.and(TecnicoSpecifications.hasNomeCompleto(filtroRequest.nome()));
         }
         if (StringUtils.isNotBlank(filtroRequest.situacao()))
             specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
