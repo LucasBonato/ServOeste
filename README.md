@@ -111,7 +111,7 @@ Class Api{
     String baseUri = "https//localhost:8080/api/v1";
     
     Future<Tecnico?> getById(int id) async{
-        var uri = Uri.parse("$baseUri/$id");
+        var uri = Uri.parse("$baseUri/tecnico/$id");
         var response = await client.get(uri);
     
         var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
@@ -213,7 +213,7 @@ Class Api{
     
     Future<dynamic> register(Tecnico tecnico) async{
         var response = await client.post(
-            Uri.parse(baseUri),
+            Uri.parse("${baseUri}/tecnico"),
             headers: <String, String>{
              'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -272,7 +272,7 @@ Class Api{
     
     Future<dynamic> update(Tecnico tecnico) async{
         var response = await client.put(
-          Uri.parse("$baseUri/${tecnico.id}"),
+          Uri.parse("$baseUri/tecnico/${tecnico.id}"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -304,6 +304,8 @@ Class Api{
 
 ---
 
+### Desativar ou Ativar Cliente
+
 ![DELETE](https://img.shields.io/static/v1?label=&message=DEL&color=red&style=for-the-badge)
 
 >`{{baseUri}}/tecnico`
@@ -323,14 +325,275 @@ Class Api{
     
     Future<dynamic> desativar(List<int> idTecnicos) async{
         var response = await client.delete(
-          Uri.parse(baseUri),
+          Uri.parse("${baseUri}/tecnico"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(selectedItems)
+          body: jsonEncode(idTecnicos)
         );
         if(response.statusCode != 200){
           Logger().e("Técnico não encontrado");
+        }
+        return;
+  }
+}
+~~~
+
+#### Responses:
+| Status Code |  Meaning  |                 Why?                  |
+|-------------|:---------:|:-------------------------------------:|
+| 200         |    OK     |   Desativoui o tecnico com sucesso    |
+| 404         | NOT FOUND | O objeto procurado não foi encontrado |
+
+###### Alguma Dúvida sobre o corpo de um erro? [Erros](#Erros)
+
+---
+
+## Cliente
+
+### Encontrar Cliente
+
+![GET](https://img.shields.io/static/v1?label=&message=GET&color=&style=for-the-badge)
+
+> `{{baseUri}}/cliente/{id}`
+
+Dart
+~~~dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Class Api{
+    var client = http.Client();
+    String baseUri = "https//localhost:8080/api/v1";
+    
+    Future<Cliente?> getById(int id) async{
+        var uri = Uri.parse("$baseUri/cliente/$id");
+        var response = await client.get(uri);
+    
+        var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+        dynamic jsonResponse = json.decode(responseBodyUtf8);
+        Cliente cliente = Cliente.fromJson(jsonResponse);
+        return cliente;
+  }
+}
+~~~
+
+#### Responses:
+| Status Code | Significado |               Por quê?                |
+|-------------|:-----------:|:-------------------------------------:|
+| 200         |     OK      |           Retornou o valor            |            
+| 404         |  NOT FOUND  | A entidade buscada não foi encontrada |
+
+###### Alguma Dúvida sobre o corpo de um erro? [Erros](#Erros)
+
+---
+
+### Encontrar Clientes
+
+![POST](https://img.shields.io/static/v1?label=&message=POST&color=yellow&style=for-the-badge)
+
+> `{{baseUri}}/cliente`
+
+``` JSON
+    "nome": "nomeESobrenomeDoCliente",
+    "telefoneFixo": "99999999999",
+    "telefoneCelular": "99999999999",
+    "endereco": "Alguma parte do endereço do cliente"
+```
+
+Dart
+~~~dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Class Api{
+    var client = http.Client();
+    String baseUri = "https//localhost:8080/api/v1";
+    
+    Future<List<Cliente>?> getClientes(String? nome, String? telefoneFixo, String? telefoneCelular, String? endereco) async{
+    var uri = Uri.parse("${baseUri}/cliente/find");
+    var response = await client.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          "nome": nome,
+          "telefoneFixo": telefoneFixo,
+          "telefoneCelular": telefoneCelular,
+          "endereco": endereco
+        }
+    ));
+
+    var responseBodyUtf8 = utf8.decode(response.body.runes.toList());
+    List<dynamic> jsonResponse = json.decode(responseBodyUtf8);
+    List<Cliente> clientes = jsonResponse.map((json) => Cliente.fromJson(json)).toList();
+    return clientes;
+  }
+}
+~~~
+
+#### Responses:
+| Status Code | Significado |               Por quê?                |
+|-------------|:-----------:|:-------------------------------------:|
+| 200         |     OK      |           Retornou o valor            |
+
+###### Alguma Dúvida sobre o corpo de um erro? [Erros](#Erros)
+
+---
+
+### Registrar Cliente
+
+![POST](https://img.shields.io/static/v1?label=&message=POST&color=yellow&style=for-the-badge)
+
+> `{{baseUri}}/cliente`
+
+#### Cliente Body:
+
+``` JSON
+    "nome": "nomeDoCliente",
+    "sobrenome": "sobrenomeDoCliente",
+    "telefoneFixo": "99999999999",
+    "telefoneCelular": "99999999999",
+    "endereco": "ruaNúmeroEComplementoDoEndereço",
+    "bairro": "bairro",
+    "municipio": "municipio"
+```
+
+Dart
+~~~dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Class Api{
+    var client = http.Client();
+    String baseUri = "https//localhost:8080/api/v1";
+    
+    Future<dynamic> register(Cliente cliente) async{
+        var response = await client.post(
+            Uri.parse("${baseUri}/cliente"),
+            headers: <String, String>{
+             'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode({
+                "nome": cliente.nome,
+                "sobrenome": cliente.sobrenome,
+                "telefoneFixo": cliente.telefoneFixo,
+                "telefoneCelular": cliente.telefoneCelular,
+                "endereco": cliente.endereco,
+                "bairro": cliente.bairro,
+                "municipio": cliente.municipio
+            }),
+        );
+        if(response.statusCode != 201){
+            dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
+            return body;
+        }
+        return null;
+  }
+}
+~~~
+
+#### Responses:
+| Status Code | Significado |               Por quê?               |
+|-------------|:-----------:|:------------------------------------:|
+| 201         |   CREATED   |        Cadastrou com sucesso         |                
+| 400         | BAD REQUEST | Alguma informação foi enviada errada |                 
+
+###### Alguma Dúvida sobre o corpo de um erro? [Erros](#Erros)
+
+---
+
+### Alterar Cliente
+
+![PUT](https://img.shields.io/static/v1?label=&message=PUT&color=blue&style=for-the-badge)
+
+>`{{baseUri}}/cliente?id=`
+
+#### Cliente Body:
+
+``` JSON
+    "nome": "nomeDoCliente",
+    "sobrenome": "sobrenomeDoCliente",
+    "telefoneFixo": "99999999999",
+    "telefoneCelular": "99999999999",
+    "endereco": "ruaNúmeroEComplementoDoEndereço",
+    "bairro": "bairro",
+    "municipio": "municipio"
+```
+
+Dart
+~~~dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Class Api{
+    var client = http.Client();
+    String baseUri = "https//localhost:8080/api/v1";
+    
+    Future<dynamic> update(Cliente cliente) async{
+        var response = await client.put(
+          Uri.parse("$baseUri/cliente?id=${tecnico.id}"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({
+            "nome": tecnico.nome,
+            "sobrenome": tecnico.sobrenome,
+            "telefoneFixo": tecnico.telefoneFixo,
+            "telefoneCelular": tecnico.telefoneCelular,
+            "situacao": tecnico.situacao,
+            "especialidades_Ids": tecnico.especialidadesIds,
+          }),
+        );
+        if(response.statusCode != 200){
+          dynamic body = jsonDecode(utf8.decode(response.body.runes.toList()));
+          return body;
+        }
+        return null;
+  }
+~~~
+
+#### Responses:
+| Status Code |   Meaning   |                           Why?                           |
+|-------------|:-----------:|:--------------------------------------------------------:|
+| 200         |     OK      |                   Alterou com sucesso                    |
+| 400         | BAD REQUEST | Alguma informação foi enviada errada ou falta informação |
+| 404         |  NOT FOUND  |          O objeto procurado não foi encontrado           |
+
+###### Alguma Dúvida sobre o corpo de um erro? [Erros](#Erros)
+
+---
+
+### Deletar Clientes
+
+![DELETE](https://img.shields.io/static/v1?label=&message=DEL&color=red&style=for-the-badge)
+
+>`{{baseUri}}/cliente`
+
+``` JSON
+    [...] // Conjunto de ids para deletar clientes
+```
+
+Dart
+~~~dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Class Api{
+    var client = http.Client();
+    String baseUri = "https//localhost:8080/api/v1";
+    
+    Future<dynamic> deletar(List<int> idClientes) async{
+        var response = await client.delete(
+          Uri.parse("${baseUri}/cliente"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(idClientes)
+        );
+        if(response.statusCode != 200){
+          Logger().e("Cliente não encontrado");
         }
         return;
   }
