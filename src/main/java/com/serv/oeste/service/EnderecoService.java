@@ -24,7 +24,7 @@ public class EnderecoService {
         try {
             ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
             if(viaCep == null) return null;
-            return new ViaCepDTO(viaCep.getLogradouro() + " " + viaCep.getBairro());
+            return new ViaCepDTO(viaCep.getLogradouro() + "|" + viaCep.getBairro());
         } catch (HttpClientErrorException e) {
             throw new EnderecoNotValidException(Codigo.ENDERECO, "CEP inexistente!");
         } catch (HttpServerErrorException e) {
