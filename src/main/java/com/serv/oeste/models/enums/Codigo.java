@@ -8,10 +8,15 @@ public enum Codigo {
     TELEFONECELULAR(2),
     TELEFONEFIXO(3),
     TELEFONES(4),
-    ENDERECO(5),
-    MUNICIPIO(6),
-    BAIRRO(7),
-    CLIENTE(8);
+    CEP(5),
+    ENDERECO(6),
+    MUNICIPIO(7),
+    BAIRRO(8),
+    CLIENTE(9);
 
-    Codigo(Integer i) {}
+    private final Integer i;
+
+    Codigo(Integer i) {
+        this.i = i;
+    }
 }

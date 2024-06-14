@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class EnderecoNotValidException extends BaseException {
     public EnderecoNotValidException(Codigo codigo, String message) {
-        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(codigo.ordinal(), message));
+        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(codigo.getI(), message));
     }
 }

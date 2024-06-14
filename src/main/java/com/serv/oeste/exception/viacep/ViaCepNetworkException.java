@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class ViaCepNetworkException extends BaseException {
     public ViaCepNetworkException(String message) {
-        super(HttpStatus.INTERNAL_SERVER_ERROR, new ExceptionResponse(Codigo.ENDERECO.ordinal(), message));
+        super(HttpStatus.INTERNAL_SERVER_ERROR, new ExceptionResponse(Codigo.CEP.getI(), message));
     }
 }

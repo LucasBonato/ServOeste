@@ -7,6 +7,7 @@ import com.serv.oeste.exception.viacep.ViaCepServerDownException;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.viacep.ViaCep;
 import com.serv.oeste.models.viacep.ViaCepDTO;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,8 @@ public class EnderecoService {
     protected ViaCepDTO getViaCepObject(String cep){
         try {
             ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
-            if(viaCep == null) return null;
-            return new ViaCepDTO(viaCep.getLogradouro() + "|" + viaCep.getBairro());
+            if(StringUtils.isBlank(viaCep.getLogradouro())) return new ViaCepDTO(null);
+            return new ViaCepDTO(viaCep.getLogradouro() + "|" + viaCep.getBairro() + "|" + viaCep.getLocalidade());
         } catch (HttpClientErrorException e) {
             throw new EnderecoNotValidException(Codigo.ENDERECO, "CEP inexistente!");
         } catch (HttpServerErrorException e) {

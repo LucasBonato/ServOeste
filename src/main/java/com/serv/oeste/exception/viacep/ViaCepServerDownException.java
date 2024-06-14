@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class ViaCepServerDownException extends BaseException {
     public ViaCepServerDownException() {
-        super(HttpStatus.SERVICE_UNAVAILABLE, new ExceptionResponse(Codigo.ENDERECO.ordinal(), "Servidor da ViaCep caiu."));
+        super(HttpStatus.SERVICE_UNAVAILABLE, new ExceptionResponse(Codigo.ENDERECO.getI(), "Servidor da ViaCep caiu."));
     }
 }

@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class RestTemplateException extends BaseException {
     public RestTemplateException(String message) {
-        super(HttpStatus.INTERNAL_SERVER_ERROR, new ExceptionResponse(Codigo.ENDERECO.ordinal(), message));
+        super(HttpStatus.INTERNAL_SERVER_ERROR, new ExceptionResponse(Codigo.ENDERECO.getI(), message));
     }
 }

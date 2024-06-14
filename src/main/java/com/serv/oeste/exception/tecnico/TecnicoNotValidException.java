@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class TecnicoNotValidException extends BaseException {
     public TecnicoNotValidException(String message, Codigo IdError) {
-        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(IdError.ordinal(), message));
+        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(IdError.getI(), message));
     }
 }

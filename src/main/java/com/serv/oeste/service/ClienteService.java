@@ -94,6 +94,9 @@ public class ClienteService {
         if(clienteRequest.telefoneFixo().length() < 11 && !clienteRequest.telefoneFixo().isEmpty()) {
             throw new ClienteNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
+        if(StringUtils.isBlank(clienteRequest.endereco())){
+            throw new ClienteNotValidException("O Endereço é obrigatório", Codigo.ENDERECO);
+        }
         if(!contemNumero(clienteRequest.endereco())) {
             throw new ClienteNotValidException("É necessário possuir número no Endereço", Codigo.ENDERECO);
         }
