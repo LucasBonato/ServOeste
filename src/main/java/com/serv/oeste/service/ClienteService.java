@@ -22,6 +22,7 @@ import java.util.List;
 @Service
 public class ClienteService {
     @Autowired private ClienteRepository clienteRepository;
+    public static Integer idUltimoCliente;
 
     public ResponseEntity<ClienteResponse> getOne(Integer id) {
         return ResponseEntity.ok(getClienteResponse(clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new)));
@@ -46,7 +47,8 @@ public class ClienteService {
     public ResponseEntity<Void> create(ClienteRequest clienteRequest) {
         verificarRegraDeNegocio(clienteRequest);
         Cliente cliente = new Cliente(clienteRequest);
-        clienteRepository.save(cliente);
+
+        idUltimoCliente = clienteRepository.save(cliente).getId();
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

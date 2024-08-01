@@ -1,6 +1,7 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
@@ -22,27 +23,52 @@ import java.util.Date;
 @Slf4j
 @Service
 public class ServicoService {
+    @Autowired private ClienteService clienteService;
     @Autowired private ClienteRepository clienteRepository;
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private ServicoRepository servicoRepository;
 
     public ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
+        verificarSelecionamentoDasEntidades(servicoRequest);
+        cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    public ResponseEntity<Void> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
+        clienteService.create(clienteRequest);
+        verificarSelecionamentoDasEntidades(servicoRequest, ClienteService.idUltimoCliente);
+        cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
         verificarCamposObrigatoriosServico(servicoRequest);
-        Cliente cliente = verificarExistenciaCliente(servicoRequest.idCliente());
+        Cliente cliente = verificarExistenciaCliente(idCliente);
         Tecnico tecnico = verificarExistenciaTecnico(servicoRequest.idTecnico());
         verificarCamposNaoObrigatoriosServico(servicoRequest);
 
         cadastrarServico(servicoRequest, cliente, tecnico);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
+    private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest) {
         if(servicoRequest.idCliente() == null) {
             throw new RuntimeException("Cliente não selecionado");
         }
         if(servicoRequest.idTecnico() == null) {
             throw new RuntimeException("Técnico não selecionado");
         }
+    }
+    private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest, Integer idCliente) {
+        if(idCliente == null) {
+            throw new RuntimeException("Não foi possível encontrar o último cliente cadastrado");
+        }
+        if(servicoRequest.idTecnico() == null) {
+            throw new RuntimeException("Técnico não selecionado");
+        }
+    }
+    private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
         if(StringUtils.isBlank(servicoRequest.equipamento())) {
             throw new RuntimeException("Equipamento é obrigatório");
         }
@@ -66,7 +92,7 @@ public class ServicoService {
         if(StringUtils.isNotBlank(servicoRequest.dataAtendimento())) {
             convertData(servicoRequest.dataAtendimento());
         }
-        if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") || !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
+        if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
             throw new RuntimeException("Horário enviado de forma errada, manha ou tarde");
         }
     }
