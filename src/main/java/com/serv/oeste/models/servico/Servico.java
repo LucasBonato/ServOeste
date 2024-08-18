@@ -4,7 +4,6 @@ import com.serv.oeste.models.cliente.Cliente;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.tecnico.Tecnico;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CurrentTimestamp;

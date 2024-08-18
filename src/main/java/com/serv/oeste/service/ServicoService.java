@@ -5,8 +5,10 @@ import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
+import com.serv.oeste.models.servico.TecnicoDisponibilidade;
 import com.serv.oeste.models.tecnico.Tecnico;
 import com.serv.oeste.repository.ClienteRepository;
+import com.serv.oeste.repository.DisponibilidadeRepository;
 import com.serv.oeste.repository.ServicoRepository;
 import com.serv.oeste.repository.TecnicoRepository;
 import io.micrometer.common.util.StringUtils;
@@ -16,9 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -27,6 +32,7 @@ public class ServicoService {
     @Autowired private ClienteRepository clienteRepository;
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private ServicoRepository servicoRepository;
+    @Autowired private DisponibilidadeRepository disponibilidadeRepository;
 
     public ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest);
@@ -41,6 +47,20 @@ public class ServicoService {
         cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade(String conhecimento) {
+        String diaAtual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("pt", "BR"));
+        Integer quantidadeDias = switch (diaAtual) {
+            case "sexta-feira", "sábado", "domingo" -> 4;
+            default -> 3;
+        };
+
+        Optional<List<TecnicoDisponibilidade>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(conhecimento, quantidadeDias);
+        if (tecnicosOptional.isEmpty())
+            throw new RuntimeException("Nenhum técnico");
+        List<TecnicoDisponibilidade> tecnicos = tecnicosOptional.get();
+        return ResponseEntity.ok(tecnicos);
     }
 
     private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){

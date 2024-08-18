@@ -27,17 +27,17 @@ public class TecnicoController {
     }
 
     @PostMapping
-    public ResponseEntity create(@RequestBody TecnicoDTO tecnicoDTO){
+    public ResponseEntity<Void> create(@RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.create(tecnicoDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
         return tecnicoService.update(id, tecnicoDTO);
     }
 
     @DeleteMapping
-    public ResponseEntity desativandoList(@RequestBody List<Integer> ids){
+    public ResponseEntity<Void> desativandoList(@RequestBody List<Integer> ids){
         return tecnicoService.disableAList(ids);
     }
 }
