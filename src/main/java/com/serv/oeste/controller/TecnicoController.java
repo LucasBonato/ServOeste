@@ -1,5 +1,6 @@
 package com.serv.oeste.controller;
 
+import com.serv.oeste.configuration.swagger.TecnicoSwagger;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.service.TecnicoService;
 import com.serv.oeste.models.dtos.TecnicoDTO;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tecnico")
-public class TecnicoController {
+public class TecnicoController implements TecnicoSwagger {
     @Autowired private TecnicoService tecnicoService;
 
     @PostMapping("/find")
