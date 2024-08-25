@@ -1,5 +1,6 @@
 package com.serv.oeste.controller;
 
+import com.serv.oeste.configuration.swagger.EnderecoSwagger;
 import com.serv.oeste.models.viacep.ViaCepDTO;
 import com.serv.oeste.service.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/endereco")
-public class EnderecoController {
+public class EnderecoController implements EnderecoSwagger {
     @Autowired private EnderecoService enderecoService;
 
     @GetMapping
