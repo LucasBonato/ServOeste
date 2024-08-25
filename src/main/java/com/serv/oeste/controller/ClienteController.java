@@ -1,5 +1,6 @@
 package com.serv.oeste.controller;
 
+import com.serv.oeste.configuration.swagger.ClienteSwagger;
 import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cliente")
-public class ClienteController {
+public class ClienteController implements ClienteSwagger {
     @Autowired private ClienteService clienteService;
 
     @GetMapping("/{id}")
