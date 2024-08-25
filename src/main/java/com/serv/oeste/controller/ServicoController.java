@@ -1,5 +1,6 @@
 package com.serv.oeste.controller;
 
+import com.serv.oeste.configuration.swagger.ServicoSwagger;
 import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/servico")
-public class ServicoController {
+public class ServicoController implements ServicoSwagger {
     @Autowired private ServicoService servicoService;
 
     @PostMapping
