@@ -1,6 +1,6 @@
 package com.serv.oeste.repository;
 
-import com.serv.oeste.models.servico.TecnicoDisponibilidade;
+import com.serv.oeste.models.tecnico.TecnicoDisponibilidadeRaw;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DisponibilidadeRepository extends JpaRepository<TecnicoDisponibilidade, Void> {
+public interface DisponibilidadeRepository extends JpaRepository<TecnicoDisponibilidadeRaw, Void> {
     @Query(value = "CALL GetTabelaDisponibilidade(:conhecimento, :last_day)", nativeQuery = true)
-    Optional<List<TecnicoDisponibilidade>> getDisponibilidadeTecnicosPeloConhecimento(@Param("conhecimento") String conhecimento, @Param("last_day") Integer lastDay);
+    Optional<List<TecnicoDisponibilidadeRaw>> getDisponibilidadeTecnicosPeloConhecimento(@Param("conhecimento") String conhecimento, @Param("last_day") Integer lastDay);
 }

@@ -6,7 +6,9 @@ import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
+import com.serv.oeste.models.tecnico.Disponibilidade;
 import com.serv.oeste.models.tecnico.Tecnico;
+import com.serv.oeste.models.tecnico.TecnicoDisponibilidadeRaw;
 import com.serv.oeste.repository.ClienteRepository;
 import com.serv.oeste.repository.DisponibilidadeRepository;
 import com.serv.oeste.repository.ServicoRepository;
@@ -24,6 +26,7 @@ import java.time.format.TextStyle;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,10 +59,33 @@ public class ServicoService {
             default -> 3;
         };
 
-        Optional<List<TecnicoDisponibilidade>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(conhecimento, quantidadeDias);
+        Optional<List<TecnicoDisponibilidadeRaw>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(conhecimento, quantidadeDias);
         if (tecnicosOptional.isEmpty())
             throw new RuntimeException("Nenhum técnico");
-        List<TecnicoDisponibilidade> tecnicos = tecnicosOptional.get();
+        List<TecnicoDisponibilidadeRaw> tecnicosRaw = tecnicosOptional.get();
+
+        Map<Integer, TecnicoDisponibilidade> tecnicoMap = tecnicosRaw.stream()
+            .collect(
+                Collectors.groupingBy(
+                    TecnicoDisponibilidadeRaw::getId, Collectors.collectingAndThen(
+                        Collectors.toList(), rawList -> {
+                            String nome = rawList.getFirst().getNome();
+                            Integer id = rawList.getFirst().getId();
+                            List<Disponibilidade> disponibilidades = rawList.stream()
+                                .map(raw -> new Disponibilidade(
+                                    raw.getData(),
+                                    raw.getDia(),
+                                    raw.getPeriodo(),
+                                    raw.getQuantidade()
+                                )).toList();
+                            return new TecnicoDisponibilidade(id, nome, disponibilidades);
+                        }
+                    )
+                )
+            );
+
+        List<TecnicoDisponibilidade> tecnicos = new ArrayList<>(tecnicoMap.values());
+
         return ResponseEntity.ok(tecnicos);
     }
 
