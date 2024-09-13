@@ -39,12 +39,14 @@ public class ServicoService {
 
     public ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest);
+        verificarCamposObrigatoriosServico(servicoRequest);
         cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public ResponseEntity<Void> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
+        verificarCamposObrigatoriosServico(servicoRequest);
         clienteService.create(clienteRequest);
         verificarSelecionamentoDasEntidades(servicoRequest, ClienteService.idUltimoCliente);
         cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
@@ -52,14 +54,14 @@ public class ServicoService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade(String conhecimento) {
+    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade() {
         String diaAtual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("pt", "BR"));
         Integer quantidadeDias = switch (diaAtual) {
             case "sexta-feira", "sábado", "domingo" -> 4;
             default -> 3;
         };
 
-        Optional<List<TecnicoDisponibilidadeRaw>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(conhecimento, quantidadeDias);
+        Optional<List<TecnicoDisponibilidadeRaw>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias);
         if (tecnicosOptional.isEmpty())
             throw new RuntimeException("Nenhum técnico");
         List<TecnicoDisponibilidadeRaw> tecnicosRaw = tecnicosOptional.get();
@@ -90,7 +92,6 @@ public class ServicoService {
     }
 
     private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
-        verificarCamposObrigatoriosServico(servicoRequest);
         Cliente cliente = verificarExistenciaCliente(idCliente);
         Tecnico tecnico = verificarExistenciaTecnico(servicoRequest.idTecnico());
         verificarCamposNaoObrigatoriosServico(servicoRequest);

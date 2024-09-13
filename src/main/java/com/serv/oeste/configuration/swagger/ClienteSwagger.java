@@ -17,6 +17,12 @@ import java.util.List;
 @Tag(name = "Cliente")
 public interface ClienteSwagger extends SwaggerConfiguration{
 
+    /**
+     * A way to fetch data from one client using its id to encounter on the database.
+     *
+     * @param id a number that represents the identifier of the client
+     * @return The data from {@link ClienteResponse} class.
+     */
     @Operation(description = "Método para pegar um cliente útilizando seu id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Cliente devolvido com sucesso.", useReturnTypeSchema = true),

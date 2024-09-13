@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -20,10 +22,10 @@ public class TecnicoDisponibilidadeRaw {
     private String nome;
 
     @Column(name = "Data")
-    private Integer data;
+    private Date data;
 
     @Column(name = "Dia")
-    private String dia;
+    private Integer dia;
 
     @Column(name = "Periodo")
     private String periodo;

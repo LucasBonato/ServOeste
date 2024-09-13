@@ -27,7 +27,7 @@ public class ServicoController implements ServicoSwagger {
     }
 
     @GetMapping("/disponibilidade")
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos(@RequestParam(value = "c") String conhecimento) {
-        return servicoService.getDadosDisponibilidade(conhecimento);
+    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos() {
+        return servicoService.getDadosDisponibilidade();
     }
 }

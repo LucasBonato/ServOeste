@@ -36,5 +36,5 @@ public interface ServicoSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "200", description = "[Ok] Informações devolvidas com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos(String conhecimento);
+    ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos();
 }

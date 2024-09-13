@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Disponibilidade {
-    private Integer data;
-    private String dia;
+    private Date data;
+    private Integer dia;
     private String periodo;
     private Integer quantidade;
 }
