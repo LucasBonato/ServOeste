@@ -1,8 +1,12 @@
 package com.serv.oeste.service;
 
+import com.serv.oeste.exception.cliente.ClienteNotFoundException;
+import com.serv.oeste.exception.servico.ServicoNotValidException;
+import com.serv.oeste.exception.tecnico.TecnicoNotFoundException;
 import com.serv.oeste.models.cliente.Cliente;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
+import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
@@ -101,38 +105,38 @@ public class ServicoService {
 
     private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest) {
         if(servicoRequest.idCliente() == null) {
-            throw new RuntimeException("Cliente não selecionado");
+            throw new ServicoNotValidException(Codigo.CLIENTE, "Cliente não selecionado");
         }
         if(servicoRequest.idTecnico() == null) {
-            throw new RuntimeException("Técnico não selecionado");
+            throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
     private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest, Integer idCliente) {
         if(idCliente == null) {
-            throw new RuntimeException("Não foi possível encontrar o último cliente cadastrado");
+            throw new ServicoNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado");
         }
         if(servicoRequest.idTecnico() == null) {
-            throw new RuntimeException("Técnico não selecionado");
+            throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
     private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
         if(StringUtils.isBlank(servicoRequest.equipamento())) {
-            throw new RuntimeException("Equipamento é obrigatório");
+            throw new ServicoNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
         }
         if(StringUtils.isBlank(servicoRequest.marca())) {
-            throw new RuntimeException("Marca é obrigatória");
+            throw new ServicoNotValidException(Codigo.MARCA, "Marca é obrigatória");
         }
         if(StringUtils.isBlank(servicoRequest.descricao())) {
-            throw new RuntimeException("Descrição é obrigatória");
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
         }
         if(servicoRequest.descricao().length() < 10) {
-            throw new RuntimeException("Descrição precisa ter pelo menos 10 caracteres");
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
         if(servicoRequest.descricao().split(" ").length < 2) {
-            throw new RuntimeException("Descrição precisa ter pelo menos 3 palavras");
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
         if(StringUtils.isBlank(servicoRequest.filial())) {
-            throw new RuntimeException("A filial é obrigatória");
+            throw new ServicoNotValidException(Codigo.FILIAL, "A filial é obrigatória");
         }
     }
     private void verificarCamposNaoObrigatoriosServico(ServicoRequest servicoRequest) {
@@ -140,14 +144,14 @@ public class ServicoService {
             convertData(servicoRequest.dataAtendimento());
         }
         if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
-            throw new RuntimeException("Horário enviado de forma errada, manha ou tarde");
+            throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
     }
     private Cliente verificarExistenciaCliente(Integer idCliente) {
-        return clienteRepository.findById(idCliente).orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        return clienteRepository.findById(idCliente).orElseThrow(ClienteNotFoundException::new);
     }
     private Tecnico verificarExistenciaTecnico(Integer idTecnico) {
-        return tecnicoRepository.findById(idTecnico).orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
+        return tecnicoRepository.findById(idTecnico).orElseThrow(TecnicoNotFoundException::new);
     }
     private void cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
         SituacaoServico situacao = StringUtils.isBlank(servicoRequest.horarioPrevisto()) ? SituacaoServico.AGUARDANDO_AGENDAMENTO : SituacaoServico.AGUARDANDO_ATENDIMENTO;
@@ -171,7 +175,7 @@ public class ServicoService {
         try{
             dataFormatada = formatter.parse(data);
         } catch (ParseException e){
-            throw new RuntimeException("Data em formato errado");
+            throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
         }
         return dataFormatada;
     }

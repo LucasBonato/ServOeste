@@ -12,7 +12,14 @@ public enum Codigo {
     ENDERECO(6),
     MUNICIPIO(7),
     BAIRRO(8),
-    CLIENTE(9);
+    CLIENTE(9),
+    TECNICO(10),
+    EQUIPAMENTO(11),
+    MARCA(12),
+    DESCRICAO(13),
+    FILIAL(14),
+    HORARIO(15),
+    DATA(16);
 
     private final Integer i;
 
