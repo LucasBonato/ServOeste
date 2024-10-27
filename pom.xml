@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sev</groupId>
-	<artifactId>oeste</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>Serv-Oeste</artifactId>
+	<version>0.0.1</version>
 	<name>oeste</name>
 	<description>Servidor do SevOeste</description>
 	<properties>

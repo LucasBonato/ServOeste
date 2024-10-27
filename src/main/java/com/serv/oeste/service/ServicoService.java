@@ -57,7 +57,7 @@ public class ServicoService {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
+    
     public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade() {
         String diaAtual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("pt", "BR"));
         Integer quantidadeDias = switch (diaAtual) {

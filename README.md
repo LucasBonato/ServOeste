@@ -57,14 +57,21 @@ Segue a tabela de valores:
 
 | Id | Campo representado |
 |----|:------------------:|
-| 1  |  Nome e Sobrenome  |
-| 2  |   Telefone Fixo    |
-| 3  |  Telefone Celular  |
-| 4  |     Telefones      |
-| 5  |      Endereço      |
-| 6  |     Município      |
-| 7  |       Bairro       |
-| 8  |      Cliente       |
+| 01 |  Nome e Sobrenome  |
+| 02 |   Telefone Fixo    |
+| 03 |  Telefone Celular  |
+| 04 |     Telefones      |
+| 05 |      Endereço      |
+| 06 |     Município      |
+| 07 |       Bairro       |
+| 08 |      Cliente       |
+| 09 |      Técnico       |
+| 10 |    Equipamento     |
+| 11 |       Marca        |
+| 12 |     Descrição      |
+| 13 |       Filial       |
+| 14 |      Horário       |
+| 15 |        Data        |
 ---
 
 # Especialidades
