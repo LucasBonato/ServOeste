@@ -24,8 +24,7 @@ public class Especialidade {
     @JsonIgnore
     private List<Tecnico> tecnicos;
 
-    public Especialidade(Integer id, String conhecimento){
-        this.id = id;
+    public Especialidade(String conhecimento){
         this.conhecimento = conhecimento;
     }
 }
