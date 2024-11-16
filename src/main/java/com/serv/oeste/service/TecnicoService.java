@@ -89,7 +89,7 @@ public class TecnicoService {
     }
 
     private Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
-        switch (tecnicoDTO.getSituacao()){
+        switch (tecnicoDTO.getSituacao().toLowerCase()){
             case "ativo" -> { return Situacao.ATIVO;}
             case "licença" -> { return Situacao.LICENCA;}
             case "desativado" -> { return Situacao.DESATIVADO;}
