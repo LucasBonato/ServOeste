@@ -4,10 +4,12 @@ import com.serv.oeste.models.tecnico.Especialidade;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Configuration
 public class DataBaseSetValuesConfiguration implements CommandLineRunner {
     @Autowired private EspecialidadeRepository especialidadeRepository;
     List<Especialidade> especialidades = new ArrayList<>();
