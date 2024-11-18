@@ -32,7 +32,7 @@ public class Servico {
     private String descricao;
 
     @Column(name = "Situacao", nullable = false)
-    private String situacao;
+    private SituacaoServico situacao;
 
     @Column(name = "Horario_Previsto")
     private String horarioPrevisto;
@@ -72,7 +72,7 @@ public class Servico {
         this.marca = marca;
         this.filial = filial;
         this.descricao = descricao;
-        this.situacao = situacao.getSituacao();
+        this.situacao = situacao;
         this.horarioPrevisto = horarioPrevisto;
         this.dataAtendimentoPrevisto = dataAtendimento;
         this.cliente = cliente;

@@ -4,11 +4,14 @@ import com.serv.oeste.exception.cliente.ClienteNotFoundException;
 import com.serv.oeste.exception.servico.ServicoNotValidException;
 import com.serv.oeste.exception.tecnico.TecnicoNotFoundException;
 import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.models.dtos.reponses.ServicoResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
+import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
+import com.serv.oeste.models.servico.ServicoSpecifications;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
 import com.serv.oeste.models.tecnico.Disponibilidade;
 import com.serv.oeste.models.tecnico.Tecnico;
@@ -20,6 +23,7 @@ import com.serv.oeste.repository.TecnicoRepository;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,33 @@ public class ServicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private ServicoRepository servicoRepository;
     @Autowired private DisponibilidadeRepository disponibilidadeRepository;
+
+
+    public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
+        Specification<Servico> specification = Specification.where(null);
+
+        if (servicoRequestFilter.clienteId() != null) {
+            specification = specification.and(ServicoSpecifications.hasClienteId(servicoRequestFilter.clienteId()));
+        }
+        if (servicoRequestFilter.tecnicoId() != null) {
+            specification = specification.and(ServicoSpecifications.hasTecnicoId(servicoRequestFilter.tecnicoId()));
+        }
+        if (StringUtils.isNotBlank(servicoRequestFilter.filial())) {
+            specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));
+        }
+        if (StringUtils.isNotBlank(servicoRequestFilter.periodo())) {
+            specification = specification.and(ServicoSpecifications.hasHorarioPrevisto(servicoRequestFilter.periodo()));
+        }
+        if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null && servicoRequestFilter.dataAtendimentoPrevistoDepois() != null) {
+            specification = specification.and(ServicoSpecifications.isDataAtendimentoPrevistoBetween(servicoRequestFilter.dataAtendimentoPrevistoAntes(), servicoRequestFilter.dataAtendimentoPrevistoDepois()));
+        }
+        else if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null) {
+            specification = specification.and(ServicoSpecifications.hasDataAtendimentoPrevisto(servicoRequestFilter.dataAtendimentoPrevistoAntes()));
+        }
+
+        List<Servico> servicos = servicoRepository.findAll(specification);
+        return ResponseEntity.ok(getServicosResponse(servicos));
+    }
 
     public ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest);
@@ -93,6 +124,23 @@ public class ServicoService {
         List<TecnicoDisponibilidade> tecnicos = new ArrayList<>(tecnicoMap.values());
 
         return ResponseEntity.ok(tecnicos);
+    }
+
+    private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
+        return servicos
+                .stream()
+                .map(servico -> new ServicoResponse(
+                        servico.getId(),
+                        servico.getCliente().getId(),
+                        servico.getTecnico().getId(),
+                        servico.getEquipamento(),
+                        servico.getFilial(),
+                        servico.getHorarioPrevisto(),
+                        servico.getMarca(),
+                        servico.getSituacao(),
+                        servico.getDataAtendimentoPrevisto()
+                ))
+                .collect(Collectors.toList());
     }
 
     private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
