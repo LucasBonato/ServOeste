@@ -1,8 +1,10 @@
 package com.serv.oeste.configuration.swagger;
 
 import com.serv.oeste.exception.ExceptionResponse;
+import com.serv.oeste.models.dtos.reponses.ServicoResponse;
 import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
+import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +18,13 @@ import java.util.List;
 
 @Tag(name = "Serviço")
 public interface ServicoSwagger extends SwaggerConfiguration{
+
+    @Operation(description = "Filtro para coletar uma lista de serviços a partir das informações passadas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "[Ok] Lista de serviços voltada com sucesso.", useReturnTypeSchema = true),
+    })
+    ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter);
+
     @Operation(description = "Forma de registrar um novo serviço em um cliente já existente.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "[Created] Serviço registrado com sucesso.", useReturnTypeSchema = true),
