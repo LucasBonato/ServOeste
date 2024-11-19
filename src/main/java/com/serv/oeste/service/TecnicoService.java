@@ -35,6 +35,7 @@ public class TecnicoService {
         }
         return ResponseEntity.ok(tecnicoOptional.get());
     }
+
     @Cacheable("allTecnicos")
     public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = Specification.where(null);
