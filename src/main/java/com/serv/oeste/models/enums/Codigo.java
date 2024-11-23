@@ -19,7 +19,8 @@ public enum Codigo {
     DESCRICAO(13),
     FILIAL(14),
     HORARIO(15),
-    DATA(16);
+    DATA(16),
+    CONHECIMENTO(17);
 
     private final Integer i;
 

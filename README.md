@@ -58,20 +58,22 @@ Segue a tabela de valores:
 | Id | Campo representado |
 |----|:------------------:|
 | 01 |  Nome e Sobrenome  |
-| 02 |   Telefone Fixo    |
-| 03 |  Telefone Celular  |
+| 02 |  Telefone Celular  |
+| 03 |   Telefone Fixo    |
 | 04 |     Telefones      |
-| 05 |      Endereço      |
-| 06 |     Município      |
-| 07 |       Bairro       |
-| 08 |      Cliente       |
-| 09 |      Técnico       |
-| 10 |    Equipamento     |
-| 11 |       Marca        |
-| 12 |     Descrição      |
-| 13 |       Filial       |
-| 14 |      Horário       |
-| 15 |        Data        |
+| 05 |        Cep         |
+| 06 |      Endereço      |
+| 07 |     Município      |
+| 08 |       Bairro       |
+| 09 |      Cliente       |
+| 10 |      Técnico       |
+| 11 |    Equipamento     |
+| 12 |       Marca        |
+| 13 |     Descrição      |
+| 14 |       Filial       |
+| 15 |      Horário       |
+| 16 |        Data        |
+| 17 |    Conhecimento    |
 ---
 
 # Especialidades
