@@ -20,14 +20,14 @@ public class ServicoSpecifications {
     }
 
     public static Specification<Servico> hasHorarioPrevisto(String periodo) {
-        return (root, query, cb) -> cb.equal(root.get("horario_previsto"), periodo);
+        return (root, query, cb) -> cb.equal(root.get("horarioPrevisto"), periodo);
     }
 
     public static Specification<Servico> isDataAtendimentoPrevistoBetween(Date dataAtendimentoPrevistoAntes, Date dataAtendimentoPrevistoDepois) {
-        return (root, query, cb) -> cb.between(root.get("data_atendimento_previsto"), dataAtendimentoPrevistoAntes, dataAtendimentoPrevistoDepois);
+        return (root, query, cb) -> cb.between(root.get("dataAtendimentoPrevisto"), dataAtendimentoPrevistoAntes, dataAtendimentoPrevistoDepois);
     }
 
     public static Specification<Servico> hasDataAtendimentoPrevisto(Date dataAtendimentoPrevisto) {
-        return (root, query, cb) -> cb.equal(root.get("data_atendimento_previsto"), dataAtendimentoPrevisto);
+        return (root, query, cb) -> cb.equal(root.get("dataAtendimentoPrevisto"), dataAtendimentoPrevisto);
     }
 }

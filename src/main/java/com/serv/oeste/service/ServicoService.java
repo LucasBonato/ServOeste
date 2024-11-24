@@ -61,7 +61,8 @@ public class ServicoService {
             specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));
         }
         if (StringUtils.isNotBlank(servicoRequestFilter.periodo())) {
-            specification = specification.and(ServicoSpecifications.hasHorarioPrevisto(servicoRequestFilter.periodo()));
+            String periodo = servicoRequestFilter.periodo().toLowerCase().replace("ã", "");
+            specification = specification.and(ServicoSpecifications.hasHorarioPrevisto(periodo));
         }
         if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null && servicoRequestFilter.dataAtendimentoPrevistoDepois() != null) {
             specification = specification.and(ServicoSpecifications.isDataAtendimentoPrevistoBetween(servicoRequestFilter.dataAtendimentoPrevistoAntes(), servicoRequestFilter.dataAtendimentoPrevistoDepois()));
