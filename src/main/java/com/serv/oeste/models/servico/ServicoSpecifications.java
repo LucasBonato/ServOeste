@@ -1,16 +1,18 @@
 package com.serv.oeste.models.servico;
 
+import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.models.tecnico.Tecnico;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Date;
 
 public class ServicoSpecifications {
-    public static Specification<Servico> hasClienteId(Integer clienteId) {
-        return (root, query, cb) -> cb.equal(root.get("id_cliente"), clienteId);
+    public static Specification<Servico> hasCliente(Cliente cliente) {
+        return (root, query, cb) -> cb.equal(root.get("cliente"), cliente);
     }
 
-    public static Specification<Servico> hasTecnicoId(Integer tecnicoId) {
-        return (root, query, cb) -> cb.equal(root.get("id_tecnico"), tecnicoId);
+    public static Specification<Servico> hasTecnico(Tecnico tecnico) {
+        return (root, query, cb) -> cb.equal(root.get("tecnico"), tecnico);
     }
 
     public static Specification<Servico> hasFilial(String filial) {

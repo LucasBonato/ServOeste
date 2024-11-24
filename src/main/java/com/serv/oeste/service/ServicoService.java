@@ -50,10 +50,12 @@ public class ServicoService {
         Specification<Servico> specification = Specification.where(null);
 
         if (servicoRequestFilter.clienteId() != null) {
-            specification = specification.and(ServicoSpecifications.hasClienteId(servicoRequestFilter.clienteId()));
+            Cliente cliente = verificarExistenciaCliente(servicoRequestFilter.clienteId());
+            specification = specification.and(ServicoSpecifications.hasCliente(cliente));
         }
         if (servicoRequestFilter.tecnicoId() != null) {
-            specification = specification.and(ServicoSpecifications.hasTecnicoId(servicoRequestFilter.tecnicoId()));
+            Tecnico tecnico = verificarExistenciaTecnico(servicoRequestFilter.tecnicoId());
+            specification = specification.and(ServicoSpecifications.hasTecnico(tecnico));
         }
         if (StringUtils.isNotBlank(servicoRequestFilter.filial())) {
             specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));

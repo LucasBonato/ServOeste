@@ -60,20 +60,19 @@ public class ClienteService {
         return ResponseEntity.ok().build();
     }
 
-    private Cliente getClienteById(Integer id) {
-        return clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new);
-    }
-
     public ResponseEntity<Void> deletandoAList(List<Integer> ids) {
         ids
-            .stream()
-            .filter(id -> clienteRepository.findById(id).isPresent())
+                .stream()
+                .filter(id -> clienteRepository.findById(id).isPresent())
                 //Adicionar outro filtro para verificar se o Cliente possui um serviço relacionado a entidade
-            .forEach(id -> clienteRepository.deleteById(id));
+                .forEach(id -> clienteRepository.deleteById(id));
 
         return ResponseEntity.ok().build();
     }
 
+    private Cliente getClienteById(Integer id) {
+        return clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new);
+    }
     private void verificarRegraDeNegocio(ClienteRequest clienteRequest) {
         if(StringUtils.isBlank(clienteRequest.nome())) {
             throw new ClienteNotValidException("O Nome do cliente não pode ser vazio!", Codigo.NOMESOBRENOME);
