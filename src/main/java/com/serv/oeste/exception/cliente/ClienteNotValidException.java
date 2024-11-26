@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class ClienteNotValidException extends BaseException {
     public ClienteNotValidException(String message, Codigo codigo) {
-        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(codigo.getI(), message));
+        super(HttpStatus.BAD_REQUEST, new ExceptionResponse(codigo, message));
     }
 }

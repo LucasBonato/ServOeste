@@ -8,7 +8,9 @@ import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
+import com.serv.oeste.models.servico.Servico;
 import com.serv.oeste.repository.ClienteRepository;
+import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +24,7 @@ import java.util.List;
 @Service
 public class ClienteService {
     @Autowired private ClienteRepository clienteRepository;
+    @Autowired private ServicoRepository servicoRepository;
     public static Integer idUltimoCliente;
 
     public ResponseEntity<ClienteResponse> getOne(Integer id) {
@@ -60,18 +63,45 @@ public class ClienteService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<Void> deletandoAList(List<Integer> ids) {
-        ids
-                .stream()
+    public ResponseEntity<Void> deleteAList(List<Integer> ids) {
+        List<Integer> clientesNaoExcluidos = new ArrayList<>();
+
+        ids.stream()
                 .filter(id -> clienteRepository.findById(id).isPresent())
-                //Adicionar outro filtro para verificar se o Cliente possui um serviço relacionado a entidade
+                //TODO - Adicionar outro filtro para verificar se o Cliente possui um serviço relacionado a entidade
+                .filter(id -> {
+                    Boolean possuiServicos = servicoRepository.existsByClienteId(id);
+                    if (possuiServicos) {
+                        clientesNaoExcluidos.add(id);
+                    }
+                    return !possuiServicos;
+                })
                 .forEach(id -> clienteRepository.deleteById(id));
+
+        if (!clientesNaoExcluidos.isEmpty()) {
+            throw new ClienteNotValidException("O(s) seguinte(s) cliente(s) não foram excluído(s) por possuirem serviços atrelados a si: " + clientesNaoExcluidos, Codigo.CLIENTE);
+        }
 
         return ResponseEntity.ok().build();
     }
 
     private Cliente getClienteById(Integer id) {
         return clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new);
+    }
+    private ClienteResponse getClienteResponse(Cliente cliente) {
+        return new ClienteResponse(
+            cliente.getId(),
+            cliente.getNome(),
+            cliente.getTelefoneFixo(),
+            cliente.getTelefoneCelular(),
+            cliente.getEndereco(),
+            cliente.getBairro(),
+            cliente.getMunicipio()
+        );
+    }
+    private boolean contemNumero(String endereco) {
+        return endereco.chars()
+                .anyMatch(Character::isDigit);
     }
     private void verificarRegraDeNegocio(ClienteRequest clienteRequest) {
         if(StringUtils.isBlank(clienteRequest.nome())) {
@@ -107,23 +137,5 @@ public class ClienteService {
         if(StringUtils.isBlank(clienteRequest.bairro())) {
             throw new ClienteNotValidException("O Bairro é obrigatório", Codigo.BAIRRO);
         }
-    }
-    private ClienteResponse getClienteResponse(Cliente cliente) {
-        return new ClienteResponse(
-                cliente.getId(),
-                cliente.getNome(),
-                cliente.getTelefoneFixo(),
-                cliente.getTelefoneCelular(),
-                cliente.getEndereco(),
-                cliente.getBairro(),
-                cliente.getMunicipio()
-        );
-    }
-    private boolean contemNumero(String endereco) {
-        char[] enderecoChars = endereco.toCharArray();
-        for (char enderecoChar : enderecoChars) {
-            if(Character.isDigit(enderecoChar)) return true;
-        }
-        return false;
     }
 }

@@ -38,6 +38,6 @@ public class ClienteController implements ClienteSwagger {
 
     @DeleteMapping
     public ResponseEntity<Void> deletandoList(@RequestBody List<Integer> ids){
-        return clienteService.deletandoAList(ids);
+        return clienteService.deleteAList(ids);
     }
 }

@@ -45,7 +45,6 @@ public class ServicoService {
     @Autowired private ServicoRepository servicoRepository;
     @Autowired private DisponibilidadeRepository disponibilidadeRepository;
 
-
     public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
         Specification<Servico> specification = Specification.where(null);
 
@@ -129,6 +128,7 @@ public class ServicoService {
         return ResponseEntity.ok(tecnicos);
     }
 
+    
     private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
         return servicos
                 .stream()
@@ -145,13 +145,21 @@ public class ServicoService {
                 ))
                 .collect(Collectors.toList());
     }
-
-    private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
-        Cliente cliente = verificarExistenciaCliente(idCliente);
-        Tecnico tecnico = verificarExistenciaTecnico(servicoRequest.idTecnico());
-        verificarCamposNaoObrigatoriosServico(servicoRequest);
-
-        cadastrarServico(servicoRequest, cliente, tecnico);
+    private Cliente verificarExistenciaCliente(Integer idCliente) {
+        return clienteRepository.findById(idCliente).orElseThrow(ClienteNotFoundException::new);
+    }
+    private Tecnico verificarExistenciaTecnico(Integer idTecnico) {
+        return tecnicoRepository.findById(idTecnico).orElseThrow(TecnicoNotFoundException::new);
+    }
+    private static Date convertData(String data) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date dataFormatada;
+        try{
+            dataFormatada = formatter.parse(data);
+        } catch (ParseException e){
+            throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
+        }
+        return dataFormatada;
     }
 
     private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest) {
@@ -198,11 +206,12 @@ public class ServicoService {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
     }
-    private Cliente verificarExistenciaCliente(Integer idCliente) {
-        return clienteRepository.findById(idCliente).orElseThrow(ClienteNotFoundException::new);
-    }
-    private Tecnico verificarExistenciaTecnico(Integer idTecnico) {
-        return tecnicoRepository.findById(idTecnico).orElseThrow(TecnicoNotFoundException::new);
+    private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
+        Cliente cliente = verificarExistenciaCliente(idCliente);
+        Tecnico tecnico = verificarExistenciaTecnico(servicoRequest.idTecnico());
+        verificarCamposNaoObrigatoriosServico(servicoRequest);
+
+        cadastrarServico(servicoRequest, cliente, tecnico);
     }
     private void cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
         SituacaoServico situacao = StringUtils.isBlank(servicoRequest.horarioPrevisto()) ? SituacaoServico.AGUARDANDO_AGENDAMENTO : SituacaoServico.AGUARDANDO_ATENDIMENTO;
@@ -218,16 +227,5 @@ public class ServicoService {
                 tecnico
         );
         servicoRepository.save(novoServico);
-    }
-
-    public static Date convertData(String data) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date dataFormatada;
-        try{
-            dataFormatada = formatter.parse(data);
-        } catch (ParseException e){
-            throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
-        }
-        return dataFormatada;
     }
 }
