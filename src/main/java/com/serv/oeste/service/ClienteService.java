@@ -8,7 +8,6 @@ import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
-import com.serv.oeste.models.servico.Servico;
 import com.serv.oeste.repository.ClienteRepository;
 import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;

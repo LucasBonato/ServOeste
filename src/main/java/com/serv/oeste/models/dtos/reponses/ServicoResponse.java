@@ -8,6 +8,8 @@ public record ServicoResponse (
     Integer id,
     Integer idCliente,
     Integer idTecnico,
+    String nomeCliente,
+    String nomeTecnico,
     String equipamento,
     String filial,
     String horarioPrevisto,

@@ -7,6 +7,8 @@ public record ServicoRequestFilter(
         Date dataAtendimentoPrevistoDepois,
         Integer clienteId,
         Integer tecnicoId,
+        String clienteNome,
+        String tecnicoNome,
         String filial,
         String periodo
 ) { }

@@ -56,6 +56,12 @@ public class ServicoService {
             Tecnico tecnico = verificarExistenciaTecnico(servicoRequestFilter.tecnicoId());
             specification = specification.and(ServicoSpecifications.hasTecnico(tecnico));
         }
+        if (StringUtils.isNotBlank(servicoRequestFilter.clienteNome())) {
+            specification = specification.and(ServicoSpecifications.hasNomeCliente(servicoRequestFilter.clienteNome()));
+        }
+        if (StringUtils.isNotBlank(servicoRequestFilter.tecnicoNome())) {
+            specification = specification.and(ServicoSpecifications.hasNomeTecnico(servicoRequestFilter.tecnicoNome()));
+        }
         if (StringUtils.isNotBlank(servicoRequestFilter.filial())) {
             specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));
         }
@@ -128,7 +134,6 @@ public class ServicoService {
         return ResponseEntity.ok(tecnicos);
     }
 
-    
     private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
         return servicos
                 .stream()
@@ -136,6 +141,8 @@ public class ServicoService {
                         servico.getId(),
                         servico.getCliente().getId(),
                         servico.getTecnico().getId(),
+                        servico.getCliente().getNome(),
+                        servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome(),
                         servico.getEquipamento(),
                         servico.getFilial(),
                         servico.getHorarioPrevisto(),
