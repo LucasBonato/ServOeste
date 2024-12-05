@@ -24,7 +24,7 @@ public class Tecnico {
     @Column(name = "Sobrenome", nullable = false, length = 50)
     private String sobrenome;
 
-    @Column(name = "Telefone_Fixo", length = 11)
+    @Column(name = "Telefone_Fixo", length = 10)
     private String telefoneFixo;
 
     @Column(name = "Telefone_Celular", length = 11)

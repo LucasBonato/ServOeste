@@ -17,7 +17,7 @@ public class Cliente {
     @Column(name = "Nome", nullable = false, length = 50)
     private String nome;
 
-    @Column(name = "Telefone_Fixo", length = 11)
+    @Column(name = "Telefone_Fixo", length = 10)
     private String telefoneFixo;
 
     @Column(name = "Telefone_Celular", length = 11)

@@ -137,7 +137,7 @@ public class TecnicoService {
         if(tecnico.getTelefoneCelular().length() < 11 && !tecnico.getTelefoneCelular().isEmpty()){
             throw new TecnicoNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
-        if(tecnico.getTelefoneFixo().length() < 11 && !tecnico.getTelefoneFixo().isEmpty()) {
+        if(tecnico.getTelefoneFixo().length() < 10 && !tecnico.getTelefoneFixo().isEmpty()) {
             throw new TecnicoNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
     }

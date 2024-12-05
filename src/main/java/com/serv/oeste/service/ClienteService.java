@@ -121,7 +121,7 @@ public class ClienteService {
         if(clienteRequest.telefoneCelular().length() < 11 && !clienteRequest.telefoneCelular().isEmpty()){
             throw new ClienteNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
-        if(clienteRequest.telefoneFixo().length() < 11 && !clienteRequest.telefoneFixo().isEmpty()) {
+        if(clienteRequest.telefoneFixo().length() < 10 && !clienteRequest.telefoneFixo().isEmpty()) {
             throw new ClienteNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
         if(StringUtils.isBlank(clienteRequest.endereco())){
