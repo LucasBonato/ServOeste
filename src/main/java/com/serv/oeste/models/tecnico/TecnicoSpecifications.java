@@ -22,4 +22,8 @@ public class TecnicoSpecifications {
     public static Specification<Tecnico> hasSituacao(String situacao) {
         return (root, query, cb) -> cb.like(root.get("situacao"), "%" + situacao + "%");
     }
+
+    public static Specification<Tecnico> hasEquipamento(String equipamento) {
+        return (root, query, cb) -> cb.equal(root.join("especialidades").get("conhecimento"), equipamento);
+    }
 }

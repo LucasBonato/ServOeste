@@ -40,13 +40,19 @@ public class TecnicoService {
     public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = Specification.where(null);
 
-        if (filtroRequest.id() != null)
+        if (filtroRequest.id() != null) {
             specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
+        }
         if (StringUtils.isNotBlank(filtroRequest.nome())) {
             specification = specification.and(TecnicoSpecifications.hasNomeCompleto(filtroRequest.nome()));
         }
-        if (StringUtils.isNotBlank(filtroRequest.situacao()))
+        if (StringUtils.isNotBlank(filtroRequest.situacao())) {
             specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
+        }
+        if (StringUtils.isNotBlank(filtroRequest.equipamento())) {
+            specification = specification.and(TecnicoSpecifications.hasEquipamento(filtroRequest.equipamento()));
+//            specification = specification.and(TecnicoSpecifications.hasEquipamento("outro"));
+        }
 
         List<Tecnico> response = tecnicoRepository.findAll(specification);
         return ResponseEntity.ok(response);
