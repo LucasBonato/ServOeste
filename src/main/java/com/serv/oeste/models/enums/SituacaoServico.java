@@ -8,15 +8,19 @@ import lombok.Getter;
 public enum SituacaoServico {
     AGUARDANDO_AGENDAMENTO("Aguardando agendamento"),
     AGUARDANDO_ATENDIMENTO("Aguardando atendimento"),
-    AGUARDANDO_APROVACAO("Aguardando aprovação"),
-    ORCAMENTO_APROVADO("Orçamento aprovado"),
-    SEM_DEFEITO("Sem defeito"),
-    NAO_APROVADO("Não aprovado"),
-    CANCELADO("Cancelado"),
+    AGUARDANDO_APROVACAO("Aguardando aprovação do cliente"),
     AGUARDANDO_CLIENTE_RETIRAR("Aguardando cliente retirar"),
-    NAO_RETIRA_3_MESES("Não retira há 3 meses"),
+    AGUARDANDO_ORCAMENTO("Aguardando orçamento"),
+    CANCELADO("Cancelado"),
+    COMPRA("Compra"),
     CORTESIA("Cortesia"),
-    GARANTIA("Garantia");
+    GARANTIA("Garantia"),
+    NAO_APROVADO("Não aprovado pelo cliente"),
+    NAO_RETIRA_3_MESES("Não retira há 3 meses"),
+    ORCAMENTO_APROVADO("Orçamento aprovado"),
+    RESOLVIDO("Resolvido"),
+    SEM_DEFEITO("Sem defeito"),
+    ;
 
     private final String situacao;
 }
