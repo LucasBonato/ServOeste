@@ -23,6 +23,7 @@ import com.serv.oeste.repository.TecnicoRepository;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class ServicoService {
     @Autowired private ServicoRepository servicoRepository;
     @Autowired private DisponibilidadeRepository disponibilidadeRepository;
 
+    @Cacheable("allServicos")
     public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
         Specification<Servico> specification = Specification.where(null);
 

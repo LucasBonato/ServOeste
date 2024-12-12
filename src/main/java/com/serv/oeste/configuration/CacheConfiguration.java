@@ -16,17 +16,22 @@ import java.util.Arrays;
 @EnableScheduling
 public class CacheConfiguration {
     private static final int TRINTA_SEGUNDOS = 30 * 1000;
+
     @Bean
-    public CacheManager cacheManager(){
+    public CacheManager cacheManager() {
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
         cacheManager.setAllowNullValues(false);
-        cacheManager.setCacheNames(Arrays.asList("tecnicoCache", "allTecnicos"));
+        cacheManager.setCacheNames(Arrays.asList("allServicos", "clienteCache", "allClientes"));
         return cacheManager;
     }
-    @CacheEvict(value = "tecnicoCache", allEntries = true)
+
+    @CacheEvict(value = "allServicos", allEntries = true)
     @Scheduled(fixedDelay = TRINTA_SEGUNDOS, initialDelay = 0)
-    public void evictTecnicoCache(){ }
-    @CacheEvict(value = "allTecnicos", allEntries = true)
+    public void evictAllServicosCache() { }
+    @CacheEvict(value = "clienteCache", allEntries = true)
     @Scheduled(fixedDelay = TRINTA_SEGUNDOS, initialDelay = 0)
-    public void evictAllTecnicosCache(){ }
+    public void evictClienteCache() { }
+    @CacheEvict(value = "allClientes", allEntries = true)
+    @Scheduled(fixedDelay = TRINTA_SEGUNDOS, initialDelay = 0)
+    public void evictAllClientesCache() { }
 }

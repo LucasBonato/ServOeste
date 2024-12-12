@@ -12,6 +12,7 @@ import com.serv.oeste.repository.ClienteRepository;
 import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +27,12 @@ public class ClienteService {
     @Autowired private ServicoRepository servicoRepository;
     public static Integer idUltimoCliente;
 
+    @Cacheable("clienteCache")
     public ResponseEntity<ClienteResponse> getOne(Integer id) {
         return ResponseEntity.ok(getClienteResponse(clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new)));
     }
 
+    @Cacheable("allClientes")
     public ResponseEntity<List<ClienteResponse>> getBy(ClienteRequestFilter filtroRequest) {
         Specification<Cliente> specification = Specification.where(null);
 

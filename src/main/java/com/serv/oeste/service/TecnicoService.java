@@ -27,7 +27,6 @@ public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
 
-    @Cacheable("tecnicoCache")
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
         if(tecnicoOptional.isEmpty()){
@@ -36,7 +35,6 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicoOptional.get());
     }
 
-    @Cacheable("allTecnicos")
     public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = Specification.where(null);
 
