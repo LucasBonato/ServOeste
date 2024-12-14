@@ -10,5 +10,5 @@ public enum Situacao {
     LICENCA("licença"),
     DESATIVADO("desativado");
 
-    private String situacao;
+    final private String situacao;
 }

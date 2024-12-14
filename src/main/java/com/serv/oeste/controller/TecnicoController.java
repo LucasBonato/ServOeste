@@ -4,7 +4,6 @@ import com.serv.oeste.configuration.swagger.TecnicoSwagger;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.service.TecnicoService;
 import com.serv.oeste.models.dtos.TecnicoDTO;
-import com.serv.oeste.models.enums.Situacao;
 import com.serv.oeste.models.tecnico.Tecnico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

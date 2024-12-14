@@ -12,7 +12,6 @@ import com.serv.oeste.models.enums.Situacao;
 import com.serv.oeste.models.tecnico.Tecnico;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +48,9 @@ public class TecnicoService {
         }
         if (StringUtils.isNotBlank(filtroRequest.equipamento())) {
             specification = specification.and(TecnicoSpecifications.hasEquipamento(filtroRequest.equipamento()));
-//            specification = specification.and(TecnicoSpecifications.hasEquipamento("outro"));
+        }
+        if (StringUtils.isNotBlank(filtroRequest.telefone())) {
+            specification = specification.and(TecnicoSpecifications.hasTelefone(filtroRequest.telefone()));
         }
 
         List<Tecnico> response = tecnicoRepository.findAll(specification);

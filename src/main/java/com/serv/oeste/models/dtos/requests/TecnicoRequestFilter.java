@@ -4,5 +4,6 @@ public record TecnicoRequestFilter(
         String id,
         String nome,
         String situacao,
-        String equipamento
+        String equipamento,
+        String telefone
 ) { }
