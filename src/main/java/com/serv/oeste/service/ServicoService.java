@@ -50,6 +50,9 @@ public class ServicoService {
     public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
         Specification<Servico> specification = Specification.where(null);
 
+        if (servicoRequestFilter.servicoId() != null) {
+            specification = specification.and(ServicoSpecifications.hasServicoId(servicoRequestFilter.servicoId()));
+        }
         if (servicoRequestFilter.clienteId() != null) {
             Cliente cliente = verificarExistenciaCliente(servicoRequestFilter.clienteId());
             specification = specification.and(ServicoSpecifications.hasCliente(cliente));
@@ -64,6 +67,9 @@ public class ServicoService {
         if (StringUtils.isNotBlank(servicoRequestFilter.tecnicoNome())) {
             specification = specification.and(ServicoSpecifications.hasNomeTecnico(servicoRequestFilter.tecnicoNome()));
         }
+        if (StringUtils.isNotBlank(servicoRequestFilter.equipamento())) {
+            specification = specification.and(ServicoSpecifications.hasEquipamento(servicoRequestFilter.equipamento()));
+        }
         if (StringUtils.isNotBlank(servicoRequestFilter.filial())) {
             specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));
         }
@@ -76,6 +82,18 @@ public class ServicoService {
         }
         else if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null) {
             specification = specification.and(ServicoSpecifications.hasDataAtendimentoPrevisto(servicoRequestFilter.dataAtendimentoPrevistoAntes()));
+        }
+        if (servicoRequestFilter.dataAtendimentoEfetivoAntes() != null && servicoRequestFilter.dataAtendimentoEfetivoDepois() != null) {
+            specification = specification.and(ServicoSpecifications.isDataAtendimentoEfetivoBetween(servicoRequestFilter.dataAtendimentoEfetivoAntes(), servicoRequestFilter.dataAtendimentoEfetivoDepois()));
+        }
+        else if (servicoRequestFilter.dataAtendimentoEfetivoAntes() != null) {
+            specification = specification.and(ServicoSpecifications.hasDataAtendimentoEfetivo(servicoRequestFilter.dataAtendimentoEfetivoAntes()));
+        }
+        if (servicoRequestFilter.dataAberturaAntes() != null && servicoRequestFilter.dataAberturaDepois() != null) {
+            specification = specification.and(ServicoSpecifications.isDataAberturaBetween(servicoRequestFilter.dataAberturaAntes(), servicoRequestFilter.dataAberturaDepois()));
+        }
+        else if (servicoRequestFilter.dataAberturaAntes() != null) {
+            specification = specification.and(ServicoSpecifications.hasDataAbertura(servicoRequestFilter.dataAberturaAntes()));
         }
 
         List<Servico> servicos = servicoRepository.findAll(specification);

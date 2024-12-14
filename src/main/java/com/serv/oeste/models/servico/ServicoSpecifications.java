@@ -39,4 +39,28 @@ public class ServicoSpecifications {
     public static Specification<Servico> hasDataAtendimentoPrevisto(Date dataAtendimentoPrevisto) {
         return (root, query, cb) -> cb.equal(root.get("dataAtendimentoPrevisto"), dataAtendimentoPrevisto);
     }
+
+    public static Specification<Servico> hasServicoId(Integer id) {
+        return (root, query, cb) -> cb.like(root.get("id").as(String.class), "%" + id + "%");
+    }
+
+    public static Specification<Servico> hasEquipamento(String equipamento) {
+        return (root, query, cb) -> cb.equal(root.join("tecnico").join("especialidades").get("conhecimento"), equipamento);
+    }
+
+    public static Specification<Servico> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
+        return (root, query, cb) -> cb.between(root.get("dataAtendimentoEfetiva"), dataAtendimentoEfetivoAntes, dataAtendimentoEfetivoDepois);
+    }
+
+    public static Specification<Servico> hasDataAtendimentoEfetivo(Date dataAtendimentoEfetivo) {
+        return (root, query, cb) -> cb.equal(root.get("dataAtendimentoEfetiva"), dataAtendimentoEfetivo);
+    }
+
+    public static Specification<Servico> isDataAberturaBetween(Date dataAberturaAntes, Date dataAberturaDepois) {
+        return (root, query, cb) -> cb.between(root.get("dataAbertura"), dataAberturaAntes, dataAberturaDepois);
+    }
+
+    public static Specification<Servico> hasDataAbertura(Date dataAbertura) {
+        return (root, query, cb) -> cb.equal(root.get("dataAbertura"), dataAbertura);
+    }
 }
