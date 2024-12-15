@@ -6,7 +6,7 @@ import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.tecnico.TecnicoSpecifications;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
-import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.tecnico.Especialidade;
 import com.serv.oeste.models.enums.Situacao;
 import com.serv.oeste.models.tecnico.Tecnico;
@@ -57,25 +57,25 @@ public class TecnicoService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Void> create(TecnicoDTO tecnicoDTO) {
-        Tecnico tecnico = new Tecnico(tecnicoDTO);
+    public ResponseEntity<Void> create(TecnicoResponse tecnicoResponse) {
+        Tecnico tecnico = new Tecnico(tecnicoResponse);
         verifyFieldsOfTecnico(tecnico);
 
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoResponse));
 
         tecnicoRepository.save(tecnico);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    public ResponseEntity<Void> update(Integer id, TecnicoDTO tecnicoDTO) {
+    public ResponseEntity<Void> update(Integer id, TecnicoResponse tecnicoResponse) {
         verifyIfTecnicoExists(id);
 
-        Tecnico tecnico = new Tecnico(tecnicoDTO);
+        Tecnico tecnico = new Tecnico(tecnicoResponse);
 
         verifyFieldsOfTecnico(tecnico);
 
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoDTO));
-        tecnico.setSituacao(getSituacaoTecnico(tecnicoDTO));
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoResponse));
+        tecnico.setSituacao(getSituacaoTecnico(tecnicoResponse));
 
         tecnico.setId(id);
         tecnicoRepository.save(tecnico);
@@ -94,15 +94,15 @@ public class TecnicoService {
         return ResponseEntity.ok().build();
     }
 
-    private Situacao getSituacaoTecnico(TecnicoDTO tecnicoDTO) {
-        switch (tecnicoDTO.getSituacao().toLowerCase()){
+    private Situacao getSituacaoTecnico(TecnicoResponse tecnicoResponse) {
+        switch (tecnicoResponse.getSituacao().toLowerCase()){
             case "ativo" -> { return Situacao.ATIVO;}
             case "licença" -> { return Situacao.LICENCA;}
             case "desativado" -> { return Situacao.DESATIVADO;}
         }
         throw new SituacaoNotFoundException();
     }
-    private List<Especialidade> getEspecialidadesTecnico(TecnicoDTO tecnico){
+    private List<Especialidade> getEspecialidadesTecnico(TecnicoResponse tecnico){
         if(tecnico.getEspecialidades_Ids().isEmpty()){
             throw new EspecialidadesTecnicoEmptyException();
         }

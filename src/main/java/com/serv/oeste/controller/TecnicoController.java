@@ -3,7 +3,7 @@ package com.serv.oeste.controller;
 import com.serv.oeste.configuration.swagger.TecnicoSwagger;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.service.TecnicoService;
-import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.tecnico.Tecnico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +27,13 @@ public class TecnicoController implements TecnicoSwagger {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody TecnicoDTO tecnicoDTO){
-        return tecnicoService.create(tecnicoDTO);
+    public ResponseEntity<Void> create(@RequestBody TecnicoResponse tecnicoResponse){
+        return tecnicoService.create(tecnicoResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TecnicoDTO tecnicoDTO){
-        return tecnicoService.update(id, tecnicoDTO);
+    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TecnicoResponse tecnicoResponse){
+        return tecnicoService.update(id, tecnicoResponse);
     }
 
     @DeleteMapping

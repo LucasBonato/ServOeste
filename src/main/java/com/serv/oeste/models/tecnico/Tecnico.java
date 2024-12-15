@@ -1,6 +1,6 @@
 package com.serv.oeste.models.tecnico;
 
-import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.enums.Situacao;
 import org.springframework.data.relational.core.mapping.Table;
 import jakarta.persistence.*;
@@ -39,7 +39,7 @@ public class Tecnico {
     @JoinTable(name = "Tecnico_Especialidade", joinColumns = @JoinColumn(name = "Id_Tecnico"), inverseJoinColumns = @JoinColumn(name = "Id_Especialidade"))
     private List<Especialidade> especialidades;
 
-    public Tecnico(TecnicoDTO tecnico){
+    public Tecnico(TecnicoResponse tecnico){
         this.nome = tecnico.getNome();
         this.sobrenome = tecnico.getSobrenome();
         this.telefoneFixo = tecnico.getTelefoneFixo();

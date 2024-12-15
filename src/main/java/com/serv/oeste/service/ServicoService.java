@@ -12,7 +12,7 @@ import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
 import com.serv.oeste.models.servico.ServicoSpecifications;
-import com.serv.oeste.models.servico.TecnicoDisponibilidade;
+import com.serv.oeste.models.servico.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.models.tecnico.Disponibilidade;
 import com.serv.oeste.models.tecnico.Tecnico;
 import com.serv.oeste.models.tecnico.TecnicoDisponibilidadeRaw;
@@ -117,7 +117,7 @@ public class ServicoService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade(Integer especialidadeId) {
+    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidade(Integer especialidadeId) {
         String diaAtual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("pt", "BR"));
         Integer quantidadeDias = switch (diaAtual) {
             case "sexta-feira", "sábado", "domingo" -> 4;
@@ -130,27 +130,31 @@ public class ServicoService {
         }
         List<TecnicoDisponibilidadeRaw> tecnicosRaw = tecnicosOptional.get();
 
-        Map<Integer, TecnicoDisponibilidade> tecnicoMap = tecnicosRaw.stream()
+        Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
             .collect(
                 Collectors.groupingBy(
                     TecnicoDisponibilidadeRaw::getId, Collectors.collectingAndThen(
                         Collectors.toList(), rawList -> {
                             String nome = rawList.getFirst().getNome();
                             Integer id = rawList.getFirst().getId();
+                            Integer quantidadeTotal = rawList.stream()
+                                    .mapToInt(TecnicoDisponibilidadeRaw::getQuantidade)
+                                    .sum();
                             List<Disponibilidade> disponibilidades = rawList.stream()
                                 .map(raw -> new Disponibilidade(
                                     raw.getData(),
                                     raw.getDia(),
+                                    getDayNameOfTheWeek(raw.getDia()),
                                     raw.getPeriodo(),
                                     raw.getQuantidade()
                                 )).toList();
-                            return new TecnicoDisponibilidade(id, nome, disponibilidades);
+                            return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
                         }
                     )
                 )
             );
 
-        List<TecnicoDisponibilidade> tecnicos = new ArrayList<>(tecnicoMap.values());
+        List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());
 
         return ResponseEntity.ok(tecnicos);
     }
@@ -188,6 +192,18 @@ public class ServicoService {
             throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
         }
         return dataFormatada;
+    }
+    private String getDayNameOfTheWeek(Integer day) {
+        return switch (day) {
+            case 1 -> "Domingo";
+            case 2 -> "Segunda";
+            case 3 -> "Terça";
+            case 4 -> "Quarta";
+            case 5 -> "Quinta";
+            case 6 -> "Sexta";
+            case 7 -> "Sábado";
+            default -> "Dia da semana não encontrado!";
+        };
     }
 
     private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest) {

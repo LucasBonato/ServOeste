@@ -1,20 +1,7 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.exception.tecnico.EspecialidadeNotFoundException;
-import com.serv.oeste.exception.tecnico.EspecialidadesTecnicoEmptyException;
-import com.serv.oeste.exception.tecnico.TecnicoNotValidException;
 import com.serv.oeste.ServOesteApplication;
-import com.serv.oeste.service.TecnicoService;
-import com.serv.oeste.models.dtos.TecnicoDTO;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

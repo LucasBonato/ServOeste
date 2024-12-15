@@ -1,7 +1,7 @@
 package com.serv.oeste.configuration.swagger;
 
 import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.dtos.TecnicoDTO;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.tecnico.Tecnico;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "201", description = "[Created] Técnico registrado com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Void> create(TecnicoDTO tecnicoDTO);
+    ResponseEntity<Void> create(TecnicoResponse tecnicoResponse);
 
     @Operation(description = "Forma de atualizar o registro de um técnico, com os campos sendo opcionais, atualizando só o necessário.")
     @ApiResponses(value = {
@@ -44,7 +44,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> update(Integer id, TecnicoDTO tecnicoDTO);
+    ResponseEntity<Void> update(Integer id, TecnicoResponse tecnicoResponse);
 
     @Operation(description = "Forma de desativar uma lista de técnicos, alterando o `status` para: `Desativado`.")
     @ApiResponses(value = {

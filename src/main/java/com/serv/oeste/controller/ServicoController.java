@@ -6,7 +6,7 @@ import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
 import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.servico.TecnicoDisponibilidade;
+import com.serv.oeste.models.servico.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.service.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class ServicoController implements ServicoSwagger {
     }
 
     @PostMapping("/disponibilidade")
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos(@RequestBody TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest) {
+    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidadeTecnicos(@RequestBody TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest) {
         return servicoService.getDadosDisponibilidade(tecnicoDisponibilidadeRequest.especialidadeId());
     }
 }

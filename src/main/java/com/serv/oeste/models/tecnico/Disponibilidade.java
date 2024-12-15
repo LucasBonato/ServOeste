@@ -11,7 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class Disponibilidade {
     private Date data;
-    private Integer dia;
+    private Integer numeroDiaSemana;
+    private String nomeDiaSemana;
     private String periodo;
-    private Integer quantidade;
+    private Integer quantidadeServicos;
 }

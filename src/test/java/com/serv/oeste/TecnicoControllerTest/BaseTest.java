@@ -1,18 +1,5 @@
 package com.serv.oeste.TecnicoControllerTest;
 
-import com.serv.oeste.repository.EspecialidadeRepository;
-import com.serv.oeste.repository.TecnicoRepository;
-import com.serv.oeste.models.dtos.TecnicoDTO;
-import com.serv.oeste.models.tecnico.Especialidade;
-import com.serv.oeste.models.tecnico.Tecnico;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
-
 public class BaseTest {
 //    @Mock private EspecialidadeRepository especialidadeRepository;
 //    @Mock protected TecnicoRepository tecnicoRepository;

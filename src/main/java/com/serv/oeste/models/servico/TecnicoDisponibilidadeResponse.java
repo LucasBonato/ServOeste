@@ -10,8 +10,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TecnicoDisponibilidade {
+public class TecnicoDisponibilidadeResponse {
     private Integer id;
     private String nome;
+    private Integer quantidadeTotalServicos;
     private List<Disponibilidade> disponibilidades;
 }
