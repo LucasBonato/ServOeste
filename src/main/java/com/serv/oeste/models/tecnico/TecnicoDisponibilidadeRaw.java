@@ -6,11 +6,13 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Date;
 
 @Data
 @Entity
+@Table(name = "tecnico_disponibilidade_raw")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TecnicoDisponibilidadeRaw {

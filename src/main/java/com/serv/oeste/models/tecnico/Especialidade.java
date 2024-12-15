@@ -2,6 +2,7 @@ package com.serv.oeste.models.tecnico;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -5,6 +5,7 @@ import com.serv.oeste.models.dtos.reponses.ServicoResponse;
 import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
+import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
 import com.serv.oeste.models.servico.TecnicoDisponibilidade;
 import com.serv.oeste.service.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class ServicoController implements ServicoSwagger {
         return servicoService.cadastrarComClienteNaoExistente(clienteServicoRequest.clienteRequest(), clienteServicoRequest.servicoRequest());
     }
 
-    @GetMapping("/disponibilidade")
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos() {
-        return servicoService.getDadosDisponibilidade();
+    @PostMapping("/disponibilidade")
+    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidadeTecnicos(@RequestBody TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest) {
+        return servicoService.getDadosDisponibilidade(tecnicoDisponibilidadeRequest.especialidadeId());
     }
 }

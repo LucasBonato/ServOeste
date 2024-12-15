@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface DisponibilidadeRepository extends JpaRepository<TecnicoDisponibilidadeRaw, Void> {
-    @Query(value = "CALL GetTabelaDisponibilidade(:last_day)", nativeQuery = true)
-    Optional<List<TecnicoDisponibilidadeRaw>> getDisponibilidadeTecnicosPeloConhecimento(@Param("last_day") Integer lastDay);
+    @Query(value = "CALL GetTabelaDisponibilidade(:days, :especialidadeId)", nativeQuery = true)
+    Optional<List<TecnicoDisponibilidadeRaw>> getDisponibilidadeTecnicosPeloConhecimento(@Param("days") Integer days, @Param("especialidadeId") Integer especialidadeId);
 }

@@ -6,6 +6,7 @@ import com.serv.oeste.models.tecnico.Tecnico;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.util.Date;

@@ -117,16 +117,17 @@ public class ServicoService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
-    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade() {
+    public ResponseEntity<List<TecnicoDisponibilidade>> getDadosDisponibilidade(Integer especialidadeId) {
         String diaAtual = LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.of("pt", "BR"));
         Integer quantidadeDias = switch (diaAtual) {
             case "sexta-feira", "sábado", "domingo" -> 4;
             default -> 3;
         };
 
-        Optional<List<TecnicoDisponibilidadeRaw>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias);
-        if (tecnicosOptional.isEmpty())
+        Optional<List<TecnicoDisponibilidadeRaw>> tecnicosOptional = disponibilidadeRepository.getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias, especialidadeId);
+        if (tecnicosOptional.isEmpty()) {
             throw new RuntimeException("Nenhum técnico");
+        }
         List<TecnicoDisponibilidadeRaw> tecnicosRaw = tecnicosOptional.get();
 
         Map<Integer, TecnicoDisponibilidade> tecnicoMap = tecnicosRaw.stream()

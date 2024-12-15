@@ -2,6 +2,7 @@ package com.serv.oeste.models.cliente;
 
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import jakarta.persistence.*;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

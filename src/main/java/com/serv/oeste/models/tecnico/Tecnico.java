@@ -2,6 +2,7 @@ package com.serv.oeste.models.tecnico;
 
 import com.serv.oeste.models.dtos.TecnicoDTO;
 import com.serv.oeste.models.enums.Situacao;
+import org.springframework.data.relational.core.mapping.Table;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
