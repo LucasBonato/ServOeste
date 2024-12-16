@@ -1,8 +1,8 @@
-INSERT INTO Especialidade (conhecimento)
-SELECT 'Adega' WHERE NOT EXISTS (SELECT 1 FROM Especialidade WHERE conhecimento = 'Adega');
+INSERT INTO especialidade (conhecimento)
+SELECT 'Adega' WHERE NOT EXISTS (SELECT 1 FROM especialidade WHERE conhecimento = 'Adega');
 
-INSERT INTO Especialidade (conhecimento)
-SELECT 'Bebedouro' WHERE NOT EXISTS (SELECT 1 FROM Especialidade WHERE conhecimento = 'Bebedouro');
+INSERT INTO especialidade (conhecimento)
+SELECT 'Bebedouro' WHERE NOT EXISTS (SELECT 1 FROM especialidade WHERE conhecimento = 'Bebedouro');
 
 INSERT INTO especialidade (conhecimento)
 SELECT 'Climatizador' WHERE NOT EXISTS (SELECT 1 FROM especialidade WHERE conhecimento = 'Climatizador');
