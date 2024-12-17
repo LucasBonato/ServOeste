@@ -1,4 +1,4 @@
-package com.serv.oeste.models.servico;
+package com.serv.oeste.models.dtos.reponses;
 
 import com.serv.oeste.models.tecnico.Disponibilidade;
 import lombok.AllArgsConstructor;

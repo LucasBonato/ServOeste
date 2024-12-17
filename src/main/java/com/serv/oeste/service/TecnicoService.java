@@ -1,15 +1,15 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.exception.tecnico.*;
+import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
-import com.serv.oeste.models.tecnico.TecnicoSpecifications;
+import com.serv.oeste.models.tecnico.*;
+import com.serv.oeste.repository.DisponibilidadeRepository;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
 import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
-import com.serv.oeste.models.tecnico.Especialidade;
 import com.serv.oeste.models.enums.Situacao;
-import com.serv.oeste.models.tecnico.Tecnico;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,14 +17,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
+    @Autowired private DisponibilidadeRepository disponibilidadeRepository;
 
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
@@ -57,6 +58,48 @@ public class TecnicoService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidade(Integer especialidadeId) {
+        int diaAtual = LocalDate.now()
+                .getDayOfWeek()
+                .getValue();
+        int quantidadeDias = 3;
+        if (diaAtual > 4) {
+            quantidadeDias = 4;
+        }
+
+        List<TecnicoDisponibilidade> tecnicosRaw = disponibilidadeRepository
+                .getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias, especialidadeId)
+                .orElseThrow(TecnicoNotFoundException::new);
+
+        Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
+                .collect(
+                    Collectors.groupingBy(
+                            TecnicoDisponibilidade::getId, Collectors.collectingAndThen(
+                            Collectors.toList(), rawList -> {
+                                String nome = rawList.getFirst().getNome();
+                                Integer id = rawList.getFirst().getId();
+                                Integer quantidadeTotal = rawList.stream()
+                                    .mapToInt(TecnicoDisponibilidade::getQuantidade)
+                                    .sum();
+                                List<Disponibilidade> disponibilidades = rawList.stream()
+                                    .map(raw -> new Disponibilidade(
+                                            raw.getData(),
+                                            raw.getDia(),
+                                            getDayNameOfTheWeek(raw.getDia()),
+                                            raw.getPeriodo(),
+                                            raw.getQuantidade()
+                                    )).toList();
+                                return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
+                            }
+                        )
+                    )
+                );
+
+        List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());
+
+        return ResponseEntity.ok(tecnicos);
+    }
+
     public ResponseEntity<Void> create(TecnicoResponse tecnicoResponse) {
         Tecnico tecnico = new Tecnico(tecnicoResponse);
         verifyFieldsOfTecnico(tecnico);
@@ -68,15 +111,14 @@ public class TecnicoService {
     }
 
     public ResponseEntity<Void> update(Integer id, TecnicoResponse tecnicoResponse) {
-        verifyIfTecnicoExists(id);
+        Tecnico tecnico = getTecnicoById(id);
 
-        Tecnico tecnico = new Tecnico(tecnicoResponse);
+        tecnico.setAll(tecnicoResponse);
 
         verifyFieldsOfTecnico(tecnico);
 
         tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoResponse));
         tecnico.setSituacao(getSituacaoTecnico(tecnicoResponse));
-
         tecnico.setId(id);
         tecnicoRepository.save(tecnico);
         return ResponseEntity.ok().build();
@@ -84,9 +126,7 @@ public class TecnicoService {
 
     public ResponseEntity<Void> disableAList(List<Integer> ids) {
         for (Integer id : ids) {
-            verifyIfTecnicoExists(id);
-
-            Tecnico tecnico = tecnicoRepository.findById(id).get();
+            Tecnico tecnico = getTecnicoById(id);
             tecnico.setSituacao(Situacao.DESATIVADO);
 
             tecnicoRepository.save(tecnico);
@@ -94,6 +134,21 @@ public class TecnicoService {
         return ResponseEntity.ok().build();
     }
 
+    public Tecnico getTecnicoById(Integer id) {
+        return tecnicoRepository.findById(id).orElseThrow(TecnicoNotFoundException::new);
+    }
+    private String getDayNameOfTheWeek(Integer day) {
+        return switch (day) {
+            case 1 -> "Domingo";
+            case 2 -> "Segunda";
+            case 3 -> "Terça";
+            case 4 -> "Quarta";
+            case 5 -> "Quinta";
+            case 6 -> "Sexta";
+            case 7 -> "Sábado";
+            default -> "Dia da semana não encontrado!";
+        };
+    }
     private Situacao getSituacaoTecnico(TecnicoResponse tecnicoResponse) {
         switch (tecnicoResponse.getSituacao().toLowerCase()){
             case "ativo" -> { return Situacao.ATIVO;}
@@ -115,12 +170,6 @@ public class TecnicoService {
             especialidades.add(especialidadeOptional.get());
         }
         return especialidades;
-    }
-    private void verifyIfTecnicoExists(Integer id) {
-        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
-        if(tecnicoOptional.isEmpty()){
-            throw new TecnicoNotFoundException();
-        }
     }
     private void verifyFieldsOfTecnico(Tecnico tecnico){
         final int MINIMO_DE_CARACTERES_ACEITO = 2;

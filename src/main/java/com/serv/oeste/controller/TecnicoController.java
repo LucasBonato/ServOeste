@@ -1,6 +1,8 @@
 package com.serv.oeste.controller;
 
 import com.serv.oeste.configuration.swagger.TecnicoSwagger;
+import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.service.TecnicoService;
 import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
@@ -24,6 +26,11 @@ public class TecnicoController implements TecnicoSwagger {
     @GetMapping("/{id}")
     public ResponseEntity<Tecnico> getOne(@PathVariable Integer id){
         return tecnicoService.getOne(id);
+    }
+
+    @PostMapping("/disponibilidade")
+    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidadeTecnicos(@RequestBody TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest) {
+        return tecnicoService.getDadosDisponibilidade(tecnicoDisponibilidadeRequest.especialidadeId());
     }
 
     @PostMapping

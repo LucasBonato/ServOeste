@@ -87,7 +87,7 @@ public class ClienteService {
         return ResponseEntity.ok().build();
     }
 
-    private Cliente getClienteById(Integer id) {
+    public Cliente getClienteById(Integer id) {
         return clienteRepository.findById(id).orElseThrow(ClienteNotFoundException::new);
     }
     private ClienteResponse getClienteResponse(Cliente cliente) {
@@ -102,8 +102,7 @@ public class ClienteService {
         );
     }
     private boolean contemNumero(String endereco) {
-        return endereco.chars()
-                .anyMatch(Character::isDigit);
+        return endereco.chars().anyMatch(Character::isDigit);
     }
     private void verificarRegraDeNegocio(ClienteRequest clienteRequest) {
         if(StringUtils.isBlank(clienteRequest.nome())) {

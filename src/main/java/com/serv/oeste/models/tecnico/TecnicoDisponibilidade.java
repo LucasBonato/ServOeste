@@ -12,10 +12,10 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "tecnico_disponibilidade_raw")
+@Table(name = "tecnico_disponibilidade")
 @NoArgsConstructor
 @AllArgsConstructor
-public class TecnicoDisponibilidadeRaw {
+public class TecnicoDisponibilidade {
     @Id
     @Column(name = "Id")
     private Integer id;

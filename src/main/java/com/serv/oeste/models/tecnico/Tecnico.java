@@ -54,4 +54,11 @@ public class Tecnico {
         this.telefoneCelular = telefoneCelular;
         this.situacao = situacao;
     }
+
+    public void setAll(TecnicoResponse tecnicoResponse) {
+        this.nome = tecnicoResponse.getNome();
+        this.sobrenome = tecnicoResponse.getSobrenome();
+        this.telefoneFixo = tecnicoResponse.getTelefoneFixo();
+        this.telefoneCelular = tecnicoResponse.getTelefoneCelular();
+    }
 }

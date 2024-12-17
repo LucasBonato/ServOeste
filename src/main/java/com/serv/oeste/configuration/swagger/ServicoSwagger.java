@@ -6,7 +6,7 @@ import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
 import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.servico.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,11 +40,4 @@ public interface ServicoSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     ResponseEntity<Void> cadastrarComClienteNaoExistente(ClienteServicoRequest clienteServicoRequest);
-
-    @Operation(description = "Forma de pegar informações para prencheer a tabela de disponibilidade de técnicos.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "[Ok] Informações devolvidas com sucesso.", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-    })
-    ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidadeTecnicos(TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest);
 }
