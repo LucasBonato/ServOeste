@@ -5,7 +5,6 @@ import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.tecnico.*;
-import com.serv.oeste.repository.DisponibilidadeRepository;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
 import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 public class TecnicoService {
     @Autowired private TecnicoRepository tecnicoRepository;
     @Autowired private EspecialidadeRepository especialidadeRepository;
-    @Autowired private DisponibilidadeRepository disponibilidadeRepository;
 
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
@@ -67,7 +65,7 @@ public class TecnicoService {
             quantidadeDias = 4;
         }
 
-        List<TecnicoDisponibilidade> tecnicosRaw = disponibilidadeRepository
+        List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository
                 .getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias, especialidadeId)
                 .orElseThrow(TecnicoNotFoundException::new);
 

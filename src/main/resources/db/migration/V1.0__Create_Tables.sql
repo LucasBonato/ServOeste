@@ -44,15 +44,6 @@ CREATE TABLE servico (
   CONSTRAINT servico_chk_1 CHECK ((situacao between 0 and 13))
 );
 
-CREATE TABLE tecnico_disponibilidade (
-  dia int DEFAULT NULL,
-  id INT PRIMARY KEY,
-  quantidade int DEFAULT NULL,
-  data datetime(6) DEFAULT NULL,
-  nome varchar(255) DEFAULT NULL,
-  periodo varchar(255) DEFAULT NULL
-);
-
 CREATE TABLE tecnico_especialidade (
   id_especialidade int NOT NULL,
   id_tecnico int NOT NULL,
