@@ -1,12 +1,12 @@
 CREATE PROCEDURE GetTabelaDisponibilidade(IN dia_semana int, IN especialidade_id int)
 BEGIN
 	SELECT
-		t.id AS 'id',
-		DAYOFWEEK(s.data_atendimento_previsto) AS 'dia',
-		s.data_atendimento_previsto AS 'data',
-		s.horario_previsto AS 'periodo',
-		CONCAT(t.nome, ' ', t.sobrenome) AS 'nome',
-		COUNT(s.id_tecnico) AS 'quantidade'
+		t.id AS 'Id',
+		DAYOFWEEK(s.data_atendimento_previsto) AS 'Dia',
+		s.data_atendimento_previsto AS 'Data',
+		s.horario_previsto AS 'Periodo',
+		CONCAT(t.nome, ' ', t.sobrenome) AS 'Nome',
+		COUNT(s.id_tecnico) AS 'Quantidade'
 	FROM servico s
 	INNER JOIN tecnico t ON t.id = s.id_tecnico
 	INNER JOIN tecnico_especialidade te ON te.id_tecnico = t.id
