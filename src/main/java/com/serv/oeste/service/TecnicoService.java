@@ -67,7 +67,16 @@ public class TecnicoService {
 
         List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository
                 .getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias, especialidadeId)
-                .orElseThrow(TecnicoNotFoundException::new);
+                .stream()
+                .map(projection -> new TecnicoDisponibilidade(
+                    projection.getId(),
+                    projection.getNome(),
+                    projection.getData(),
+                    projection.getDia(),
+                    projection.getPeriodo(),
+                    projection.getQuantidade()
+                ))
+                .toList();
 
         Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
                 .collect(

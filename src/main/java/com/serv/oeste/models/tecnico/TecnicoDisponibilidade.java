@@ -29,3 +29,4 @@ public class TecnicoDisponibilidade {
     @Column(name = "Quantidade")
     private Integer quantidade;
 }
+
