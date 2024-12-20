@@ -45,7 +45,7 @@ public class ServicoSpecifications {
     }
 
     public static Specification<Servico> hasEquipamento(String equipamento) {
-        return (root, query, cb) -> cb.equal(root.join("tecnico").join("especialidades").get("conhecimento"), equipamento);
+        return (root, query, cb) -> cb.equal(root.get("equipamento"), equipamento);
     }
 
     public static Specification<Servico> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
