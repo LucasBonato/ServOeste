@@ -132,12 +132,19 @@ public class TecnicoService {
     }
 
     public ResponseEntity<Void> disableAList(List<Integer> ids) {
-        for (Integer id : ids) {
-            Tecnico tecnico = getTecnicoById(id);
-            tecnico.setSituacao(Situacao.DESATIVADO);
+        ids.stream()
+                .map(this::getTecnicoById)
+                .forEach(tecnico -> {
+                    tecnico.setSituacao(Situacao.DESATIVADO);
+                    tecnicoRepository.save(tecnico);
+                });
 
-            tecnicoRepository.save(tecnico);
-        }
+//        for (Integer id : ids) {
+//            Tecnico tecnico = getTecnicoById(id);
+//            tecnico.setSituacao(Situacao.DESATIVADO);
+//
+//            tecnicoRepository.save(tecnico);
+//        }
         return ResponseEntity.ok().build();
     }
 
