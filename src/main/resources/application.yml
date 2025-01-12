@@ -1,0 +1,56 @@
+server:
+  servlet:
+    context-path: /api/v1
+  error:
+    include-message: AlWAYS
+    include-stacktrace: ALWAYS
+
+spring:
+  application:
+    name: servoeste
+  output:
+    ansi:
+      enabled: ALWAYS
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:servOeste}?createDatabaseIfNotExist=TRUE
+    username: '${MYSQL_USERNAME}'
+    password: '${MYSQL_PASSWORD}'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    show-sql: false
+  flyway:
+    enabled: true
+    url: 'jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:servOeste}'
+    user: '${MYSQL_USERNAME}'
+    password: '${MYSQL_PASSWORD}'
+    ignore-unsupported-database: true
+    baseline-version: '0'
+    baseline-on-migrate: true
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+springdoc:
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
