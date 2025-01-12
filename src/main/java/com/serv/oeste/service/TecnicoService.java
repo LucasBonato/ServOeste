@@ -4,6 +4,7 @@ import com.serv.oeste.exception.tecnico.*;
 import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
+import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.models.tecnico.*;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
@@ -34,23 +35,29 @@ public class TecnicoService {
     }
 
     public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
-        Specification<Tecnico> specification = Specification.where(null);
+        Specification<Tecnico> specification = new SpecificationBuilder<Tecnico>()
+                .addIfNotNull(filtroRequest.id(), TecnicoSpecifications::hasId)
+                .addIf(StringUtils::isNotBlank, filtroRequest.nome(), TecnicoSpecifications::hasNomeCompleto)
+                .addIf(StringUtils::isNotBlank, filtroRequest.situacao(), TecnicoSpecifications::hasSituacao)
+                .addIf(StringUtils::isNotBlank, filtroRequest.equipamento(), TecnicoSpecifications::hasEquipamento)
+                .addIf(StringUtils::isNotBlank, filtroRequest.telefone(), TecnicoSpecifications::hasTelefone)
+                .build();
 
-        if (filtroRequest.id() != null) {
-            specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
-        }
-        if (StringUtils.isNotBlank(filtroRequest.nome())) {
-            specification = specification.and(TecnicoSpecifications.hasNomeCompleto(filtroRequest.nome()));
-        }
-        if (StringUtils.isNotBlank(filtroRequest.situacao())) {
-            specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
-        }
-        if (StringUtils.isNotBlank(filtroRequest.equipamento())) {
-            specification = specification.and(TecnicoSpecifications.hasEquipamento(filtroRequest.equipamento()));
-        }
-        if (StringUtils.isNotBlank(filtroRequest.telefone())) {
-            specification = specification.and(TecnicoSpecifications.hasTelefone(filtroRequest.telefone()));
-        }
+//        if (filtroRequest.id() != null) {
+//            specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
+//        }
+//        if (StringUtils.isNotBlank(filtroRequest.nome())) {
+//            specification = specification.and(TecnicoSpecifications.hasNomeCompleto(filtroRequest.nome()));
+//        }
+//        if (StringUtils.isNotBlank(filtroRequest.situacao())) {
+//            specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
+//        }
+//        if (StringUtils.isNotBlank(filtroRequest.equipamento())) {
+//            specification = specification.and(TecnicoSpecifications.hasEquipamento(filtroRequest.equipamento()));
+//        }
+//        if (StringUtils.isNotBlank(filtroRequest.telefone())) {
+//            specification = specification.and(TecnicoSpecifications.hasTelefone(filtroRequest.telefone()));
+//        }
 
         List<Tecnico> response = tecnicoRepository.findAll(specification);
         return ResponseEntity.ok(response);
@@ -60,42 +67,28 @@ public class TecnicoService {
         int diaAtual = LocalDate.now()
                 .getDayOfWeek()
                 .getValue();
-        int quantidadeDias = 3;
-        if (diaAtual > 4) {
-            quantidadeDias = 4;
-        }
+        int intervaloDeDias = (diaAtual > 4) ? 4 : 3;
 
-        List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository
-                .getDisponibilidadeTecnicosPeloConhecimento(quantidadeDias, especialidadeId)
+        List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository.getDisponibilidadeTecnicosPeloConhecimento(intervaloDeDias, especialidadeId)
                 .stream()
-                .map(projection -> new TecnicoDisponibilidade(
-                    projection.getId(),
-                    projection.getNome(),
-                    projection.getData(),
-                    projection.getDia(),
-                    projection.getPeriodo(),
-                    projection.getQuantidade()
-                ))
+                .map(TecnicoDisponibilidade::new)
                 .toList();
 
         Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
                 .collect(
                     Collectors.groupingBy(
-                            TecnicoDisponibilidade::getId, Collectors.collectingAndThen(
-                            Collectors.toList(), rawList -> {
+                        TecnicoDisponibilidade::getId,
+                        Collectors.collectingAndThen(
+                            Collectors.toList(),
+                            rawList -> {
                                 String nome = rawList.getFirst().getNome();
                                 Integer id = rawList.getFirst().getId();
                                 Integer quantidadeTotal = rawList.stream()
                                     .mapToInt(TecnicoDisponibilidade::getQuantidade)
                                     .sum();
                                 List<Disponibilidade> disponibilidades = rawList.stream()
-                                    .map(raw -> new Disponibilidade(
-                                            raw.getData(),
-                                            raw.getDia(),
-                                            getDayNameOfTheWeek(raw.getDia()),
-                                            raw.getPeriodo(),
-                                            raw.getQuantidade()
-                                    )).toList();
+                                    .map(this::getDisponibilidadeFromRaw)
+                                    .collect(Collectors.toList());
                                 return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
                             }
                         )
@@ -148,8 +141,17 @@ public class TecnicoService {
         return ResponseEntity.ok().build();
     }
 
-    public Tecnico getTecnicoById(Integer id) {
+    protected Tecnico getTecnicoById(Integer id) {
         return tecnicoRepository.findById(id).orElseThrow(TecnicoNotFoundException::new);
+    }
+    private Disponibilidade getDisponibilidadeFromRaw(TecnicoDisponibilidade tecnicoDisponibilidade) {
+        return new Disponibilidade(
+                tecnicoDisponibilidade.getData(),
+                tecnicoDisponibilidade.getDia(),
+                getDayNameOfTheWeek(tecnicoDisponibilidade.getDia()),
+                tecnicoDisponibilidade.getPeriodo(),
+                tecnicoDisponibilidade.getQuantidade()
+        );
     }
     private String getDayNameOfTheWeek(Integer day) {
         return switch (day) {

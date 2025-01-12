@@ -28,5 +28,14 @@ public class TecnicoDisponibilidade {
 
     @Column(name = "Quantidade")
     private Integer quantidade;
+
+    public TecnicoDisponibilidade(TecnicoDisponibilidadeProjection tecnicoDisponibilidadeProjection) {
+        this.id = tecnicoDisponibilidadeProjection.getId();
+        this.nome = tecnicoDisponibilidadeProjection.getNome();
+        this.data = tecnicoDisponibilidadeProjection.getData();
+        this.dia = tecnicoDisponibilidadeProjection.getDia();
+        this.periodo = tecnicoDisponibilidadeProjection.getPeriodo();
+        this.quantidade = tecnicoDisponibilidadeProjection.getQuantidade();
+    }
 }
 
