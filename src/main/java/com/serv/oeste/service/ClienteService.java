@@ -8,6 +8,7 @@ import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.dtos.reponses.ClienteResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
+import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.repository.ClienteRepository;
 import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -34,17 +36,23 @@ public class ClienteService {
 
     @Cacheable("allClientes")
     public ResponseEntity<List<ClienteResponse>> getBy(ClienteRequestFilter filtroRequest) {
-        Specification<Cliente> specification = Specification.where(null);
+        Specification<Cliente> specification = new SpecificationBuilder<Cliente>()
+                .addIf(StringUtils::isNotBlank, filtroRequest.nome(), ClienteSpecifications::hasNome)
+                .addIf(StringUtils::isNotBlank, filtroRequest.telefone(), ClienteSpecifications::hasTelefone)
+                .addIf(StringUtils::isNotBlank, filtroRequest.endereco(), ClienteSpecifications::hasEndereco)
+                .build();
 
-        if (StringUtils.isNotBlank(filtroRequest.nome()))
-            specification = specification.and(ClienteSpecifications.hasNome(filtroRequest.nome()));
-        if (StringUtils.isNotBlank(filtroRequest.telefone()))
-            specification = specification.and(ClienteSpecifications.hasTelefone(filtroRequest.telefone()));
-        if (StringUtils.isNotBlank(filtroRequest.endereco()))
-            specification = specification.and(ClienteSpecifications.hasEndereco(filtroRequest.endereco()));
+//        if (StringUtils.isNotBlank(filtroRequest.nome()))
+//            specification = specification.and(ClienteSpecifications.hasNome(filtroRequest.nome()));
+//        if (StringUtils.isNotBlank(filtroRequest.telefone()))
+//            specification = specification.and(ClienteSpecifications.hasTelefone(filtroRequest.telefone()));
+//        if (StringUtils.isNotBlank(filtroRequest.endereco()))
+//            specification = specification.and(ClienteSpecifications.hasEndereco(filtroRequest.endereco()));
 
-        List<ClienteResponse> response = new ArrayList<>();
-        clienteRepository.findAll(specification).forEach(cliente -> response.add(getClienteResponse(cliente)));
+        List<ClienteResponse> response = clienteRepository.findAll(specification)
+                .stream()
+                .map(this::getClienteResponse)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
     }
