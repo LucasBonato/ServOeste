@@ -1,5 +1,6 @@
 package com.serv.oeste.service;
 
+import com.serv.oeste.exception.servico.ServicoNotFoundException;
 import com.serv.oeste.exception.servico.ServicoNotValidException;
 import com.serv.oeste.models.cliente.Cliente;
 import com.serv.oeste.models.dtos.reponses.ServicoResponse;
@@ -16,6 +17,7 @@ import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,6 +106,15 @@ public class ServicoService {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+
+    public ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids) {
+        ids.stream()
+                .filter(id -> servicoRepository.findById(id).isPresent())
+                .forEach(id -> servicoRepository.deleteById(id));
+
+        return ResponseEntity.ok().build();
+    }
+
     private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
         return servicos
                 .stream()
@@ -122,6 +133,9 @@ public class ServicoService {
                 ))
                 .collect(Collectors.toList());
     }
+//    private Servico getServicoById(Integer id) {
+//        return servicoRepository.findById(id).orElseThrow(ServicoNotFoundException::new);
+//    }
     private static Date convertData(String data) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date dataFormatada;

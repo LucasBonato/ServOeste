@@ -33,4 +33,9 @@ public class ServicoController implements ServicoSwagger {
     public ResponseEntity<Void> cadastrarComClienteNaoExistente(@RequestBody ClienteServicoRequest clienteServicoRequest) {
         return servicoService.cadastrarComClienteNaoExistente(clienteServicoRequest.clienteRequest(), clienteServicoRequest.servicoRequest());
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteListOfServicesById(@RequestBody List<Integer> ids) {
+        return servicoService.deleteListOfServicesById(ids);
+    }
 }

@@ -20,7 +20,8 @@ public enum Codigo {
     FILIAL(14),
     HORARIO(15),
     DATA(16),
-    CONHECIMENTO(17);
+    CONHECIMENTO(17),
+    SERVICO(18);
 
     private final Integer i;
 
