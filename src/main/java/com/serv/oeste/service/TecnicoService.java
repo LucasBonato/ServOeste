@@ -11,6 +11,7 @@ import com.serv.oeste.repository.TecnicoRepository;
 import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.enums.Situacao;
 import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TecnicoService {
-    @Autowired private TecnicoRepository tecnicoRepository;
-    @Autowired private EspecialidadeRepository especialidadeRepository;
+    private final TecnicoRepository tecnicoRepository;
+    private final EspecialidadeRepository especialidadeRepository;
 
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);

@@ -12,7 +12,7 @@ import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.repository.ClienteRepository;
 import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ClienteService {
-    @Autowired private ClienteRepository clienteRepository;
-    @Autowired private ServicoRepository servicoRepository;
+    private final ClienteRepository clienteRepository;
+    private final ServicoRepository servicoRepository;
     public static Integer idUltimoCliente;
 
     @Cacheable("clienteCache")

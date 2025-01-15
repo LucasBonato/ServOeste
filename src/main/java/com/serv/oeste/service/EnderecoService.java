@@ -8,14 +8,15 @@ import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.viacep.ViaCep;
 import com.serv.oeste.models.viacep.ViaCepDTO;
 import io.micrometer.common.util.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;
 
 @Service
+@RequiredArgsConstructor
 public class EnderecoService {
-    @Autowired private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public ResponseEntity<ViaCepDTO> getFields(String cep) {
         return ResponseEntity.ok(getViaCepObject(cep));

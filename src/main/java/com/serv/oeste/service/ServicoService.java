@@ -14,6 +14,7 @@ import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.models.tecnico.Tecnico;
 import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,10 +30,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ServicoService {
-    @Autowired private ClienteService clienteService;
-    @Autowired private TecnicoService tecnicoService;
-    @Autowired private ServicoRepository servicoRepository;
+    private final ClienteService clienteService;
+    private final TecnicoService tecnicoService;
+    private final ServicoRepository servicoRepository;
 
     @Cacheable("allServicos")
     public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
