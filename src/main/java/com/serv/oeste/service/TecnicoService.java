@@ -12,7 +12,6 @@ import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.enums.Situacao;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

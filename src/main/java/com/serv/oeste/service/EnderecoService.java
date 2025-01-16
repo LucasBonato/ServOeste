@@ -22,7 +22,7 @@ public class EnderecoService {
         return ResponseEntity.ok(getViaCepObject(cep));
     }
 
-    protected ViaCepDTO getViaCepObject(String cep){
+    protected ViaCepDTO getViaCepObject(String cep) {
         try {
             ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
             if(StringUtils.isBlank(viaCep.getLogradouro())) return new ViaCepDTO(null);

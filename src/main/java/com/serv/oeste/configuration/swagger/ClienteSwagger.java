@@ -42,7 +42,7 @@ public interface ClienteSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "201", description = "[Created] Cliente registrado com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> create(ClienteRequest clienteRequest);
+    ResponseEntity<ClienteResponse> create(ClienteRequest clienteRequest);
 
     @Operation(description = "Forma de atualizar o registro de um cliente, com os campos sendo opcionais, atualizando só o necessário.")
     @ApiResponses(value = {

@@ -27,7 +27,7 @@ public class ClienteController implements ClienteSwagger {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody ClienteRequest clienteRequest) {
+    public ResponseEntity<ClienteResponse> create(@RequestBody ClienteRequest clienteRequest) {
         return clienteService.create(clienteRequest);
     }
 

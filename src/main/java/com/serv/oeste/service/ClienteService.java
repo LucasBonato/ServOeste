@@ -58,12 +58,16 @@ public class ClienteService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<Void> create(ClienteRequest clienteRequest) {
+    public ResponseEntity<ClienteResponse> create(ClienteRequest clienteRequest) {
         verificarRegraDeNegocio(clienteRequest);
-        Cliente cliente = new Cliente(clienteRequest);
+        Cliente newCliente = new Cliente(clienteRequest);
 
-        idUltimoCliente = clienteRepository.save(cliente).getId();
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Cliente cliente = clienteRepository.save(newCliente);
+
+        idUltimoCliente = cliente.getId();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(getClienteResponse(cliente));
     }
 
     public ResponseEntity<Void> update(Integer id, ClienteRequest clienteRequest) {
@@ -87,7 +91,7 @@ public class ClienteService {
                     }
                     return !possuiServicos;
                 })
-                .forEach(id -> clienteRepository.deleteById(id));
+                .forEach(clienteRepository::deleteById);
 
         if (!clientesNaoExcluidos.isEmpty()) {
             throw new ClienteNotValidException("O(s) seguinte(s) cliente(s) não foram excluído(s) por possuirem serviços atrelados a si: " + clientesNaoExcluidos, Codigo.CLIENTE);

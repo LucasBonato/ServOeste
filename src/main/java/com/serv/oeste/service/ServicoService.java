@@ -16,7 +16,6 @@ import com.serv.oeste.repository.ServicoRepository;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -146,7 +145,7 @@ public class ServicoService {
     public ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids) {
         ids.stream()
                 .filter(id -> servicoRepository.findById(id).isPresent())
-                .forEach(id -> servicoRepository.deleteById(id));
+                .forEach(servicoRepository::deleteById);
 
         return ResponseEntity.ok().build();
     }
