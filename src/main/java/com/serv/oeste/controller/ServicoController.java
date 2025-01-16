@@ -25,12 +25,12 @@ public class ServicoController implements ServicoSwagger {
     }
 
     @PostMapping
-    public ResponseEntity<Void> cadastrarComClienteExistente(@RequestBody ServicoRequest servicoRequest) {
+    public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(@RequestBody ServicoRequest servicoRequest) {
         return servicoService.cadastrarComClienteExistente(servicoRequest);
     }
 
     @PostMapping("/cliente")
-    public ResponseEntity<Void> cadastrarComClienteNaoExistente(@RequestBody ClienteServicoRequest clienteServicoRequest) {
+    public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(@RequestBody ClienteServicoRequest clienteServicoRequest) {
         return servicoService.cadastrarComClienteNaoExistente(clienteServicoRequest.clienteRequest(), clienteServicoRequest.servicoRequest());
     }
 

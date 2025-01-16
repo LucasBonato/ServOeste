@@ -1,5 +1,6 @@
 package com.serv.oeste.service;
 
+import com.serv.oeste.exception.servico.ServicoNotFoundException;
 import com.serv.oeste.exception.servico.ServicoNotValidException;
 import com.serv.oeste.models.cliente.Cliente;
 import com.serv.oeste.models.dtos.reponses.ServicoResponse;
@@ -125,21 +126,25 @@ public class ServicoService {
         return ResponseEntity.ok(getServicosResponse(servicos));
     }
 
-    public ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
+    public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest);
         verificarCamposObrigatoriosServico(servicoRequest);
-        cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
+        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(servicoResponse);
     }
 
-    public ResponseEntity<Void> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
+    public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
         verificarCamposObrigatoriosServico(servicoRequest);
         clienteService.create(clienteRequest);
         verificarSelecionamentoDasEntidades(servicoRequest, ClienteService.idUltimoCliente);
-        cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
+        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(servicoResponse);
     }
 
     public ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids) {
@@ -153,24 +158,25 @@ public class ServicoService {
     private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
         return servicos
                 .stream()
-                .map(servico -> new ServicoResponse(
-                        servico.getId(),
-                        servico.getCliente().getId(),
-                        servico.getTecnico().getId(),
-                        servico.getCliente().getNome(),
-                        servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome(),
-                        servico.getEquipamento(),
-                        servico.getFilial(),
-                        servico.getHorarioPrevisto(),
-                        servico.getMarca(),
-                        servico.getSituacao(),
-                        servico.getDataAtendimentoPrevisto()
-                ))
+                .map(this::getServicoResponse)
                 .collect(Collectors.toList());
     }
-//    private Servico getServicoById(Integer id) {
-//        return servicoRepository.findById(id).orElseThrow(ServicoNotFoundException::new);
-//    }
+
+    private ServicoResponse getServicoResponse(Servico servico) {
+        return new ServicoResponse(
+            servico.getId(),
+            servico.getCliente().getId(),
+            servico.getTecnico().getId(),
+            servico.getCliente().getNome(),
+            servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome(),
+            servico.getEquipamento(),
+            servico.getFilial(),
+            servico.getHorarioPrevisto(),
+            servico.getMarca(),
+            servico.getSituacao(),
+            servico.getDataAtendimentoPrevisto()
+        );
+    }
     private static Date convertData(String data) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date dataFormatada;
@@ -226,14 +232,14 @@ public class ServicoService {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
     }
-    private void cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
+    private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
         Cliente cliente = clienteService.getClienteById(idCliente);
         Tecnico tecnico = tecnicoService.getTecnicoById(servicoRequest.idTecnico());
         verificarCamposNaoObrigatoriosServico(servicoRequest);
 
-        cadastrarServico(servicoRequest, cliente, tecnico);
+        return cadastrarServico(servicoRequest, cliente, tecnico);
     }
-    private void cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
+    private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
         SituacaoServico situacao = StringUtils.isBlank(servicoRequest.horarioPrevisto()) ? SituacaoServico.AGUARDANDO_AGENDAMENTO : SituacaoServico.AGUARDANDO_ATENDIMENTO;
         Servico novoServico = new Servico(
                 servicoRequest.equipamento(),
@@ -246,6 +252,6 @@ public class ServicoService {
                 cliente,
                 tecnico
         );
-        servicoRepository.save(novoServico);
+        return getServicoResponse(servicoRepository.save(novoServico));
     }
 }

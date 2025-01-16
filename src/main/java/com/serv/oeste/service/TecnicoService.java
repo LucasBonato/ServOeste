@@ -29,7 +29,7 @@ public class TecnicoService {
 
     public ResponseEntity<Tecnico> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
-        if(tecnicoOptional.isEmpty()){
+        if (tecnicoOptional.isEmpty()) {
             throw new TecnicoNotFoundException();
         }
         return ResponseEntity.ok(tecnicoOptional.get());
@@ -77,23 +77,23 @@ public class TecnicoService {
 
         Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
                 .collect(
-                    Collectors.groupingBy(
-                        TecnicoDisponibilidade::getId,
-                        Collectors.collectingAndThen(
-                            Collectors.toList(),
-                            rawList -> {
-                                String nome = rawList.getFirst().getNome();
-                                Integer id = rawList.getFirst().getId();
-                                Integer quantidadeTotal = rawList.stream()
-                                    .mapToInt(TecnicoDisponibilidade::getQuantidade)
-                                    .sum();
-                                List<Disponibilidade> disponibilidades = rawList.stream()
-                                    .map(this::getDisponibilidadeFromRaw)
-                                    .collect(Collectors.toList());
-                                return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
-                            }
+                        Collectors.groupingBy(
+                                TecnicoDisponibilidade::getId,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        rawList -> {
+                                            String nome = rawList.getFirst().getNome();
+                                            Integer id = rawList.getFirst().getId();
+                                            Integer quantidadeTotal = rawList.stream()
+                                                    .mapToInt(TecnicoDisponibilidade::getQuantidade)
+                                                    .sum();
+                                            List<Disponibilidade> disponibilidades = rawList.stream()
+                                                    .map(this::getDisponibilidadeFromRaw)
+                                                    .collect(Collectors.toList());
+                                            return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
+                                        }
+                                )
                         )
-                    )
                 );
 
         List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());
@@ -146,6 +146,7 @@ public class TecnicoService {
     protected Tecnico getTecnicoById(Integer id) {
         return tecnicoRepository.findById(id).orElseThrow(TecnicoNotFoundException::new);
     }
+
     private Disponibilidade getDisponibilidadeFromRaw(TecnicoDisponibilidade tecnicoDisponibilidade) {
         return new Disponibilidade(
                 tecnicoDisponibilidade.getData(),
@@ -155,6 +156,7 @@ public class TecnicoService {
                 tecnicoDisponibilidade.getQuantidade()
         );
     }
+
     private String getDayNameOfTheWeek(Integer day) {
         return switch (day) {
             case 1 -> "Domingo";
@@ -167,49 +169,58 @@ public class TecnicoService {
             default -> "Dia da semana não encontrado!";
         };
     }
+
     private Situacao getSituacaoTecnico(TecnicoRequest tecnicoResponse) {
-        switch (tecnicoResponse.getSituacao().toLowerCase()){
-            case "ativo" -> { return Situacao.ATIVO;}
-            case "licença" -> { return Situacao.LICENCA;}
-            case "desativado" -> { return Situacao.DESATIVADO;}
+        switch (tecnicoResponse.getSituacao().toLowerCase()) {
+            case "ativo" -> {
+                return Situacao.ATIVO;
+            }
+            case "licença" -> {
+                return Situacao.LICENCA;
+            }
+            case "desativado" -> {
+                return Situacao.DESATIVADO;
+            }
         }
         throw new SituacaoNotFoundException();
     }
-    private List<Especialidade> getEspecialidadesTecnico(TecnicoRequest tecnico){
-        if(tecnico.getEspecialidades_Ids().isEmpty()){
+
+    private List<Especialidade> getEspecialidadesTecnico(TecnicoRequest tecnico) {
+        if (tecnico.getEspecialidades_Ids().isEmpty()) {
             throw new EspecialidadesTecnicoEmptyException();
         }
         List<Especialidade> especialidades = new ArrayList<>();
         for (Integer id : tecnico.getEspecialidades_Ids()) {
             Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
-            if (especialidadeOptional.isEmpty()){
+            if (especialidadeOptional.isEmpty()) {
                 throw new EspecialidadeNotFoundException();
             }
             especialidades.add(especialidadeOptional.get());
         }
         return especialidades;
     }
-    private void verifyFieldsOfTecnico(Tecnico tecnico){
+
+    private void verifyFieldsOfTecnico(Tecnico tecnico) {
         final int MINIMO_DE_CARACTERES_ACEITO = 2;
-        if(StringUtils.isBlank(tecnico.getNome())) {
+        if (StringUtils.isBlank(tecnico.getNome())) {
             throw new TecnicoNotValidException("O Nome do técnico não pode ser vazio!", Codigo.NOMESOBRENOME);
         }
-        if(tecnico.getNome().length() < MINIMO_DE_CARACTERES_ACEITO){
+        if (tecnico.getNome().length() < MINIMO_DE_CARACTERES_ACEITO) {
             throw new TecnicoNotValidException(String.format("O Nome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
         }
-        if(StringUtils.isBlank(tecnico.getSobrenome())) {
+        if (StringUtils.isBlank(tecnico.getSobrenome())) {
             throw new TecnicoNotValidException("Digite Nome e Sobrenome!", Codigo.NOMESOBRENOME);
         }
-        if(tecnico.getSobrenome().length() < MINIMO_DE_CARACTERES_ACEITO){
+        if (tecnico.getSobrenome().length() < MINIMO_DE_CARACTERES_ACEITO) {
             throw new TecnicoNotValidException(String.format("O Sobrenome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
         }
-        if(tecnico.getTelefoneCelular().isBlank() && tecnico.getTelefoneFixo().isBlank()) {
+        if (tecnico.getTelefoneCelular().isBlank() && tecnico.getTelefoneFixo().isBlank()) {
             throw new TecnicoNotValidException("O técnico precisa ter no mínimo um telefone cadastrado!", Codigo.TELEFONES);
         }
-        if(tecnico.getTelefoneCelular().length() < 11 && !tecnico.getTelefoneCelular().isEmpty()){
+        if (tecnico.getTelefoneCelular().length() < 11 && !tecnico.getTelefoneCelular().isEmpty()) {
             throw new TecnicoNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
-        if(tecnico.getTelefoneFixo().length() < 10 && !tecnico.getTelefoneFixo().isEmpty()) {
+        if (tecnico.getTelefoneFixo().length() < 10 && !tecnico.getTelefoneFixo().isEmpty()) {
             throw new TecnicoNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
     }

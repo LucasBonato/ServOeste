@@ -5,8 +5,6 @@ import com.serv.oeste.models.dtos.reponses.ServicoResponse;
 import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,12 +30,20 @@ public interface ServicoSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Cliente informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> cadastrarComClienteExistente(ServicoRequest servicoRequest);
+    ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest);
 
     @Operation(description = "Forma de registrar um novo serviço e um novo cliente ao mesmo tempo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "[Created] Serviço e cliente registrados com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Void> cadastrarComClienteNaoExistente(ClienteServicoRequest clienteServicoRequest);
+    ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteServicoRequest clienteServicoRequest);
+
+    @Operation(description = "Endpoint para deletar uma lista de serviços a partir de seus ids.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "[Ok] Lista de serviços deletada com sucesso.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+            @ApiResponse(responseCode = "404", description = "[NotFound] Algum serviço informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+    })
+    ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids);
 }
