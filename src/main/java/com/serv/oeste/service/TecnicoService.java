@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,17 +66,31 @@ public class TecnicoService {
     }
 
     public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidade(Integer especialidadeId) {
-        int diaAtual = LocalDate.now()
-                .getDayOfWeek()
-                .getValue();
-        int intervaloDeDias = (diaAtual > 4) ? 4 : 3;
+        int intervaloDeDias = (LocalDate.now().getDayOfWeek().getValue() > 4) ? 4 : 3;
 
         List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository.getDisponibilidadeTecnicosPeloConhecimento(intervaloDeDias, especialidadeId)
                 .stream()
                 .map(TecnicoDisponibilidade::new)
                 .toList();
 
-        Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
+        List<TecnicoDisponibilidadeResponse> tecnicos = tecnicosRaw.stream()
+                .collect(Collectors.groupingBy(TecnicoDisponibilidade::getId))
+                .entrySet().stream()
+                .map(tecnico -> {
+                    List<TecnicoDisponibilidade> rawList = tecnico.getValue();
+                    String nome = rawList.getFirst().getNome();
+                    Integer id = tecnico.getKey();
+                    Integer quantidadeTotal = rawList.stream()
+                            .mapToInt(TecnicoDisponibilidade::getQuantidade)
+                            .sum();
+                    List<Disponibilidade> disponibilidades = rawList.stream()
+                            .map(this::getDisponibilidadeFromRaw)
+                            .collect(Collectors.toList());
+                    return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
+                })
+                .toList();
+
+/*        Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
                 .collect(
                         Collectors.groupingBy(
                                 TecnicoDisponibilidade::getId,
@@ -96,7 +111,7 @@ public class TecnicoService {
                         )
                 );
 
-        List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());
+        List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());*/
 
         return ResponseEntity.ok(tecnicos);
     }
@@ -127,19 +142,13 @@ public class TecnicoService {
     }
 
     public ResponseEntity<Void> disableAList(List<Integer> ids) {
-        ids.stream()
+        List<Tecnico> tecnicos = ids.stream()
                 .map(this::getTecnicoById)
-                .forEach(tecnico -> {
-                    tecnico.setSituacao(Situacao.DESATIVADO);
-                    tecnicoRepository.save(tecnico);
-                });
+                .peek(tecnico -> tecnico.setSituacao(Situacao.DESATIVADO))
+                .collect(Collectors.toList());
 
-//        for (Integer id : ids) {
-//            Tecnico tecnico = getTecnicoById(id);
-//            tecnico.setSituacao(Situacao.DESATIVADO);
-//
-//            tecnicoRepository.save(tecnico);
-//        }
+        tecnicoRepository.saveAll(tecnicos);
+
         return ResponseEntity.ok().build();
     }
 
@@ -149,11 +158,11 @@ public class TecnicoService {
 
     private Disponibilidade getDisponibilidadeFromRaw(TecnicoDisponibilidade tecnicoDisponibilidade) {
         return new Disponibilidade(
-                tecnicoDisponibilidade.getData(),
-                tecnicoDisponibilidade.getDia(),
-                getDayNameOfTheWeek(tecnicoDisponibilidade.getDia()),
-                tecnicoDisponibilidade.getPeriodo(),
-                tecnicoDisponibilidade.getQuantidade()
+            tecnicoDisponibilidade.getData(),
+            tecnicoDisponibilidade.getDia(),
+            getDayNameOfTheWeek(tecnicoDisponibilidade.getDia()),
+            tecnicoDisponibilidade.getPeriodo(),
+            tecnicoDisponibilidade.getQuantidade()
         );
     }
 
@@ -189,15 +198,10 @@ public class TecnicoService {
         if (tecnico.getEspecialidades_Ids().isEmpty()) {
             throw new EspecialidadesTecnicoEmptyException();
         }
-        List<Especialidade> especialidades = new ArrayList<>();
-        for (Integer id : tecnico.getEspecialidades_Ids()) {
-            Optional<Especialidade> especialidadeOptional = especialidadeRepository.findById(id);
-            if (especialidadeOptional.isEmpty()) {
-                throw new EspecialidadeNotFoundException();
-            }
-            especialidades.add(especialidadeOptional.get());
-        }
-        return especialidades;
+
+        return tecnico.getEspecialidades_Ids().stream()
+                .map(id -> especialidadeRepository.findById(id).orElseThrow(EspecialidadeNotFoundException::new))
+                .collect(Collectors.toList());
     }
 
     private void verifyFieldsOfTecnico(Tecnico tecnico) {
