@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class TecnicoResponse {
+public class TecnicoRequest {
     private String nome;
     private String sobrenome;
     private String telefoneFixo;

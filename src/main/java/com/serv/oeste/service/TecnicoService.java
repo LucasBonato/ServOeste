@@ -8,7 +8,7 @@ import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.models.tecnico.*;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
-import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
+import com.serv.oeste.models.dtos.reponses.TecnicoRequest;
 import com.serv.oeste.models.enums.Situacao;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -101,25 +101,26 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicos);
     }
 
-    public ResponseEntity<Void> create(TecnicoResponse tecnicoResponse) {
-        Tecnico tecnico = new Tecnico(tecnicoResponse);
+    public ResponseEntity<Tecnico> create(TecnicoRequest tecnicoRequest) {
+        Tecnico tecnico = new Tecnico(tecnicoRequest);
         verifyFieldsOfTecnico(tecnico);
 
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoResponse));
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest));
 
-        tecnicoRepository.save(tecnico);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(tecnicoRepository.save(tecnico));
     }
 
-    public ResponseEntity<Void> update(Integer id, TecnicoResponse tecnicoResponse) {
+    public ResponseEntity<Void> update(Integer id, TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = getTecnicoById(id);
 
-        tecnico.setAll(tecnicoResponse);
+        tecnico.setAll(tecnicoRequest);
 
         verifyFieldsOfTecnico(tecnico);
 
-        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoResponse));
-        tecnico.setSituacao(getSituacaoTecnico(tecnicoResponse));
+        tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest));
+        tecnico.setSituacao(getSituacaoTecnico(tecnicoRequest));
         tecnico.setId(id);
         tecnicoRepository.save(tecnico);
         return ResponseEntity.ok().build();
@@ -166,7 +167,7 @@ public class TecnicoService {
             default -> "Dia da semana não encontrado!";
         };
     }
-    private Situacao getSituacaoTecnico(TecnicoResponse tecnicoResponse) {
+    private Situacao getSituacaoTecnico(TecnicoRequest tecnicoResponse) {
         switch (tecnicoResponse.getSituacao().toLowerCase()){
             case "ativo" -> { return Situacao.ATIVO;}
             case "licença" -> { return Situacao.LICENCA;}
@@ -174,7 +175,7 @@ public class TecnicoService {
         }
         throw new SituacaoNotFoundException();
     }
-    private List<Especialidade> getEspecialidadesTecnico(TecnicoResponse tecnico){
+    private List<Especialidade> getEspecialidadesTecnico(TecnicoRequest tecnico){
         if(tecnico.getEspecialidades_Ids().isEmpty()){
             throw new EspecialidadesTecnicoEmptyException();
         }
