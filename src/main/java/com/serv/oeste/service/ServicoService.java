@@ -47,14 +47,13 @@ public class ServicoService {
                     Tecnico tecnico = tecnicoService.getTecnicoById(id);
                     return ServicoSpecifications.hasTecnico(tecnico);
                 })
+                .addIfNotNull(servicoRequestFilter.situacao(), ServicoSpecifications::hasSituacao)
+                .addIfNotNull(servicoRequestFilter.garantia(), ServicoSpecifications::hasGarantia)
                 .addIf(StringUtils::isNotBlank, servicoRequestFilter.clienteNome(), ServicoSpecifications::hasNomeCliente)
                 .addIf(StringUtils::isNotBlank, servicoRequestFilter.tecnicoNome(), ServicoSpecifications::hasNomeTecnico)
                 .addIf(StringUtils::isNotBlank, servicoRequestFilter.equipamento(), ServicoSpecifications::hasEquipamento)
                 .addIf(StringUtils::isNotBlank, servicoRequestFilter.filial(), ServicoSpecifications::hasFilial)
-                .addIf(StringUtils::isNotBlank, servicoRequestFilter.periodo(), periodo -> {
-                    String periodoFormatado = periodo.toLowerCase().replace("ã", "a");
-                    return ServicoSpecifications.hasHorarioPrevisto(periodoFormatado);
-                })
+                .addIf(StringUtils::isNotBlank, servicoRequestFilter.periodo(), ServicoSpecifications::hasHorarioPrevisto)
                 .addDateRange(
                         servicoRequestFilter.dataAtendimentoPrevistoAntes(),
                         servicoRequestFilter.dataAtendimentoPrevistoDepois(),
@@ -74,52 +73,6 @@ public class ServicoService {
                         ServicoSpecifications::hasDataAbertura
                 )
                 .build();
-/*
-        if (servicoRequestFilter.servicoId() != null) {
-            specification = specification.and(ServicoSpecifications.hasServicoId(servicoRequestFilter.servicoId()));
-        }
-        if (servicoRequestFilter.clienteId() != null) {
-            Cliente cliente = clienteService.getClienteById(servicoRequestFilter.clienteId());
-            specification = specification.and(ServicoSpecifications.hasCliente(cliente));
-        }
-        if (servicoRequestFilter.tecnicoId() != null) {
-            Tecnico tecnico = tecnicoService.getTecnicoById(servicoRequestFilter.tecnicoId());
-            specification = specification.and(ServicoSpecifications.hasTecnico(tecnico));
-        }
-        if (StringUtils.isNotBlank(servicoRequestFilter.clienteNome())) {
-            specification = specification.and(ServicoSpecifications.hasNomeCliente(servicoRequestFilter.clienteNome()));
-        }
-        if (StringUtils.isNotBlank(servicoRequestFilter.tecnicoNome())) {
-            specification = specification.and(ServicoSpecifications.hasNomeTecnico(servicoRequestFilter.tecnicoNome()));
-        }
-        if (StringUtils.isNotBlank(servicoRequestFilter.equipamento())) {
-            specification = specification.and(ServicoSpecifications.hasEquipamento(servicoRequestFilter.equipamento()));
-        }
-        if (StringUtils.isNotBlank(servicoRequestFilter.filial())) {
-            specification = specification.and(ServicoSpecifications.hasFilial(servicoRequestFilter.filial()));
-        }
-        if (StringUtils.isNotBlank(servicoRequestFilter.periodo())) {
-            String periodo = servicoRequestFilter.periodo().toLowerCase().replace("ã", "a");
-            specification = specification.and(ServicoSpecifications.hasHorarioPrevisto(periodo));
-        }
-        if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null && servicoRequestFilter.dataAtendimentoPrevistoDepois() != null) {
-            specification = specification.and(ServicoSpecifications.isDataAtendimentoPrevistoBetween(servicoRequestFilter.dataAtendimentoPrevistoAntes(), servicoRequestFilter.dataAtendimentoPrevistoDepois()));
-        }
-        else if (servicoRequestFilter.dataAtendimentoPrevistoAntes() != null) {
-            specification = specification.and(ServicoSpecifications.hasDataAtendimentoPrevisto(servicoRequestFilter.dataAtendimentoPrevistoAntes()));
-        }
-        if (servicoRequestFilter.dataAtendimentoEfetivoAntes() != null && servicoRequestFilter.dataAtendimentoEfetivoDepois() != null) {
-            specification = specification.and(ServicoSpecifications.isDataAtendimentoEfetivoBetween(servicoRequestFilter.dataAtendimentoEfetivoAntes(), servicoRequestFilter.dataAtendimentoEfetivoDepois()));
-        }
-        else if (servicoRequestFilter.dataAtendimentoEfetivoAntes() != null) {
-            specification = specification.and(ServicoSpecifications.hasDataAtendimentoEfetivo(servicoRequestFilter.dataAtendimentoEfetivoAntes()));
-        }
-        if (servicoRequestFilter.dataAberturaAntes() != null && servicoRequestFilter.dataAberturaDepois() != null) {
-            specification = specification.and(ServicoSpecifications.isDataAberturaBetween(servicoRequestFilter.dataAberturaAntes(), servicoRequestFilter.dataAberturaDepois()));
-        }
-        else if (servicoRequestFilter.dataAberturaAntes() != null) {
-            specification = specification.and(ServicoSpecifications.hasDataAbertura(servicoRequestFilter.dataAberturaAntes()));
-        }*/
 
         List<Servico> servicos = servicoRepository.findAll(specification);
         return ResponseEntity.ok(getServicosResponse(servicos));

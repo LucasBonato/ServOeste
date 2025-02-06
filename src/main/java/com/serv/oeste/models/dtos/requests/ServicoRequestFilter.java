@@ -1,5 +1,7 @@
 package com.serv.oeste.models.dtos.requests;
 
+import com.serv.oeste.models.enums.SituacaoServico;
+
 import java.util.Date;
 
 public record ServicoRequestFilter(
@@ -16,5 +18,7 @@ public record ServicoRequestFilter(
         String tecnicoNome,
         String equipamento,
         String filial,
-        String periodo
+        String periodo,
+        Boolean garantia,
+        SituacaoServico situacao
 ) { }

@@ -1,10 +1,12 @@
 package com.serv.oeste.models.servico;
 
 import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.tecnico.Tecnico;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class ServicoSpecifications {
@@ -29,7 +31,26 @@ public class ServicoSpecifications {
     }
 
     public static Specification<Servico> hasHorarioPrevisto(String periodo) {
-        return (root, query, cb) -> cb.equal(root.get("horarioPrevisto"), periodo);
+        return (root, query, cb) -> cb.equal(root.get("horarioPrevisto"), periodo.toLowerCase().replace("ã", "a"));
+    }
+
+    public static Specification<Servico> hasSituacao(SituacaoServico situacao) {
+        return (root, query, cb) -> cb.equal(root.get("situacao"), situacao);
+    }
+
+    public static Specification<Servico> hasGarantia(Boolean garantia) {
+        Date hoje = java.sql.Date.valueOf(LocalDate.now());
+        return (root, query, cb) -> (garantia)
+                ? cb.and(
+                    cb.lessThanOrEqualTo(root.get("dataInicioGarantia"), hoje),
+                    cb.greaterThanOrEqualTo(root.get("dataFimGarantia"), hoje)
+                )
+                : cb.or(
+                    cb.greaterThan(root.get("dataInicioGarantia"), hoje),
+                    cb.lessThan(root.get("dataFimGarantia"), hoje),
+                    cb.isNull(root.get("dataInicioGarantia")),
+                    cb.isNull(root.get("dataFimGarantia"))
+                );
     }
 
     public static Specification<Servico> isDataAtendimentoPrevistoBetween(Date dataAtendimentoPrevistoAntes, Date dataAtendimentoPrevistoDepois) {
@@ -45,7 +66,7 @@ public class ServicoSpecifications {
     }
 
     public static Specification<Servico> hasEquipamento(String equipamento) {
-        return (root, query, cb) -> cb.equal(root.get("equipamento"), equipamento);
+        return (root, query, cb) -> cb.like(root.get("equipamento"), "%" + equipamento + "%");
     }
 
     public static Specification<Servico> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
