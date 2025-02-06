@@ -39,6 +39,7 @@ public class SpecificationBuilder<T> {
      * @return The specification with or without the filter
      *
      * @see Specification
+     * @see Function
      **/
     public <V> SpecificationBuilder<T> addIfNotNull(V value, Function<V, Specification<T>> specificationFunction) {
         if (value != null) {
