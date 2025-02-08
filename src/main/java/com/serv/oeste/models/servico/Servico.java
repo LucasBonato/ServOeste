@@ -36,6 +36,7 @@ public class Servico {
     private String descricao;
 
     @Column(name = "Situacao", nullable = false)
+    @Enumerated(EnumType.STRING)
     private SituacaoServico situacao;
 
     @Column(name = "Horario_Previsto")
@@ -45,6 +46,7 @@ public class Servico {
     private Double valor;
 
     @Column(name = "Forma_Pagamento")
+    @Enumerated(EnumType.STRING)
     private FormaPagamento formaPagamento;
 
     @Column(name = "Valor_Pecas")
@@ -95,8 +97,8 @@ public class Servico {
         this.tecnico = tecnico;
     }
 
-    public Servico(ServicoUpdateRequest servicoUpdateRequest, Servico servico, Cliente cliente, Tecnico tecnico) {
-        this.id = servico.id;
+    public Servico(Integer id, ServicoUpdateRequest servicoUpdateRequest, Servico servico, Cliente cliente, Tecnico tecnico, Date dataFechamento, Date dataInicioGarantia, Date dataFimGarantia, Date dataAtendimentoPrevisto, Date dataAtendimentoEfetiva, Date dataPagamentoComissao) {
+        this.id = id;
         this.dataAbertura = servico.dataAbertura;
         this.cliente = cliente;
         this.tecnico = tecnico;
@@ -107,11 +109,15 @@ public class Servico {
         this.situacao = servicoUpdateRequest.situacao();
         this.horarioPrevisto = servicoUpdateRequest.horarioPrevisto();
         this.valor = servicoUpdateRequest.valor();
-        this.dataFechamento = servicoUpdateRequest.dataFechamento();
-        this.dataInicioGarantia = servicoUpdateRequest.dataInicioGarantia();
-        this.dataFimGarantia = servicoUpdateRequest.dataFimGarantia();
-        this.dataAtendimentoPrevisto = servicoUpdateRequest.dataAtendimentoPrevisto();
-        this.dataAtendimentoEfetiva = servicoUpdateRequest.dataAtendimentoEfetiva();
+        this.valorComissao = servicoUpdateRequest.valorComissao();
+        this.valorPecas = servicoUpdateRequest.valorPecas();
+        this.formaPagamento = servicoUpdateRequest.formaPagamento();
+        this.dataFechamento = dataFechamento;
+        this.dataInicioGarantia = dataInicioGarantia;
+        this.dataFimGarantia = dataFimGarantia;
+        this.dataAtendimentoPrevisto = dataAtendimentoPrevisto;
+        this.dataAtendimentoEfetiva = dataAtendimentoEfetiva;
+        this.dataPagamentoComissao = dataPagamentoComissao;
     }
 
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
