@@ -32,7 +32,7 @@ public class ClienteController implements ClienteSwagger {
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestParam(value = "id") Integer id, @RequestBody ClienteRequest clienteRequest) {
+    public ResponseEntity<ClienteResponse> update(@RequestParam(value = "id") Integer id, @RequestBody ClienteRequest clienteRequest) {
         return clienteService.update(id, clienteRequest);
     }
 

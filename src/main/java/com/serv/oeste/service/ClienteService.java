@@ -43,13 +43,6 @@ public class ClienteService {
                 .addIf(StringUtils::isNotBlank, filtroRequest.endereco(), ClienteSpecifications::hasEndereco)
                 .build();
 
-//        if (StringUtils.isNotBlank(filtroRequest.nome()))
-//            specification = specification.and(ClienteSpecifications.hasNome(filtroRequest.nome()));
-//        if (StringUtils.isNotBlank(filtroRequest.telefone()))
-//            specification = specification.and(ClienteSpecifications.hasTelefone(filtroRequest.telefone()));
-//        if (StringUtils.isNotBlank(filtroRequest.endereco()))
-//            specification = specification.and(ClienteSpecifications.hasEndereco(filtroRequest.endereco()));
-
         List<ClienteResponse> response = clienteRepository.findAll(specification)
                 .stream()
                 .map(this::getClienteResponse)
@@ -70,12 +63,11 @@ public class ClienteService {
                 .body(getClienteResponse(cliente));
     }
 
-    public ResponseEntity<Void> update(Integer id, ClienteRequest clienteRequest) {
+    public ResponseEntity<ClienteResponse> update(Integer id, ClienteRequest clienteRequest) {
         Cliente cliente = getClienteById(id);
         verificarRegraDeNegocio(clienteRequest);
         cliente.setAll(clienteRequest);
-        clienteRepository.save(cliente);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(getClienteResponse(clienteRepository.save(cliente)));
     }
 
     public ResponseEntity<Void> deleteAList(List<Integer> ids) {
@@ -83,7 +75,6 @@ public class ClienteService {
 
         ids.stream()
                 .filter(id -> clienteRepository.findById(id).isPresent())
-                //TODO - Adicionar outro filtro para verificar se o Cliente possui um serviço relacionado a entidade
                 .filter(id -> {
                     Boolean possuiServicos = servicoRepository.existsByClienteId(id);
                     if (possuiServicos) {

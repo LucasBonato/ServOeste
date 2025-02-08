@@ -50,7 +50,7 @@ public interface ClienteSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Cliente informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> update(Integer id, ClienteRequest clienteRequest);
+    ResponseEntity<ClienteResponse> update(Integer id, ClienteRequest clienteRequest);
 
     @Operation(description = "Forma de deletar uma lista de registros de clientes que não possuem serviços conectados aos clientes.")
     @ApiResponses(value = {

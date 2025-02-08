@@ -44,22 +44,6 @@ public class TecnicoService {
                 .addIf(StringUtils::isNotBlank, filtroRequest.telefone(), TecnicoSpecifications::hasTelefone)
                 .build();
 
-//        if (filtroRequest.id() != null) {
-//            specification = specification.and(TecnicoSpecifications.hasId(filtroRequest.id()));
-//        }
-//        if (StringUtils.isNotBlank(filtroRequest.nome())) {
-//            specification = specification.and(TecnicoSpecifications.hasNomeCompleto(filtroRequest.nome()));
-//        }
-//        if (StringUtils.isNotBlank(filtroRequest.situacao())) {
-//            specification = specification.and(TecnicoSpecifications.hasSituacao(filtroRequest.situacao()));
-//        }
-//        if (StringUtils.isNotBlank(filtroRequest.equipamento())) {
-//            specification = specification.and(TecnicoSpecifications.hasEquipamento(filtroRequest.equipamento()));
-//        }
-//        if (StringUtils.isNotBlank(filtroRequest.telefone())) {
-//            specification = specification.and(TecnicoSpecifications.hasTelefone(filtroRequest.telefone()));
-//        }
-
         List<Tecnico> response = tecnicoRepository.findAll(specification);
         return ResponseEntity.ok(response);
     }
@@ -89,29 +73,6 @@ public class TecnicoService {
                 })
                 .toList();
 
-/*        Map<Integer, TecnicoDisponibilidadeResponse> tecnicoMap = tecnicosRaw.stream()
-                .collect(
-                        Collectors.groupingBy(
-                                TecnicoDisponibilidade::getId,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        rawList -> {
-                                            String nome = rawList.getFirst().getNome();
-                                            Integer id = rawList.getFirst().getId();
-                                            Integer quantidadeTotal = rawList.stream()
-                                                    .mapToInt(TecnicoDisponibilidade::getQuantidade)
-                                                    .sum();
-                                            List<Disponibilidade> disponibilidades = rawList.stream()
-                                                    .map(this::getDisponibilidadeFromRaw)
-                                                    .collect(Collectors.toList());
-                                            return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
-                                        }
-                                )
-                        )
-                );
-
-        List<TecnicoDisponibilidadeResponse> tecnicos = new ArrayList<>(tecnicoMap.values());*/
-
         return ResponseEntity.ok(tecnicos);
     }
 
@@ -126,7 +87,7 @@ public class TecnicoService {
                 .body(tecnicoRepository.save(tecnico));
     }
 
-    public ResponseEntity<Void> update(Integer id, TecnicoRequest tecnicoRequest) {
+    public ResponseEntity<Tecnico> update(Integer id, TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = getTecnicoById(id);
 
         tecnico.setAll(tecnicoRequest);
@@ -136,8 +97,7 @@ public class TecnicoService {
         tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest));
         tecnico.setSituacao(getSituacaoTecnico(tecnicoRequest));
         tecnico.setId(id);
-        tecnicoRepository.save(tecnico);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(tecnicoRepository.save(tecnico));
     }
 
     public ResponseEntity<Void> disableAList(List<Integer> ids) {

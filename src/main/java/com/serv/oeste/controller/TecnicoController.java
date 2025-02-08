@@ -39,7 +39,7 @@ public class TecnicoController implements TecnicoSwagger {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody TecnicoRequest tecnicoResponse){
+    public ResponseEntity<Tecnico> update(@PathVariable Integer id, @RequestBody TecnicoRequest tecnicoResponse){
         return tecnicoService.update(id, tecnicoResponse);
     }
 

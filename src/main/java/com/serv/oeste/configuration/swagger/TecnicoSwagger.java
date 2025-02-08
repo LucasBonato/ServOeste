@@ -53,7 +53,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> update(Integer id, TecnicoRequest tecnicoResponse);
+    ResponseEntity<Tecnico> update(Integer id, TecnicoRequest tecnicoResponse);
 
     @Operation(description = "Forma de desativar uma lista de técnicos, alterando o `status` para: `Desativado`.")
     @ApiResponses(value = {
