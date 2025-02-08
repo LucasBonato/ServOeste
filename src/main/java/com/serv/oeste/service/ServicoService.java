@@ -176,7 +176,7 @@ public class ServicoService {
         try {
             dataFormatada = formatter.parse(data);
         } catch (ParseException e){
-            throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
+            throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado, formato correto: dd/MM/YYYY");
         }
         return dataFormatada;
     }
