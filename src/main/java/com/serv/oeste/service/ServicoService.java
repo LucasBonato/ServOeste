@@ -153,14 +153,27 @@ public class ServicoService {
             servico.getFilial(),
             servico.getHorarioPrevisto(),
             servico.getMarca(),
+            servico.getDescricao(),
+            servico.getFormaPagamento(),
             servico.getSituacao(),
-            servico.getDataAtendimentoPrevisto()
+            servico.getValor(),
+            servico.getValorComissao(),
+            servico.getValorPecas(),
+            servico.getDataAtendimentoPrevisto(),
+            servico.getDataFechamento(),
+            servico.getDataInicioGarantia(),
+            servico.getDataFimGarantia(),
+            servico.getDataAtendimentoEfetiva(),
+            servico.getDataPagamentoComissao()
         );
     }
     private static Date convertData(String data) {
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date dataFormatada;
-        try{
+        try {
             dataFormatada = formatter.parse(data);
         } catch (ParseException e){
             throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado");
