@@ -1,11 +1,13 @@
 package com.serv.oeste.service;
 
+import com.serv.oeste.exception.servico.ServicoNotFoundException;
 import com.serv.oeste.exception.servico.ServicoNotValidException;
 import com.serv.oeste.models.cliente.Cliente;
 import com.serv.oeste.models.dtos.reponses.ServicoResponse;
 import com.serv.oeste.models.dtos.requests.ClienteRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequest;
 import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
+import com.serv.oeste.models.dtos.requests.ServicoUpdateRequest;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.enums.SituacaoServico;
 import com.serv.oeste.models.servico.Servico;
@@ -79,7 +81,7 @@ public class ServicoService {
     }
 
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
-        verificarSelecionamentoDasEntidades(servicoRequest);
+        verificarSelecionamentoDasEntidades(servicoRequest.idCliente(), servicoRequest.idTecnico());
         verificarCamposObrigatoriosServico(servicoRequest);
         ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
 
@@ -97,6 +99,32 @@ public class ServicoService {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(servicoResponse);
+    }
+
+    public ResponseEntity<ServicoResponse> update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
+        Servico servico = servicoRepository.findById(id).orElseThrow(ServicoNotFoundException::new);
+
+        verificarSelecionamentoDasEntidades(servicoUpdateRequest.idCliente(), servicoUpdateRequest.idTecnico());
+        verificarCamposUpdate(servicoUpdateRequest);
+        Cliente cliente = clienteService.getClienteById(servicoUpdateRequest.idCliente());
+        Tecnico tecnico = tecnicoService.getTecnicoById(servicoUpdateRequest.idTecnico());
+
+
+        Servico servicoUpdated = servicoRepository.save(new Servico(
+                id,
+                servicoUpdateRequest,
+                servico,
+                cliente,
+                tecnico,
+                convertData(servicoUpdateRequest.dataFechamento()),
+                convertData(servicoUpdateRequest.dataInicioGarantia()),
+                convertData(servicoUpdateRequest.dataFimGarantia()),
+                convertData(servicoUpdateRequest.dataAtendimentoPrevisto()),
+                convertData(servicoUpdateRequest.dataAtendimentoEfetiva()),
+                convertData(servicoUpdateRequest.dataPagamentoComissao())
+        ));
+
+        return ResponseEntity.ok(getServicoResponse(servicoUpdated));
     }
 
     public ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids) {
@@ -140,11 +168,11 @@ public class ServicoService {
         return dataFormatada;
     }
 
-    private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest) {
-        if(servicoRequest.idCliente() == null) {
+    private void verificarSelecionamentoDasEntidades(Integer idCliente, Integer idTecnico) {
+        if(idCliente == null) {
             throw new ServicoNotValidException(Codigo.CLIENTE, "Cliente não selecionado");
         }
-        if(servicoRequest.idTecnico() == null) {
+        if(idTecnico == null) {
             throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
@@ -182,6 +210,38 @@ public class ServicoService {
         }
         if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
+        }
+    }
+    private void verificarCamposUpdate(ServicoUpdateRequest servicoRequest) {
+        if(StringUtils.isBlank(servicoRequest.equipamento())) {
+            throw new ServicoNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
+        }
+        if(StringUtils.isBlank(servicoRequest.marca())) {
+            throw new ServicoNotValidException(Codigo.MARCA, "Marca é obrigatória");
+        }
+        if(StringUtils.isBlank(servicoRequest.descricao())) {
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
+        }
+        if(servicoRequest.descricao().length() < 10) {
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
+        }
+        if(servicoRequest.descricao().split(" ").length < 2) {
+            throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
+        }
+        if(StringUtils.isBlank(servicoRequest.filial())) {
+            throw new ServicoNotValidException(Codigo.FILIAL, "A filial é obrigatória");
+        }
+        if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
+            throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
+        }
+        if (servicoRequest.valor() < 0) {
+            throw new ServicoNotValidException(Codigo.SERVICO, "O Valor não pode ser negativo.");
+        }
+        if (servicoRequest.valorComissao() < 0) {
+            throw new ServicoNotValidException(Codigo.SERVICO, "O Valor da Comissão não pode ser negativo.");
+        }
+        if (servicoRequest.valorPecas() < 0) {
+            throw new ServicoNotValidException(Codigo.SERVICO, "O Valor das Peças não pode ser negativo.");
         }
     }
     private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){

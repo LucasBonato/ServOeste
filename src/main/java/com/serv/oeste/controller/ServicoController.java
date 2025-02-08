@@ -2,11 +2,7 @@ package com.serv.oeste.controller;
 
 import com.serv.oeste.configuration.swagger.ServicoSwagger;
 import com.serv.oeste.models.dtos.reponses.ServicoResponse;
-import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
-import com.serv.oeste.models.dtos.requests.ServicoRequest;
-import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.models.dtos.requests.*;
 import com.serv.oeste.service.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +28,11 @@ public class ServicoController implements ServicoSwagger {
     @PostMapping("/cliente")
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(@RequestBody ClienteServicoRequest clienteServicoRequest) {
         return servicoService.cadastrarComClienteNaoExistente(clienteServicoRequest.clienteRequest(), clienteServicoRequest.servicoRequest());
+    }
+
+    @PutMapping
+    public ResponseEntity<ServicoResponse> update(@RequestParam(value = "id") Integer id, @RequestBody ServicoUpdateRequest servicoUpdateRequest) {
+        return servicoService.update(id, servicoUpdateRequest);
     }
 
     @DeleteMapping
