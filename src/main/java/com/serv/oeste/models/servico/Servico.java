@@ -115,6 +115,11 @@ public class Servico {
     }
 
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
-        return history + String.format("[%TD] - %s - %s%n", LocalDate.now(), situacao.getSituacao().toUpperCase(), descricao);
+        return history + String.format(
+                "[%TD] - %s - %s%n",
+                LocalDate.now(),
+                ((situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) || situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO)) ? "ABERTURA: " : "") + situacao.getSituacao().toUpperCase(),
+                descricao
+        );
     }
 }
