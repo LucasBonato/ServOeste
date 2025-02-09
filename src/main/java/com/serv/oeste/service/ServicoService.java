@@ -154,7 +154,7 @@ public class ServicoService {
             servico.getHorarioPrevisto(),
             servico.getMarca(),
             servico.getDescricao(),
-            servico.getFormaPagamento(),
+            servico.getFormaPagamento().getFormaPagamento(),
             servico.getSituacao(),
             servico.getValor(),
             servico.getValorComissao(),

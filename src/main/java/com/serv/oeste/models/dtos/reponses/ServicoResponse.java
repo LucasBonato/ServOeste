@@ -16,7 +16,7 @@ public record ServicoResponse (
     String horarioPrevisto,
     String marca,
     String descricao,
-    FormaPagamento formaPagamento,
+    String formaPagamento,
     SituacaoServico situacao,
     Double valor,
     Double valorComissao,
