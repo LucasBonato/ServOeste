@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FormaPagamento {
     DEBITO("Débito"),
+    DINHEIRO("Dinheiro"),
     CREDITO("Crédito"),
     PIX("PIX"),
     BOLETO("Boleto"),
