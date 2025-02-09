@@ -9,7 +9,7 @@ public enum FormaPagamento {
     DEBITO("Débito"),
     DINHEIRO("Dinheiro"),
     CREDITO("Crédito"),
-    PIX("PIX"),
+    PIX("Pix"),
     BOLETO("Boleto"),
     ;
 
