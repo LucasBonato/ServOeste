@@ -18,6 +18,7 @@ public record ServicoResponse (
     String descricao,
     String formaPagamento,
     SituacaoServico situacao,
+    Boolean garantia,
     Double valor,
     Double valorComissao,
     Double valorPecas,

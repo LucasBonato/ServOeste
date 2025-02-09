@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -143,6 +144,11 @@ public class ServicoService {
     }
 
     private ServicoResponse getServicoResponse(Servico servico) {
+        Boolean garatia = null;
+        if (servico.getDataInicioGarantia() != null) {
+            garatia = (servico.getDataInicioGarantia().after(java.sql.Date.valueOf(LocalDate.now())) && servico.getDataFimGarantia().before(java.sql.Date.valueOf(LocalDate.now())));
+        }
+
         return new ServicoResponse(
             servico.getId(),
             servico.getCliente().getId(),
@@ -154,8 +160,9 @@ public class ServicoService {
             servico.getHorarioPrevisto(),
             servico.getMarca(),
             servico.getDescricao(),
-            servico.getFormaPagamento().getFormaPagamento(),
+            (servico.getFormaPagamento() != null) ? servico.getFormaPagamento().getFormaPagamento() : null,
             servico.getSituacao(),
+            garatia,
             servico.getValor(),
             servico.getValorComissao(),
             servico.getValorPecas(),
