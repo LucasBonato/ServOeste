@@ -254,13 +254,13 @@ public class ServicoService {
         if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
-        if (servicoRequest.valor() < 0) {
+        if (servicoRequest.valor() != null && servicoRequest.valor() < 0) {
             throw new ServicoNotValidException(Codigo.SERVICO, "O Valor não pode ser negativo.");
         }
-        if (servicoRequest.valorComissao() < 0) {
+        if (servicoRequest.valorComissao() != null && servicoRequest.valorComissao() < 0) {
             throw new ServicoNotValidException(Codigo.SERVICO, "O Valor da Comissão não pode ser negativo.");
         }
-        if (servicoRequest.valorPecas() < 0) {
+        if (servicoRequest.valorPecas() != null && servicoRequest.valorPecas() < 0) {
             throw new ServicoNotValidException(Codigo.SERVICO, "O Valor das Peças não pode ser negativo.");
         }
     }
