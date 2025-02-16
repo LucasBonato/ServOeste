@@ -26,6 +26,7 @@ spring:
           lob:
             non_contextual_creation: true
     show-sql: false
+    open-in-view: false
   flyway:
     enabled: true
     url: 'jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:servOeste}'
