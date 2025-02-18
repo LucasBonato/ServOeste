@@ -27,7 +27,8 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -109,7 +110,6 @@ public class ServicoService {
         verificarCamposUpdate(servicoUpdateRequest);
         Cliente cliente = clienteService.getClienteById(servicoUpdateRequest.idCliente());
         Tecnico tecnico = tecnicoService.getTecnicoById(servicoUpdateRequest.idTecnico());
-
 
         Servico servicoUpdated = servicoRepository.save(new Servico(
                 id,

@@ -1,7 +1,9 @@
 package com.serv.oeste.models.tecnico;
 
-import com.serv.oeste.models.dtos.reponses.TecnicoRequest;
+import com.serv.oeste.models.dtos.requests.TecnicoRequest;
 import com.serv.oeste.models.enums.Situacao;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.relational.core.mapping.Table;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -36,6 +38,7 @@ public class Tecnico {
     private Situacao situacao = Situacao.ATIVO;
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(name = "Tecnico_Especialidade", joinColumns = @JoinColumn(name = "Id_Tecnico"), inverseJoinColumns = @JoinColumn(name = "Id_Especialidade"))
     private List<Especialidade> especialidades;
 

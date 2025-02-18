@@ -1,14 +1,16 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.exception.tecnico.*;
+import com.serv.oeste.models.dtos.reponses.TecnicoAllResponse;
 import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.specifications.SpecificationBuilder;
 import com.serv.oeste.models.tecnico.*;
 import com.serv.oeste.repository.EspecialidadeRepository;
 import com.serv.oeste.repository.TecnicoRepository;
-import com.serv.oeste.models.dtos.reponses.TecnicoRequest;
+import com.serv.oeste.models.dtos.requests.TecnicoRequest;
 import com.serv.oeste.models.enums.Situacao;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +29,16 @@ public class TecnicoService {
     private final TecnicoRepository tecnicoRepository;
     private final EspecialidadeRepository especialidadeRepository;
 
-    public ResponseEntity<Tecnico> getOne(Integer id) {
+    public ResponseEntity<TecnicoAllResponse> getOne(Integer id) {
         Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
         if (tecnicoOptional.isEmpty()) {
             throw new TecnicoNotFoundException();
         }
-        return ResponseEntity.ok(tecnicoOptional.get());
+        TecnicoAllResponse tecnico = new TecnicoAllResponse(tecnicoOptional.get());
+        return ResponseEntity.ok(tecnico);
     }
 
-    public ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filtroRequest) {
+    public ResponseEntity<List<TecnicoResponse>> getBy(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = new SpecificationBuilder<Tecnico>()
                 .addIfNotNull(filtroRequest.id(), TecnicoSpecifications::hasId)
                 .addIf(StringUtils::isNotBlank, filtroRequest.nome(), TecnicoSpecifications::hasNomeCompleto)
@@ -44,8 +47,11 @@ public class TecnicoService {
                 .addIf(StringUtils::isNotBlank, filtroRequest.telefone(), TecnicoSpecifications::hasTelefone)
                 .build();
 
-        List<Tecnico> response = tecnicoRepository.findAll(specification);
-        return ResponseEntity.ok(response);
+        List<TecnicoResponse> tecnicos = tecnicoRepository.findAll(specification)
+                .stream()
+                .map(TecnicoResponse::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(tecnicos);
     }
 
     public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidade(Integer especialidadeId) {
@@ -76,7 +82,7 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicos);
     }
 
-    public ResponseEntity<Tecnico> create(TecnicoRequest tecnicoRequest) {
+    public ResponseEntity<TecnicoAllResponse> create(TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = new Tecnico(tecnicoRequest);
         verifyFieldsOfTecnico(tecnico);
 
@@ -84,10 +90,10 @@ public class TecnicoService {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(tecnicoRepository.save(tecnico));
+                .body(new TecnicoAllResponse(tecnicoRepository.save(tecnico)));
     }
 
-    public ResponseEntity<Tecnico> update(Integer id, TecnicoRequest tecnicoRequest) {
+    public ResponseEntity<TecnicoAllResponse> update(Integer id, TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = getTecnicoById(id);
 
         tecnico.setAll(tecnicoRequest);
@@ -97,7 +103,7 @@ public class TecnicoService {
         tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest));
         tecnico.setSituacao(getSituacaoTecnico(tecnicoRequest));
         tecnico.setId(id);
-        return ResponseEntity.ok(tecnicoRepository.save(tecnico));
+        return ResponseEntity.ok(new TecnicoAllResponse(tecnicoRepository.save(tecnico)));
     }
 
     public ResponseEntity<Void> disableAList(List<Integer> ids) {

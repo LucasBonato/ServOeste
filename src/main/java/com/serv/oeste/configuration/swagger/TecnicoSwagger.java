@@ -1,11 +1,12 @@
 package com.serv.oeste.configuration.swagger;
 
 import com.serv.oeste.exception.ExceptionResponse;
+import com.serv.oeste.models.dtos.reponses.TecnicoAllResponse;
 import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoRequest;
+import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
+import com.serv.oeste.models.dtos.requests.TecnicoRequest;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
-import com.serv.oeste.models.tecnico.Tecnico;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,14 +25,14 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "200", description = "[Ok] Lista de técnicos trazida com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<List<Tecnico>> getBy(TecnicoRequestFilter filter);
+    ResponseEntity<List<TecnicoResponse>> getBy(TecnicoRequestFilter filter);
 
     @Operation(description = "Forma de trazer o registro de um técnico atravez de seu id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Técnico devolvido com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Tecnico> getOne(Integer id);
+    ResponseEntity<TecnicoAllResponse> getOne(Integer id);
 
     @Operation(description = "Forma de pegar informações para prencheer a tabela de disponibilidade de técnicos.")
     @ApiResponses(value = {
@@ -45,7 +46,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "201", description = "[Created] Técnico registrado com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<Tecnico> create(TecnicoRequest tecnicoResponse);
+    ResponseEntity<TecnicoAllResponse> create(TecnicoRequest tecnicoResponse);
 
     @Operation(description = "Forma de atualizar o registro de um técnico, com os campos sendo opcionais, atualizando só o necessário.")
     @ApiResponses(value = {
@@ -53,7 +54,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Tecnico> update(Integer id, TecnicoRequest tecnicoResponse);
+    ResponseEntity<TecnicoAllResponse> update(Integer id, TecnicoRequest tecnicoResponse);
 
     @Operation(description = "Forma de desativar uma lista de técnicos, alterando o `status` para: `Desativado`.")
     @ApiResponses(value = {
@@ -61,5 +62,5 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] Algum técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> desativandoList(List<Integer> ids);
+    ResponseEntity<Void> disableAList(List<Integer> ids);
 }

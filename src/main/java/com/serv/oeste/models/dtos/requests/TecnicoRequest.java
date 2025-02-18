@@ -1,4 +1,4 @@
-package com.serv.oeste.models.dtos.reponses;
+package com.serv.oeste.models.dtos.requests;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
