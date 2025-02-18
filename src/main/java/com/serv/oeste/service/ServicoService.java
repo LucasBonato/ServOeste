@@ -146,7 +146,7 @@ public class ServicoService {
     private ServicoResponse getServicoResponse(Servico servico) {
         Boolean garatia = null;
         if (servico.getDataInicioGarantia() != null) {
-            garatia = (servico.getDataInicioGarantia().after(java.sql.Date.valueOf(LocalDate.now())) && servico.getDataFimGarantia().before(java.sql.Date.valueOf(LocalDate.now())));
+            garatia = (servico.getDataInicioGarantia().before(java.sql.Date.valueOf(LocalDate.now())) && servico.getDataFimGarantia().after(java.sql.Date.valueOf(LocalDate.now())));
         }
 
         return new ServicoResponse(
