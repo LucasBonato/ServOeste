@@ -272,7 +272,10 @@ public class ServicoService {
         return cadastrarServico(servicoRequest, cliente, tecnico);
     }
     private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
-        SituacaoServico situacao = StringUtils.isBlank(servicoRequest.horarioPrevisto()) ? SituacaoServico.AGUARDANDO_AGENDAMENTO : SituacaoServico.AGUARDANDO_ATENDIMENTO;
+        SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || convertData(servicoRequest.dataAtendimento()) != null)
+                ? SituacaoServico.AGUARDANDO_AGENDAMENTO
+                : SituacaoServico.AGUARDANDO_ATENDIMENTO;
+
         Servico novoServico = new Servico(
                 servicoRequest.equipamento(),
                 servicoRequest.marca(),
