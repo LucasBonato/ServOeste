@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ServicoService {
@@ -83,7 +82,7 @@ public class ServicoService {
     }
 
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
-        verificarSelecionamentoDasEntidades(servicoRequest.idCliente(), servicoRequest.idTecnico());
+        verificarSelecionamentoDasEntidades(servicoRequest.idCliente());
         verificarCamposObrigatoriosServico(servicoRequest);
         ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
 
@@ -95,7 +94,7 @@ public class ServicoService {
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
         verificarCamposObrigatoriosServico(servicoRequest);
         clienteService.create(clienteRequest);
-        verificarSelecionamentoDasEntidades(servicoRequest, ClienteService.idUltimoCliente);
+        verificarSelecionamentoDasEntidades(ClienteService.idUltimoCliente);
         ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
 
         return ResponseEntity
@@ -106,7 +105,7 @@ public class ServicoService {
     public ResponseEntity<ServicoResponse> update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
         Servico servico = servicoRepository.findById(id).orElseThrow(ServicoNotFoundException::new);
 
-        verificarSelecionamentoDasEntidades(servicoUpdateRequest.idCliente(), servicoUpdateRequest.idTecnico());
+        verificarSelecionamentoDasEntidades(servicoUpdateRequest.idCliente(), servicoUpdateRequest.idTecnico(), servicoUpdateRequest.situacao());
         verificarCamposUpdate(servicoUpdateRequest);
         Cliente cliente = clienteService.getClienteById(servicoUpdateRequest.idCliente());
         Tecnico tecnico = tecnicoService.getTecnicoById(servicoUpdateRequest.idTecnico());
@@ -146,15 +145,16 @@ public class ServicoService {
     private ServicoResponse getServicoResponse(Servico servico) {
         Boolean garatia = null;
         if (servico.getDataInicioGarantia() != null) {
-            garatia = (servico.getDataInicioGarantia().before(java.sql.Date.valueOf(LocalDate.now())) && servico.getDataFimGarantia().after(java.sql.Date.valueOf(LocalDate.now())));
+            java.sql.Date dataHoje = java.sql.Date.valueOf(LocalDate.now());
+            garatia = (servico.getDataInicioGarantia().before(dataHoje) && servico.getDataFimGarantia().after(dataHoje));
         }
 
         return new ServicoResponse(
             servico.getId(),
             servico.getCliente().getId(),
-            servico.getTecnico().getId(),
+            (servico.getTecnico() != null) ? servico.getTecnico().getId() : null,
             servico.getCliente().getNome(),
-            servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome(),
+            (servico.getTecnico() != null) ? servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome() : null,
             servico.getEquipamento(),
             servico.getFilial(),
             servico.getHorarioPrevisto(),
@@ -188,20 +188,17 @@ public class ServicoService {
         return dataFormatada;
     }
 
-    private void verificarSelecionamentoDasEntidades(Integer idCliente, Integer idTecnico) {
+    private void verificarSelecionamentoDasEntidades(Integer idCliente, Integer idTecnico, SituacaoServico situacao) {
         if(idCliente == null) {
             throw new ServicoNotValidException(Codigo.CLIENTE, "Cliente não selecionado");
         }
-        if(idTecnico == null) {
+        if((!situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO)) && idTecnico == null) {
             throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
-    private void verificarSelecionamentoDasEntidades(ServicoRequest servicoRequest, Integer idCliente) {
+    private void verificarSelecionamentoDasEntidades(Integer idCliente) {
         if(idCliente == null) {
             throw new ServicoNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado");
-        }
-        if(servicoRequest.idTecnico() == null) {
-            throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
     private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
@@ -266,15 +263,19 @@ public class ServicoService {
     }
     private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
         Cliente cliente = clienteService.getClienteById(idCliente);
-        Tecnico tecnico = tecnicoService.getTecnicoById(servicoRequest.idTecnico());
+        Tecnico tecnico = (servicoRequest.idTecnico() != null) ? tecnicoService.getTecnicoById(servicoRequest.idTecnico()) : null;
         verificarCamposNaoObrigatoriosServico(servicoRequest);
 
         return cadastrarServico(servicoRequest, cliente, tecnico);
     }
     private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
-        SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || convertData(servicoRequest.dataAtendimento()) != null)
+        SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || convertData(servicoRequest.dataAtendimento()) == null)
                 ? SituacaoServico.AGUARDANDO_AGENDAMENTO
                 : SituacaoServico.AGUARDANDO_ATENDIMENTO;
+
+        if(situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) && tecnico == null) {
+            throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
+        }
 
         Servico novoServico = new Servico(
                 servicoRequest.equipamento(),
