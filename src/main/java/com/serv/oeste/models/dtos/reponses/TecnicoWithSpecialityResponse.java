@@ -6,7 +6,7 @@ import com.serv.oeste.models.tecnico.Tecnico;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record TecnicoAllResponse(
+public record TecnicoWithSpecialityResponse(
         Integer id,
         String nome,
         String sobrenome,
@@ -15,7 +15,7 @@ public record TecnicoAllResponse(
         Situacao situacao,
         List<EspecialidadeResponse> especialidades
 ) {
-    public TecnicoAllResponse(Tecnico tecnico) {
+    public TecnicoWithSpecialityResponse(Tecnico tecnico) {
         this(
                 tecnico.getId(),
                 tecnico.getNome(),

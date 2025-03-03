@@ -1,7 +1,7 @@
 package com.serv.oeste.service;
 
 import com.serv.oeste.exception.tecnico.*;
-import com.serv.oeste.models.dtos.reponses.TecnicoAllResponse;
+import com.serv.oeste.models.dtos.reponses.TecnicoWithSpecialityResponse;
 import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
@@ -29,16 +29,13 @@ public class TecnicoService {
     private final TecnicoRepository tecnicoRepository;
     private final EspecialidadeRepository especialidadeRepository;
 
-    public ResponseEntity<TecnicoAllResponse> getOne(Integer id) {
-        Optional<Tecnico> tecnicoOptional = tecnicoRepository.findById(id);
-        if (tecnicoOptional.isEmpty()) {
-            throw new TecnicoNotFoundException();
-        }
-        TecnicoAllResponse tecnico = new TecnicoAllResponse(tecnicoOptional.get());
-        return ResponseEntity.ok(tecnico);
+    public ResponseEntity<TecnicoWithSpecialityResponse> fetchOneById(Integer id) {
+        Tecnico tecnico = tecnicoRepository.findById(id).orElseThrow(TecnicoNotFoundException::new);
+        
+        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(tecnico));
     }
 
-    public ResponseEntity<List<TecnicoResponse>> getBy(TecnicoRequestFilter filtroRequest) {
+    public ResponseEntity<List<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filtroRequest) {
         Specification<Tecnico> specification = new SpecificationBuilder<Tecnico>()
                 .addIfNotNull(filtroRequest.id(), TecnicoSpecifications::hasId)
                 .addIf(StringUtils::isNotBlank, filtroRequest.nome(), TecnicoSpecifications::hasNomeCompleto)
@@ -54,7 +51,7 @@ public class TecnicoService {
         return ResponseEntity.ok(tecnicos);
     }
 
-    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> getDadosDisponibilidade(Integer especialidadeId) {
+    public ResponseEntity<List<TecnicoDisponibilidadeResponse>> fetchListAvailability(Integer especialidadeId) {
         int intervaloDeDias = (LocalDate.now().getDayOfWeek().getValue() > 4) ? 4 : 3;
 
         List<TecnicoDisponibilidade> tecnicosRaw = tecnicoRepository.getDisponibilidadeTecnicosPeloConhecimento(intervaloDeDias, especialidadeId)
@@ -67,22 +64,19 @@ public class TecnicoService {
                 .entrySet().stream()
                 .map(tecnico -> {
                     List<TecnicoDisponibilidade> rawList = tecnico.getValue();
-                    String nome = rawList.getFirst().getNome();
-                    Integer id = tecnico.getKey();
-                    Integer quantidadeTotal = rawList.stream()
-                            .mapToInt(TecnicoDisponibilidade::getQuantidade)
-                            .sum();
-                    List<Disponibilidade> disponibilidades = rawList.stream()
-                            .map(this::getDisponibilidadeFromRaw)
-                            .collect(Collectors.toList());
-                    return new TecnicoDisponibilidadeResponse(id, nome, quantidadeTotal, disponibilidades);
+                    return new TecnicoDisponibilidadeResponse(
+                            tecnico.getKey(),
+                            rawList.getFirst().getNome(),
+                            rawList.stream().mapToInt(TecnicoDisponibilidade::getQuantidade).sum(),
+                            rawList.stream().map(this::getDisponibilidadeFromRaw).toList()
+                    );
                 })
                 .toList();
 
         return ResponseEntity.ok(tecnicos);
     }
 
-    public ResponseEntity<TecnicoAllResponse> create(TecnicoRequest tecnicoRequest) {
+    public ResponseEntity<TecnicoWithSpecialityResponse> create(TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = new Tecnico(tecnicoRequest);
         verifyFieldsOfTecnico(tecnico);
 
@@ -90,10 +84,10 @@ public class TecnicoService {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new TecnicoAllResponse(tecnicoRepository.save(tecnico)));
+                .body(new TecnicoWithSpecialityResponse(tecnicoRepository.save(tecnico)));
     }
 
-    public ResponseEntity<TecnicoAllResponse> update(Integer id, TecnicoRequest tecnicoRequest) {
+    public ResponseEntity<TecnicoWithSpecialityResponse> update(Integer id, TecnicoRequest tecnicoRequest) {
         Tecnico tecnico = getTecnicoById(id);
 
         tecnico.setAll(tecnicoRequest);
@@ -103,10 +97,10 @@ public class TecnicoService {
         tecnico.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest));
         tecnico.setSituacao(getSituacaoTecnico(tecnicoRequest));
         tecnico.setId(id);
-        return ResponseEntity.ok(new TecnicoAllResponse(tecnicoRepository.save(tecnico)));
+        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(tecnicoRepository.save(tecnico)));
     }
 
-    public ResponseEntity<Void> disableAList(List<Integer> ids) {
+    public ResponseEntity<Void> disableListByIds(List<Integer> ids) {
         List<Tecnico> tecnicos = ids.stream()
                 .map(this::getTecnicoById)
                 .peek(tecnico -> tecnico.setSituacao(Situacao.DESATIVADO))
@@ -145,18 +139,12 @@ public class TecnicoService {
     }
 
     private Situacao getSituacaoTecnico(TecnicoRequest tecnicoResponse) {
-        switch (tecnicoResponse.getSituacao().toLowerCase()) {
-            case "ativo" -> {
-                return Situacao.ATIVO;
-            }
-            case "licença" -> {
-                return Situacao.LICENCA;
-            }
-            case "desativado" -> {
-                return Situacao.DESATIVADO;
-            }
-        }
-        throw new SituacaoNotFoundException();
+        return switch(tecnicoResponse.getSituacao().toLowerCase()) {
+            case "ativo" -> Situacao.ATIVO;
+            case "licença" -> Situacao.LICENCA;
+            case "desativado" -> Situacao.DESATIVADO;
+            default -> throw new SituacaoNotFoundException();
+        };
     }
 
     private List<Especialidade> getEspecialidadesTecnico(TecnicoRequest tecnico) {
