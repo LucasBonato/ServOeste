@@ -28,14 +28,14 @@ public interface ClienteSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "200", description = "[Ok] Cliente devolvido com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "[NotFound] Cliente não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<ClienteResponse> getOne(Integer id);
+    ResponseEntity<ClienteResponse> fetchOneById(Integer id);
 
     @Operation(description = "Método para pegar uma lista cliente útilizando um filtro com campos opcionais: Nome, Telefone e Endereço.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Clientes devolvidos com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<List<ClienteResponse>> getBy(ClienteRequestFilter filter);
+    ResponseEntity<List<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filter);
 
     @Operation(description = "Forma de criar um novo registro de um cliente sem nenhum serviço conectado ao cliente.")
     @ApiResponses(value = {
@@ -58,5 +58,5 @@ public interface ClienteSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] Algum cliente informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> deletandoList(List<Integer> ids);
+    ResponseEntity<Void> deleteListByIds(List<Integer> ids);
 }

@@ -17,13 +17,13 @@ public class ClienteController implements ClienteSwagger {
     @Autowired private ClienteService clienteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponse> getOne(@PathVariable Integer id) {
-        return clienteService.getOne(id);
+    public ResponseEntity<ClienteResponse> fetchOneById(@PathVariable Integer id) {
+        return clienteService.fetchOneById(id);
     }
 
     @PostMapping("/find")
-    public ResponseEntity<List<ClienteResponse>> getBy(@RequestBody ClienteRequestFilter filter){
-        return clienteService.getBy(filter);
+    public ResponseEntity<List<ClienteResponse>> fetchListByFilter(@RequestBody ClienteRequestFilter filter){
+        return clienteService.fetchListByFilter(filter);
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class ClienteController implements ClienteSwagger {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deletandoList(@RequestBody List<Integer> ids){
-        return clienteService.deleteAList(ids);
+    public ResponseEntity<Void> deleteListByIds(@RequestBody List<Integer> ids){
+        return clienteService.deleteListByIds(ids);
     }
 }
