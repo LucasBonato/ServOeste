@@ -23,7 +23,7 @@ public interface ServicoSwagger extends SwaggerConfiguration {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Lista de serviços voltada com sucesso.", useReturnTypeSchema = true),
     })
-    ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter);
+    ResponseEntity<List<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter);
 
     @Operation(description = "Forma de registrar um novo serviço em um cliente já existente.")
     @ApiResponses(value = {
@@ -54,5 +54,5 @@ public interface ServicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "404", description = "[NotFound] Algum serviço informado não foi encontrado.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids);
+    ResponseEntity<Void> deleteListById(List<Integer> ids);
 }

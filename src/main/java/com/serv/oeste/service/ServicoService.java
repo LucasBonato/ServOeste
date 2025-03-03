@@ -36,19 +36,13 @@ public class ServicoService {
     private final ClienteService clienteService;
     private final TecnicoService tecnicoService;
     private final ServicoRepository servicoRepository;
-
+    
     @Cacheable("allServicos")
-    public ResponseEntity<List<ServicoResponse>> getByFilter(ServicoRequestFilter servicoRequestFilter) {
+    public ResponseEntity<List<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter) {
         Specification<Servico> specification = new SpecificationBuilder<Servico>()
                 .addIfNotNull(servicoRequestFilter.servicoId(), ServicoSpecifications::hasServicoId)
-                .addIfNotNull(servicoRequestFilter.clienteId(), id -> {
-                    Cliente cliente = clienteService.getClienteById(id);
-                    return ServicoSpecifications.hasCliente(cliente);
-                })
-                .addIfNotNull(servicoRequestFilter.tecnicoId(), id -> {
-                    Tecnico tecnico = tecnicoService.getTecnicoById(id);
-                    return ServicoSpecifications.hasTecnico(tecnico);
-                })
+                .addIfNotNull(servicoRequestFilter.clienteId(), id -> ServicoSpecifications.hasCliente(clienteService.getClienteById(id)))
+                .addIfNotNull(servicoRequestFilter.tecnicoId(), id -> ServicoSpecifications.hasTecnico(tecnicoService.getTecnicoById(id)))
                 .addIfNotNull(servicoRequestFilter.situacao(), ServicoSpecifications::hasSituacao)
                 .addIfNotNull(servicoRequestFilter.garantia(), ServicoSpecifications::hasGarantia)
                 .addIf(StringUtils::isNotBlank, servicoRequestFilter.clienteNome(), ServicoSpecifications::hasNomeCliente)
@@ -75,40 +69,40 @@ public class ServicoService {
                         ServicoSpecifications::hasDataAbertura
                 )
                 .build();
-
+        
         List<Servico> servicos = servicoRepository.findAll(specification);
         return ResponseEntity.ok(getServicosResponse(servicos));
     }
-
+    
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest.idCliente());
         verificarCamposObrigatoriosServico(servicoRequest);
         ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
-
+        
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(servicoResponse);
     }
-
+    
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
         verificarCamposObrigatoriosServico(servicoRequest);
         clienteService.create(clienteRequest);
         verificarSelecionamentoDasEntidades(ClienteService.idUltimoCliente);
         ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, ClienteService.idUltimoCliente);
-
+        
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(servicoResponse);
     }
-
+    
     public ResponseEntity<ServicoResponse> update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
         Servico servico = servicoRepository.findById(id).orElseThrow(ServicoNotFoundException::new);
-
+        
         verificarSelecionamentoDasEntidades(servicoUpdateRequest.idCliente(), servicoUpdateRequest.idTecnico(), servicoUpdateRequest.situacao());
         verificarCamposUpdate(servicoUpdateRequest);
         Cliente cliente = clienteService.getClienteById(servicoUpdateRequest.idCliente());
         Tecnico tecnico = tecnicoService.getTecnicoById(servicoUpdateRequest.idTecnico());
-
+        
         Servico servicoUpdated = servicoRepository.save(new Servico(
                 id,
                 servicoUpdateRequest,
@@ -122,57 +116,58 @@ public class ServicoService {
                 convertData(servicoUpdateRequest.dataAtendimentoEfetiva()),
                 convertData(servicoUpdateRequest.dataPagamentoComissao())
         ));
-
+        
         return ResponseEntity.ok(getServicoResponse(servicoUpdated));
     }
-
-    public ResponseEntity<Void> deleteListOfServicesById(List<Integer> ids) {
+    
+    public ResponseEntity<Void> deleteListByIds(List<Integer> ids) {
         ids.stream()
                 .filter(id -> servicoRepository.findById(id).isPresent())
                 .forEach(servicoRepository::deleteById);
-
+        
         return ResponseEntity.ok().build();
     }
-
+    
     private List<ServicoResponse> getServicosResponse(List<Servico> servicos) {
         return servicos
                 .stream()
                 .map(this::getServicoResponse)
                 .collect(Collectors.toList());
     }
-
+    
     private ServicoResponse getServicoResponse(Servico servico) {
         Boolean garatia = null;
         if (servico.getDataInicioGarantia() != null) {
             java.sql.Date dataHoje = java.sql.Date.valueOf(LocalDate.now());
             garatia = (servico.getDataInicioGarantia().before(dataHoje) && servico.getDataFimGarantia().after(dataHoje));
         }
-
+        
         return new ServicoResponse(
-            servico.getId(),
-            servico.getCliente().getId(),
-            (servico.getTecnico() != null) ? servico.getTecnico().getId() : null,
-            servico.getCliente().getNome(),
-            (servico.getTecnico() != null) ? servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome() : null,
-            servico.getEquipamento(),
-            servico.getFilial(),
-            servico.getHorarioPrevisto(),
-            servico.getMarca(),
-            servico.getDescricao(),
-            (servico.getFormaPagamento() != null) ? servico.getFormaPagamento().getFormaPagamento() : null,
-            servico.getSituacao(),
-            garatia,
-            servico.getValor(),
-            servico.getValorComissao(),
-            servico.getValorPecas(),
-            servico.getDataAtendimentoPrevisto(),
-            servico.getDataFechamento(),
-            servico.getDataInicioGarantia(),
-            servico.getDataFimGarantia(),
-            servico.getDataAtendimentoEfetiva(),
-            servico.getDataPagamentoComissao()
+                servico.getId(),
+                servico.getCliente().getId(),
+                (servico.getTecnico() != null) ? servico.getTecnico().getId() : null,
+                servico.getCliente().getNome(),
+                (servico.getTecnico() != null) ? servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome() : null,
+                servico.getEquipamento(),
+                servico.getFilial(),
+                servico.getHorarioPrevisto(),
+                servico.getMarca(),
+                servico.getDescricao(),
+                (servico.getFormaPagamento() != null) ? servico.getFormaPagamento().getFormaPagamento() : null,
+                servico.getSituacao(),
+                garatia,
+                servico.getValor(),
+                servico.getValorComissao(),
+                servico.getValorPecas(),
+                servico.getDataAtendimentoPrevisto(),
+                servico.getDataFechamento(),
+                servico.getDataInicioGarantia(),
+                servico.getDataFimGarantia(),
+                servico.getDataAtendimentoEfetiva(),
+                servico.getDataPagamentoComissao()
         );
     }
+    
     private static Date convertData(String data) {
         if (StringUtils.isBlank(data)) {
             return null;
@@ -181,73 +176,78 @@ public class ServicoService {
         Date dataFormatada;
         try {
             dataFormatada = formatter.parse(data);
-        } catch (ParseException e){
+        }
+        catch (ParseException e) {
             throw new ServicoNotValidException(Codigo.DATA, "Data em formato errado, formato correto: dd/MM/YYYY");
         }
         return dataFormatada;
     }
-
+    
     private void verificarSelecionamentoDasEntidades(Integer idCliente, Integer idTecnico, SituacaoServico situacao) {
-        if(idCliente == null) {
+        if (idCliente == null) {
             throw new ServicoNotValidException(Codigo.CLIENTE, "Cliente não selecionado");
         }
-        if((!situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO)) && idTecnico == null) {
+        if ((!situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO)) && idTecnico == null) {
             throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
     }
+    
     private void verificarSelecionamentoDasEntidades(Integer idCliente) {
-        if(idCliente == null) {
+        if (idCliente == null) {
             throw new ServicoNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado");
         }
     }
+    
     private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
-        if(StringUtils.isBlank(servicoRequest.equipamento())) {
+        if (StringUtils.isBlank(servicoRequest.equipamento())) {
             throw new ServicoNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
         }
-        if(StringUtils.isBlank(servicoRequest.marca())) {
+        if (StringUtils.isBlank(servicoRequest.marca())) {
             throw new ServicoNotValidException(Codigo.MARCA, "Marca é obrigatória");
         }
-        if(StringUtils.isBlank(servicoRequest.descricao())) {
+        if (StringUtils.isBlank(servicoRequest.descricao())) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
         }
-        if(servicoRequest.descricao().length() < 10) {
+        if (servicoRequest.descricao().length() < 10) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
-        if(servicoRequest.descricao().split(" ").length < 2) {
+        if (servicoRequest.descricao().split(" ").length < 2) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
-        if(StringUtils.isBlank(servicoRequest.filial())) {
+        if (StringUtils.isBlank(servicoRequest.filial())) {
             throw new ServicoNotValidException(Codigo.FILIAL, "A filial é obrigatória");
         }
     }
+    
     private void verificarCamposNaoObrigatoriosServico(ServicoRequest servicoRequest) {
-        if(StringUtils.isNotBlank(servicoRequest.dataAtendimento())) {
+        if (StringUtils.isNotBlank(servicoRequest.dataAtendimento())) {
             convertData(servicoRequest.dataAtendimento());
         }
-        if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
+        if (StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
     }
+    
     private void verificarCamposUpdate(ServicoUpdateRequest servicoRequest) {
-        if(StringUtils.isBlank(servicoRequest.equipamento())) {
+        if (StringUtils.isBlank(servicoRequest.equipamento())) {
             throw new ServicoNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
         }
-        if(StringUtils.isBlank(servicoRequest.marca())) {
+        if (StringUtils.isBlank(servicoRequest.marca())) {
             throw new ServicoNotValidException(Codigo.MARCA, "Marca é obrigatória");
         }
-        if(StringUtils.isBlank(servicoRequest.descricao())) {
+        if (StringUtils.isBlank(servicoRequest.descricao())) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
         }
-        if(servicoRequest.descricao().length() < 10) {
+        if (servicoRequest.descricao().length() < 10) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
-        if(servicoRequest.descricao().split(" ").length < 2) {
+        if (servicoRequest.descricao().split(" ").length < 2) {
             throw new ServicoNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
-        if(StringUtils.isBlank(servicoRequest.filial())) {
+        if (StringUtils.isBlank(servicoRequest.filial())) {
             throw new ServicoNotValidException(Codigo.FILIAL, "A filial é obrigatória");
         }
-        if(StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
+        if (StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
             throw new ServicoNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
         if (servicoRequest.valor() != null && servicoRequest.valor() < 0) {
@@ -260,22 +260,24 @@ public class ServicoService {
             throw new ServicoNotValidException(Codigo.SERVICO, "O Valor das Peças não pode ser negativo.");
         }
     }
-    private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente){
+    
+    private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente) {
         Cliente cliente = clienteService.getClienteById(idCliente);
         Tecnico tecnico = (servicoRequest.idTecnico() != null) ? tecnicoService.getTecnicoById(servicoRequest.idTecnico()) : null;
         verificarCamposNaoObrigatoriosServico(servicoRequest);
-
+        
         return cadastrarServico(servicoRequest, cliente, tecnico);
     }
+    
     private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
         SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || convertData(servicoRequest.dataAtendimento()) == null)
                 ? SituacaoServico.AGUARDANDO_AGENDAMENTO
                 : SituacaoServico.AGUARDANDO_ATENDIMENTO;
-
-        if(situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) && tecnico == null) {
+        
+        if (situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) && tecnico == null) {
             throw new ServicoNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
-
+        
         Servico novoServico = new Servico(
                 servicoRequest.equipamento(),
                 servicoRequest.marca(),

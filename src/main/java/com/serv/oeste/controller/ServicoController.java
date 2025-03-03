@@ -16,8 +16,8 @@ public class ServicoController implements ServicoSwagger {
     @Autowired private ServicoService servicoService;
 
     @PostMapping("/find")
-    public ResponseEntity<List<ServicoResponse>> getByFilter(@RequestBody ServicoRequestFilter servicoRequestFilter) {
-        return servicoService.getByFilter(servicoRequestFilter);
+    public ResponseEntity<List<ServicoResponse>> fetchListByFilter(@RequestBody ServicoRequestFilter servicoRequestFilter) {
+        return servicoService.fetchListByFilter(servicoRequestFilter);
     }
 
     @PostMapping
@@ -36,7 +36,7 @@ public class ServicoController implements ServicoSwagger {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteListOfServicesById(@RequestBody List<Integer> ids) {
-        return servicoService.deleteListOfServicesById(ids);
+    public ResponseEntity<Void> deleteListById(@RequestBody List<Integer> ids) {
+        return servicoService.deleteListByIds(ids);
     }
 }
