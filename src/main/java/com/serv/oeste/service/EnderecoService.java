@@ -17,23 +17,28 @@ import org.springframework.web.client.*;
 @RequiredArgsConstructor
 public class EnderecoService {
     private final RestTemplate restTemplate;
-
+    
     public ResponseEntity<ViaCepDTO> getFields(String cep) {
         return ResponseEntity.ok(getViaCepObject(cep));
     }
-
+    
     protected ViaCepDTO getViaCepObject(String cep) {
         try {
             ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
-            if(StringUtils.isBlank(viaCep.getLogradouro())) return new ViaCepDTO(null);
-            return new ViaCepDTO(viaCep.getLogradouro() + "|" + viaCep.getBairro() + "|" + viaCep.getLocalidade());
-        } catch (HttpClientErrorException e) {
+            if (viaCep == null || StringUtils.isBlank(viaCep.getLogradouro()))
+                return new ViaCepDTO((String) null);
+            return new ViaCepDTO(viaCep);
+        }
+        catch (HttpClientErrorException e) {
             throw new EnderecoNotValidException(Codigo.ENDERECO, "CEP inexistente!");
-        } catch (HttpServerErrorException e) {
+        }
+        catch (HttpServerErrorException e) {
             throw new ViaCepServerDownException();
-        } catch (ResourceAccessException e) {
+        }
+        catch (ResourceAccessException e) {
             throw new ViaCepNetworkException("Problema de rede ao acessar o serviço ViaCep");
-        } catch (RestClientException e) {
+        }
+        catch (RestClientException e) {
             throw new RestTemplateException("Erro no RestTemplate, consulte um desenvolvedor!");
         }
     }
