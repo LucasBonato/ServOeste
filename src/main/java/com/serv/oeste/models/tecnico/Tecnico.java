@@ -37,7 +37,7 @@ public class Tecnico {
     @Column(name = "Situacao", length = 15)
     private Situacao situacao = Situacao.ATIVO;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "Tecnico_Especialidade", joinColumns = @JoinColumn(name = "Id_Tecnico"), inverseJoinColumns = @JoinColumn(name = "Id_Especialidade"))
     private List<Especialidade> especialidades;
