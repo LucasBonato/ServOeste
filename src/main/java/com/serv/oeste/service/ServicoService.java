@@ -270,7 +270,7 @@ public class ServicoService {
     }
     
     private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Cliente cliente, Tecnico tecnico) {
-        SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || convertData(servicoRequest.dataAtendimento()) == null)
+        SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || (convertData(servicoRequest.dataAtendimento()) == null && tecnico == null))
                 ? SituacaoServico.AGUARDANDO_AGENDAMENTO
                 : SituacaoServico.AGUARDANDO_ATENDIMENTO;
         
