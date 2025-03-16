@@ -1,7 +1,7 @@
 package com.serv.oeste.configuration.swagger;
 
 import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.viacep.ViaCepDTO;
+import com.serv.oeste.models.dtos.reponses.EnderecoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,5 +20,5 @@ public interface EnderecoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "500", description = "[ServiceUnavailable] A API ViaCep não se encontra online.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
             @ApiResponse(responseCode = "503", description = "[InternalServerError] Não foi possível acessar o serviço da ViaCep ou o RestTemplate não está funcionando corretamente(Chamar um técnico).", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<ViaCepDTO> getFieldsEndereco(String cep);
+    ResponseEntity<EnderecoResponse> getFieldsEndereco(String cep);
 }

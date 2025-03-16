@@ -4,9 +4,9 @@ import com.serv.oeste.exception.endereco.EnderecoNotValidException;
 import com.serv.oeste.exception.viacep.RestTemplateException;
 import com.serv.oeste.exception.viacep.ViaCepNetworkException;
 import com.serv.oeste.exception.viacep.ViaCepServerDownException;
+import com.serv.oeste.models.dtos.reponses.EnderecoResponse;
 import com.serv.oeste.models.enums.Codigo;
 import com.serv.oeste.models.viacep.ViaCep;
-import com.serv.oeste.models.viacep.ViaCepDTO;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +18,16 @@ import org.springframework.web.client.*;
 public class EnderecoService {
     private final RestTemplate restTemplate;
     
-    public ResponseEntity<ViaCepDTO> getFields(String cep) {
+    public ResponseEntity<EnderecoResponse> getFields(String cep) {
         return ResponseEntity.ok(getViaCepObject(cep));
     }
     
-    protected ViaCepDTO getViaCepObject(String cep) {
+    protected EnderecoResponse getViaCepObject(String cep) {
         try {
             ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
             if (viaCep == null || StringUtils.isBlank(viaCep.getLogradouro()))
-                return new ViaCepDTO((String) null);
-            return new ViaCepDTO(viaCep);
+                return new EnderecoResponse(null, null, null);
+            return new EnderecoResponse(viaCep);
         }
         catch (HttpClientErrorException e) {
             throw new EnderecoNotValidException(Codigo.ENDERECO, "CEP inexistente!");
