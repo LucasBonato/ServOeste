@@ -39,7 +39,11 @@ public class Tecnico {
 
     @ManyToMany
     @Fetch(FetchMode.JOIN)
-    @JoinTable(name = "Tecnico_Especialidade", joinColumns = @JoinColumn(name = "Id_Tecnico"), inverseJoinColumns = @JoinColumn(name = "Id_Especialidade"))
+    @JoinTable(
+            name = "Tecnico_Especialidade",
+            joinColumns = @JoinColumn(name = "Id_Tecnico"),
+            inverseJoinColumns = @JoinColumn(name = "Id_Especialidade")
+    )
     private List<Especialidade> especialidades;
 
     public Tecnico(TecnicoRequest tecnico){
