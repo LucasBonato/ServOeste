@@ -1,4 +1,4 @@
-package com.serv.oeste.configuration;
+package com.serv.oeste.infrastructure.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

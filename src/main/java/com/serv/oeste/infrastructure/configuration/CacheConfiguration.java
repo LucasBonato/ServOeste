@@ -1,4 +1,4 @@
-package com.serv.oeste.configuration;
+package com.serv.oeste.infrastructure.configuration;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
