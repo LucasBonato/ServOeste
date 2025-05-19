@@ -84,4 +84,335 @@ class ClientServiceTest {
             assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
         }
     }
+
+    @Nested
+    class Create {
+        @Test
+        void create_ValidRequest_ShouldCreateClientSuccessfully() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            Client client = new Client(
+                    1,
+                    "João Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            when(clientRepository.save(any(Client.class))).thenReturn(client);
+
+            // Act
+            ResponseEntity<ClienteResponse> response = clientService.create(request);
+
+            // Assert
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(client.getId(), response.getBody().id());
+            assertEquals(client.getNome(), response.getBody().nome());
+            assertEquals(client.getTelefoneCelular(), response.getBody().telefoneCelular());
+            assertEquals(client.getTelefoneFixo(), response.getBody().telefoneFixo());
+            assertEquals(client.getEndereco(), response.getBody().endereco());
+            assertEquals(client.getBairro(), response.getBody().bairro());
+            assertEquals(client.getMunicipio(), response.getBody().municipio());
+
+            verify(clientRepository).save(any(Client.class));
+        }
+
+        @Test
+        void create_InvalidRequestWithBlankName_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Nome do cliente não pode ser vazio!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.NOMESOBRENOME.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithShortName_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "A",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Nome do cliente precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.NOMESOBRENOME.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithBlankSurname_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("Digite Nome e Sobrenome!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.NOMESOBRENOME.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithShortSurname_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "a",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Sobrenome do cliente precisa ter no mínimo 2 caracteres!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.NOMESOBRENOME.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithNoPhone_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "",
+                    "",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O cliente precisa ter no mínimo um telefone cadastrado!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.TELEFONES.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestLengthCellPhone_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "",
+                    "11942623746238",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("Telefone celular inválido!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.TELEFONECELULAR.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestLengthLandLine_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1192",
+                    "",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("Telefone fixo inválido!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.TELEFONEFIXO.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithBlankAddress_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Endereço é obrigatório!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.ENDERECO.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithNoNumberAddress_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("É necessário possuir número no Endereço!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.ENDERECO.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithBlankDistrict_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 234",
+                    "",
+                    "São Paulo"
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Bairro é obrigatório!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.BAIRRO.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+
+        @Test
+        void create_InvalidRequestWithBlankMunicipality_ShouldThrowClientNotValidException() {
+            // Arrange
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 244",
+                    "Bairro Qualquer",
+                    ""
+            );
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.create(request)
+            );
+
+            // Assert
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O Município é obrigatório!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.MUNICIPIO.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).save(any());
+        }
+    }
 }
