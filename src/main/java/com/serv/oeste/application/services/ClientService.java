@@ -121,19 +121,19 @@ public class ClientService {
             throw new ClientNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
         if (clienteRequest.telefoneFixo().length() != 10 && !clienteRequest.telefoneFixo().isEmpty()) {
-            throw new ClientNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
+            throw new ClientNotValidException("Telefone fixo inválido!", Codigo.TELEFONEFIXO);
         }
         if (StringUtils.isBlank(clienteRequest.endereco())) {
-            throw new ClientNotValidException("O Endereço é obrigatório", Codigo.ENDERECO);
+            throw new ClientNotValidException("O Endereço é obrigatório!", Codigo.ENDERECO);
         }
         if (!contemNumero(clienteRequest.endereco())) {
-            throw new ClientNotValidException("É necessário possuir número no Endereço", Codigo.ENDERECO);
+            throw new ClientNotValidException("É necessário possuir número no Endereço!", Codigo.ENDERECO);
         }
         if (StringUtils.isBlank(clienteRequest.municipio())) {
-            throw new ClientNotValidException("O Município é obrigatório", Codigo.MUNICIPIO);
+            throw new ClientNotValidException("O Município é obrigatório!", Codigo.MUNICIPIO);
         }
         if (StringUtils.isBlank(clienteRequest.bairro())) {
-            throw new ClientNotValidException("O Bairro é obrigatório", Codigo.BAIRRO);
+            throw new ClientNotValidException("O Bairro é obrigatório!", Codigo.BAIRRO);
         }
     }
 }
