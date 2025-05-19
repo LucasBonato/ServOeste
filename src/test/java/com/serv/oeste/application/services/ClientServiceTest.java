@@ -464,4 +464,69 @@ class ClientServiceTest {
             verify(clientRepository).save(any(Client.class));
         }
     }
+
+    @Nested
+    class DeleteListByIds {
+        @Test
+        void deleteListByIds_AllClientsWithoutServices_ShouldDeleteAllClients() {
+            // Arrange
+            List<Integer> ids = List.of(1, 2, 3);
+            ids.forEach(id -> {
+                when(clientRepository.findById(id)).thenReturn(Optional.of(new Client()));
+                when(serviceRepository.existsByClienteId(id)).thenReturn(false);
+            });
+
+            // Act
+            ResponseEntity<Void> response = clientService.deleteListByIds(ids);
+
+            // Assert
+            verify(clientRepository, times(3)).deleteById(any());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+
+        @Test
+        void deleteListByIds_SomeClientsWithServices_ShouldThrowClientNotValidException() {
+            // Arrange
+            List<Integer> ids = List.of(1, 2, 3);
+            when(clientRepository.findById(1)).thenReturn(Optional.of(new Client()));
+            when(serviceRepository.existsByClienteId(1)).thenReturn(false);
+
+            when(clientRepository.findById(2)).thenReturn(Optional.of(new Client()));
+            when(serviceRepository.existsByClienteId(2)).thenReturn(true);
+
+            when(clientRepository.findById(3)).thenReturn(Optional.of(new Client()));
+            when(serviceRepository.existsByClienteId(3)).thenReturn(false);
+
+            // Act
+            ClientNotValidException exception = assertThrows(
+                    ClientNotValidException.class,
+                    () -> clientService.deleteListByIds(ids)
+            );
+
+            // Assert
+            assertTrue(exception.getExceptionResponse().getMessage().contains("2"));
+            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals("O(s) seguinte(s) cliente(s) não foram excluído(s) por possuirem serviços atrelados a si: [2]", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
+            verify(clientRepository, never()).deleteById(2);
+        }
+
+        @Test
+        void deleteListByIds_SomeClientsNotFound_ShouldIgnoreMissingAndDeleteFound() {
+            // Arrange
+            List<Integer> ids = List.of(1, 2);
+            when(clientRepository.findById(1)).thenReturn(Optional.empty());
+            when(clientRepository.findById(2)).thenReturn(Optional.of(new Client()));
+
+            when(serviceRepository.existsByClienteId(2)).thenReturn(false);
+
+            // Act
+            ResponseEntity<Void> response = clientService.deleteListByIds(ids);
+
+            // Assert
+            verify(clientRepository, never()).deleteById(1);
+            verify(clientRepository, times(1)).deleteById(2);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+    }
 }
