@@ -9,6 +9,8 @@ public class Client {
     private String bairro;
     private String municipio;
 
+    public Client() { }
+
     public Client(Integer id, String nome, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
         this.id = id;
         this.nome = nome;
