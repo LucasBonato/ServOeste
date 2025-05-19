@@ -1,4 +1,4 @@
-package com.serv.oeste.models.specifications;
+package com.serv.oeste.infrastructure.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -87,7 +87,8 @@ public class SpecificationBuilder<T> {
     public SpecificationBuilder<T> addDateRange(Date start, Date end, BiFunction<Date, Date, Specification<T>> rangeSpecification, Function<Date, Specification<T>> singleSpecification) {
         if (start != null && end != null) {
             this.specification = this.specification.and(rangeSpecification.apply(start, end));
-        } else if (start != null) {
+        }
+        else if (start != null) {
             this.specification = this.specification.and(singleSpecification.apply(start));
         }
         return this;

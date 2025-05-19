@@ -1,44 +1,45 @@
-package com.serv.oeste.models.servico;
+package com.serv.oeste.infrastructure.specifications;
 
-import com.serv.oeste.models.cliente.Cliente;
-import com.serv.oeste.models.enums.SituacaoServico;
-import com.serv.oeste.models.tecnico.Tecnico;
+import com.serv.oeste.domain.entities.client.Client;
+import com.serv.oeste.domain.entities.technician.Technician;
+import com.serv.oeste.domain.enums.SituacaoServico;
+import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-public class ServicoSpecifications {
-    public static Specification<Servico> hasCliente(Cliente cliente) {
+public class ServiceSpecifications {
+    public static Specification<ServiceEntity> hasCliente(Client cliente) {
         return (root, query, cb) -> cb.equal(root.get("cliente"), cliente);
     }
 
-    public static Specification<Servico> hasTecnico(Tecnico tecnico) {
+    public static Specification<ServiceEntity> hasTecnico(Technician tecnico) {
         return (root, query, cb) -> cb.equal(root.get("tecnico"), tecnico);
     }
 
-    public static Specification<Servico> hasNomeCliente(String clienteNome) {
+    public static Specification<ServiceEntity> hasNomeCliente(String clienteNome) {
         return (root, query, cb) -> cb.like(root.join("cliente", JoinType.INNER).get("nome"), "%" + clienteNome + "%");
     }
 
-    public static Specification<Servico> hasNomeTecnico(String tecnicoNome) {
+    public static Specification<ServiceEntity> hasNomeTecnico(String tecnicoNome) {
         return (root, query, cb) -> cb.like(root.join("tecnico", JoinType.INNER).get("nome"), "%" + tecnicoNome + "%");
     }
 
-    public static Specification<Servico> hasFilial(String filial) {
+    public static Specification<ServiceEntity> hasFilial(String filial) {
         return (root, query, cb) -> cb.equal(root.get("filial"), filial);
     }
 
-    public static Specification<Servico> hasHorarioPrevisto(String periodo) {
+    public static Specification<ServiceEntity> hasHorarioPrevisto(String periodo) {
         return (root, query, cb) -> cb.equal(root.get("horarioPrevisto"), periodo.toLowerCase().replace("ã", "a"));
     }
 
-    public static Specification<Servico> hasSituacao(SituacaoServico situacao) {
+    public static Specification<ServiceEntity> hasSituacao(SituacaoServico situacao) {
         return (root, query, cb) -> cb.equal(root.get("situacao"), situacao);
     }
 
-    public static Specification<Servico> hasGarantia(Boolean garantia) {
+    public static Specification<ServiceEntity> hasGarantia(Boolean garantia) {
         Date hoje = java.sql.Date.valueOf(LocalDate.now());
         return (root, query, cb) -> (garantia)
                 ? cb.and(
@@ -53,35 +54,35 @@ public class ServicoSpecifications {
                 );
     }
 
-    public static Specification<Servico> isDataAtendimentoPrevistoBetween(Date dataAtendimentoPrevistoAntes, Date dataAtendimentoPrevistoDepois) {
+    public static Specification<ServiceEntity> isDataAtendimentoPrevistoBetween(Date dataAtendimentoPrevistoAntes, Date dataAtendimentoPrevistoDepois) {
         return (root, query, cb) -> cb.between(root.get("dataAtendimentoPrevisto"), dataAtendimentoPrevistoAntes, dataAtendimentoPrevistoDepois);
     }
 
-    public static Specification<Servico> hasDataAtendimentoPrevisto(Date dataAtendimentoPrevisto) {
+    public static Specification<ServiceEntity> hasDataAtendimentoPrevisto(Date dataAtendimentoPrevisto) {
         return (root, query, cb) -> cb.equal(root.get("dataAtendimentoPrevisto"), dataAtendimentoPrevisto);
     }
 
-    public static Specification<Servico> hasServicoId(Integer id) {
+    public static Specification<ServiceEntity> hasServicoId(Integer id) {
         return (root, query, cb) -> cb.like(root.get("id").as(String.class), "%" + id + "%");
     }
 
-    public static Specification<Servico> hasEquipamento(String equipamento) {
+    public static Specification<ServiceEntity> hasEquipamento(String equipamento) {
         return (root, query, cb) -> cb.like(root.get("equipamento"), "%" + equipamento + "%");
     }
 
-    public static Specification<Servico> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
+    public static Specification<ServiceEntity> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
         return (root, query, cb) -> cb.between(root.get("dataAtendimentoEfetiva"), dataAtendimentoEfetivoAntes, dataAtendimentoEfetivoDepois);
     }
 
-    public static Specification<Servico> hasDataAtendimentoEfetivo(Date dataAtendimentoEfetivo) {
+    public static Specification<ServiceEntity> hasDataAtendimentoEfetivo(Date dataAtendimentoEfetivo) {
         return (root, query, cb) -> cb.equal(root.get("dataAtendimentoEfetiva"), dataAtendimentoEfetivo);
     }
 
-    public static Specification<Servico> isDataAberturaBetween(Date dataAberturaAntes, Date dataAberturaDepois) {
+    public static Specification<ServiceEntity> isDataAberturaBetween(Date dataAberturaAntes, Date dataAberturaDepois) {
         return (root, query, cb) -> cb.between(root.get("dataAbertura"), dataAberturaAntes, dataAberturaDepois);
     }
 
-    public static Specification<Servico> hasDataAbertura(Date dataAbertura) {
+    public static Specification<ServiceEntity> hasDataAbertura(Date dataAbertura) {
         return (root, query, cb) -> cb.equal(root.get("dataAbertura"), dataAbertura);
     }
 }
