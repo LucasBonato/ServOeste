@@ -415,4 +415,53 @@ class ClientServiceTest {
             verify(clientRepository, never()).save(any());
         }
     }
+
+    @Nested
+    class Update {
+        @Test
+        void update_ValidRequestWithExistingClient_ShouldUpdateClientSuccessfully() {
+            // Arrange
+            Integer id = 1;
+
+            ClienteRequest request = new ClienteRequest(
+                    "João",
+                    "Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            Client client = new Client(
+                    1,
+                    "João Silva Pereira",
+                    "1198762345",
+                    "11942368296",
+                    "Rua Qualquer Coisa, 275",
+                    "Bairro Qualquer",
+                    "São Paulo"
+            );
+
+            when(clientRepository.findById(id)).thenReturn(Optional.of(client));
+            when(clientRepository.save(any(Client.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // Act
+            ResponseEntity<ClienteResponse> response = clientService.update(id, request);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertEquals(id, response.getBody().id());
+            assertEquals(request.nome() + " " + request.sobrenome(), response.getBody().nome());
+            assertEquals(request.telefoneCelular(), response.getBody().telefoneCelular());
+            assertEquals(request.telefoneFixo(), response.getBody().telefoneFixo());
+            assertEquals(request.endereco(), response.getBody().endereco());
+            assertEquals(request.bairro(), response.getBody().bairro());
+            assertEquals(request.municipio(), response.getBody().municipio());
+
+            verify(clientRepository).findById(id);
+            verify(clientRepository).save(any(Client.class));
+        }
+    }
 }
