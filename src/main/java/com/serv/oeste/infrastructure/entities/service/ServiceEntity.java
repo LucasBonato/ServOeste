@@ -84,6 +84,7 @@ public class ServiceEntity {
     private TechnicianEntity tecnico;
 
     public ServiceEntity(Service service) {
+        this.id = service.getId();
         this.equipamento = service.getEquipamento();
         this.marca = service.getMarca();
         this.filial = service.getFilial();

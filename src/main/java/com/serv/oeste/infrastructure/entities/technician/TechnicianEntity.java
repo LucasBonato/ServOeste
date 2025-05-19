@@ -47,6 +47,7 @@ public class TechnicianEntity {
     private List<SpecialtyEntity> especialidades;
 
     public TechnicianEntity(Technician technician) {
+        this.id = technician.getId();
         this.nome = technician.getNome();
         this.sobrenome = technician.getSobrenome();
         this.telefoneFixo = technician.getTelefoneFixo();

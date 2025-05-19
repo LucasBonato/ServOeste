@@ -33,6 +33,7 @@ public class ClientEntity {
     private String municipio;
 
     public ClientEntity(Client client) {
+        this.id = client.getId();
         this.nome = client.getNome();
         this.telefoneFixo = client.getTelefoneFixo();
         this.telefoneCelular = client.getTelefoneCelular();
