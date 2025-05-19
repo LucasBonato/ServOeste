@@ -117,10 +117,10 @@ public class ClientService {
         if (clienteRequest.telefoneCelular().isBlank() && clienteRequest.telefoneFixo().isBlank()) {
             throw new ClientNotValidException("O cliente precisa ter no mínimo um telefone cadastrado!", Codigo.TELEFONES);
         }
-        if (clienteRequest.telefoneCelular().length() < 11 && !clienteRequest.telefoneCelular().isEmpty()) {
+        if (clienteRequest.telefoneCelular().length() != 11 && !clienteRequest.telefoneCelular().isEmpty()) {
             throw new ClientNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
-        if (clienteRequest.telefoneFixo().length() < 10 && !clienteRequest.telefoneFixo().isEmpty()) {
+        if (clienteRequest.telefoneFixo().length() != 10 && !clienteRequest.telefoneFixo().isEmpty()) {
             throw new ClientNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
         if (StringUtils.isBlank(clienteRequest.endereco())) {
