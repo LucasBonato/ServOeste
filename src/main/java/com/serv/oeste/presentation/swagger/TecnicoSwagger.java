@@ -1,12 +1,12 @@
-package com.serv.oeste.configuration.swagger;
+package com.serv.oeste.presentation.swagger;
 
-import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoWithSpecialityResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
-import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.dtos.requests.TecnicoRequest;
-import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
+import com.serv.oeste.application.exceptions.ExceptionResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
+import com.serv.oeste.application.dtos.requests.TecnicoDisponibilidadeRequest;
+import com.serv.oeste.application.dtos.requests.TecnicoRequest;
+import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

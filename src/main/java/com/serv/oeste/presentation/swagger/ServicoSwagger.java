@@ -1,11 +1,11 @@
-package com.serv.oeste.configuration.swagger;
+package com.serv.oeste.presentation.swagger;
 
-import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.dtos.reponses.ServicoResponse;
-import com.serv.oeste.models.dtos.requests.ClienteServicoRequest;
-import com.serv.oeste.models.dtos.requests.ServicoRequest;
-import com.serv.oeste.models.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.models.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.application.exceptions.ExceptionResponse;
+import com.serv.oeste.application.dtos.reponses.ServicoResponse;
+import com.serv.oeste.application.dtos.requests.ClienteServicoRequest;
+import com.serv.oeste.application.dtos.requests.ServicoRequest;
+import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
+import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
