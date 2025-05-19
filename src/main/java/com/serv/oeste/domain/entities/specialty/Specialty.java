@@ -1,8 +1,8 @@
 package com.serv.oeste.domain.entities.specialty;
 
 public class Specialty {
-    private Integer id;
-    private String conhecimento;
+    private final Integer id;
+    private final String conhecimento;
 
     public Specialty(Integer id, String conhecimento) {
         this.id = id;

@@ -3,12 +3,12 @@ package com.serv.oeste.domain.entities.technician;
 import java.util.Date;
 
 public class TechnicianAvailability {
-    private Integer id;
-    private String nome;
-    private Date data;
-    private Integer dia;
-    private String periodo;
-    private Integer quantidade;
+    private final Integer id;
+    private final String nome;
+    private final Date data;
+    private final Integer dia;
+    private final String periodo;
+    private final Integer quantidade;
 
     public TechnicianAvailability(Integer id, String nome, Date data, Integer dia, String periodo, Integer quantidade) {
         this.id = id;

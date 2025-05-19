@@ -10,12 +10,12 @@ import java.util.Date;
 
 public class Service {
     private Integer id;
-    private String equipamento;
-    private String marca;
-    private String filial;
-    private String descricao;
-    private SituacaoServico situacao;
-    private String horarioPrevisto;
+    private final String equipamento;
+    private final String marca;
+    private final String filial;
+    private final String descricao;
+    private final SituacaoServico situacao;
+    private final String horarioPrevisto;
     private Double valor;
     private FormaPagamento formaPagamento;
     private Double valorPecas;
@@ -25,10 +25,10 @@ public class Service {
     private Date dataFechamento;
     private Date dataInicioGarantia;
     private Date dataFimGarantia;
-    private Date dataAtendimentoPrevisto;
+    private final Date dataAtendimentoPrevisto;
     private Date dataAtendimentoEfetiva;
-    private Client cliente;
-    private Technician tecnico;
+    private final Client cliente;
+    private final Technician tecnico;
 
     public Service(String equipamento, String marca, String filial, String descricao, SituacaoServico situacao, String horarioPrevisto, Date dataAtendimento, Client cliente, Technician tecnico) {
         this.equipamento = equipamento;
