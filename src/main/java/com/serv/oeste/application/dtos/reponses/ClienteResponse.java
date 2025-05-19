@@ -1,6 +1,6 @@
-package com.serv.oeste.models.dtos.reponses;
+package com.serv.oeste.application.dtos.reponses;
 
-import com.serv.oeste.models.cliente.Cliente;
+import com.serv.oeste.domain.entities.client.Client;
 
 public record ClienteResponse(
         Integer id,
@@ -11,7 +11,7 @@ public record ClienteResponse(
         String bairro,
         String municipio
 ) {
-    public ClienteResponse(Cliente cliente) {
+    public ClienteResponse(Client cliente) {
         this(
                 cliente.getId(),
                 cliente.getNome(),

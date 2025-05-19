@@ -1,7 +1,6 @@
-package com.serv.oeste.models.dtos.reponses;
+package com.serv.oeste.application.dtos.reponses;
 
-import com.serv.oeste.models.enums.FormaPagamento;
-import com.serv.oeste.models.enums.SituacaoServico;
+import com.serv.oeste.domain.enums.SituacaoServico;
 
 import java.util.Date;
 

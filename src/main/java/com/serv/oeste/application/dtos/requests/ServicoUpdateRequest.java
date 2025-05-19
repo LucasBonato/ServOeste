@@ -1,7 +1,7 @@
-package com.serv.oeste.models.dtos.requests;
+package com.serv.oeste.application.dtos.requests;
 
-import com.serv.oeste.models.enums.FormaPagamento;
-import com.serv.oeste.models.enums.SituacaoServico;
+import com.serv.oeste.domain.enums.FormaPagamento;
+import com.serv.oeste.domain.enums.SituacaoServico;
 
 public record ServicoUpdateRequest(
         Integer idTecnico,

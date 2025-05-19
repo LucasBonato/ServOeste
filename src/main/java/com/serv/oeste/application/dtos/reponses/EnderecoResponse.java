@@ -1,6 +1,6 @@
-package com.serv.oeste.models.dtos.reponses;
+package com.serv.oeste.application.dtos.reponses;
 
-import com.serv.oeste.models.viacep.ViaCep;
+import com.serv.oeste.domain.entities.viacep.ViaCep;
 
 public record EnderecoResponse(
         String logradouro,

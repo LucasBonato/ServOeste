@@ -1,4 +1,4 @@
-package com.serv.oeste.models.dtos.requests;
+package com.serv.oeste.application.dtos.requests;
 
 public record ClienteServicoRequest(
         ClienteRequest clienteRequest,

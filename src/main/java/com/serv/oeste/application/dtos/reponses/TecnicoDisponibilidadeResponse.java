@@ -1,6 +1,6 @@
-package com.serv.oeste.models.dtos.reponses;
+package com.serv.oeste.application.dtos.reponses;
 
-import com.serv.oeste.models.tecnico.Disponibilidade;
+import com.serv.oeste.domain.entities.technician.Availability;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ public class TecnicoDisponibilidadeResponse {
     private Integer id;
     private String nome;
     private Integer quantidadeTotalServicos;
-    private List<Disponibilidade> disponibilidades;
+    private List<Availability> disponibilidades;
 }
