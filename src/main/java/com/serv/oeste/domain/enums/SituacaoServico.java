@@ -1,10 +1,5 @@
-package com.serv.oeste.models.enums;
+package com.serv.oeste.domain.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum SituacaoServico {
     AGUARDANDO_AGENDAMENTO("Aguardando agendamento"),
     AGUARDANDO_ATENDIMENTO("Aguardando atendimento"),
@@ -23,4 +18,12 @@ public enum SituacaoServico {
     ;
 
     private final String situacao;
+
+    SituacaoServico(String situacao) {
+        this.situacao = situacao;
+    }
+
+    public String getSituacao() {
+        return this.situacao;
+    }
 }

@@ -1,8 +1,5 @@
-package com.serv.oeste.models.enums;
+package com.serv.oeste.domain.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum Codigo {
     NOMESOBRENOME(1),
     TELEFONECELULAR(2),
@@ -27,5 +24,9 @@ public enum Codigo {
 
     Codigo(Integer i) {
         this.i = i;
+    }
+
+    public Integer getI() {
+        return this.i;
     }
 }
