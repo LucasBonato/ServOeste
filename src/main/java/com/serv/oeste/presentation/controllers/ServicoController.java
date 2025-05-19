@@ -1,9 +1,12 @@
-package com.serv.oeste.controller;
+package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.configuration.swagger.ServicoSwagger;
-import com.serv.oeste.models.dtos.reponses.ServicoResponse;
-import com.serv.oeste.models.dtos.requests.*;
-import com.serv.oeste.service.ServicoService;
+import com.serv.oeste.application.dtos.requests.ClienteServicoRequest;
+import com.serv.oeste.application.dtos.requests.ServicoRequest;
+import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
+import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.presentation.swagger.ServicoSwagger;
+import com.serv.oeste.application.dtos.reponses.ServicoResponse;
+import com.serv.oeste.application.services.ServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

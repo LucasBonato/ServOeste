@@ -1,10 +1,10 @@
-package com.serv.oeste.controller;
+package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.configuration.swagger.ClienteSwagger;
-import com.serv.oeste.models.dtos.reponses.ClienteResponse;
-import com.serv.oeste.models.dtos.requests.ClienteRequest;
-import com.serv.oeste.models.dtos.requests.ClienteRequestFilter;
-import com.serv.oeste.service.ClienteService;
+import com.serv.oeste.presentation.swagger.ClienteSwagger;
+import com.serv.oeste.application.dtos.reponses.ClienteResponse;
+import com.serv.oeste.application.dtos.requests.ClienteRequest;
+import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
+import com.serv.oeste.application.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

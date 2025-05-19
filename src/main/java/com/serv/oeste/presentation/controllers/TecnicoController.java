@@ -1,13 +1,13 @@
-package com.serv.oeste.controller;
+package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.configuration.swagger.TecnicoSwagger;
-import com.serv.oeste.models.dtos.reponses.TecnicoWithSpecialityResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoDisponibilidadeResponse;
-import com.serv.oeste.models.dtos.reponses.TecnicoResponse;
-import com.serv.oeste.models.dtos.requests.TecnicoDisponibilidadeRequest;
-import com.serv.oeste.models.dtos.requests.TecnicoRequest;
-import com.serv.oeste.models.dtos.requests.TecnicoRequestFilter;
-import com.serv.oeste.service.TecnicoService;
+import com.serv.oeste.presentation.swagger.TecnicoSwagger;
+import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
+import com.serv.oeste.application.dtos.requests.TecnicoDisponibilidadeRequest;
+import com.serv.oeste.application.dtos.requests.TecnicoRequest;
+import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
+import com.serv.oeste.application.services.TecnicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

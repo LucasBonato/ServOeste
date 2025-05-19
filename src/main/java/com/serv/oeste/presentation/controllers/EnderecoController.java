@@ -1,8 +1,8 @@
-package com.serv.oeste.controller;
+package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.configuration.swagger.EnderecoSwagger;
-import com.serv.oeste.models.dtos.reponses.EnderecoResponse;
-import com.serv.oeste.service.EnderecoService;
+import com.serv.oeste.presentation.swagger.EnderecoSwagger;
+import com.serv.oeste.application.dtos.reponses.EnderecoResponse;
+import com.serv.oeste.application.services.EnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
