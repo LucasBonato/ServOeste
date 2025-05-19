@@ -1,8 +1,8 @@
-package com.serv.oeste.exception.viacep;
+package com.serv.oeste.application.exceptions.viacep;
 
-import com.serv.oeste.exception.BaseException;
-import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.enums.Codigo;
+import com.serv.oeste.application.exceptions.BaseException;
+import com.serv.oeste.application.exceptions.ExceptionResponse;
+import com.serv.oeste.domain.enums.Codigo;
 import org.springframework.http.HttpStatus;
 
 public class ViaCepServerDownException extends BaseException {

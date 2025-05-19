@@ -1,4 +1,4 @@
-package com.serv.oeste.exception;
+package com.serv.oeste.application.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

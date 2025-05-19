@@ -1,6 +1,6 @@
-package com.serv.oeste.exception;
+package com.serv.oeste.application.exceptions;
 
-import com.serv.oeste.models.enums.Codigo;
+import com.serv.oeste.domain.enums.Codigo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

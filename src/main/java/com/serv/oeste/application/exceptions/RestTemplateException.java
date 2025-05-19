@@ -1,8 +1,6 @@
-package com.serv.oeste.exception.viacep;
+package com.serv.oeste.application.exceptions;
 
-import com.serv.oeste.exception.BaseException;
-import com.serv.oeste.exception.ExceptionResponse;
-import com.serv.oeste.models.enums.Codigo;
+import com.serv.oeste.domain.enums.Codigo;
 import org.springframework.http.HttpStatus;
 
 public class RestTemplateException extends BaseException {
