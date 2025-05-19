@@ -1,12 +1,12 @@
-package com.serv.oeste.service;
+package com.serv.oeste.application.services;
 
-import com.serv.oeste.exception.endereco.EnderecoNotValidException;
-import com.serv.oeste.exception.viacep.RestTemplateException;
-import com.serv.oeste.exception.viacep.ViaCepNetworkException;
-import com.serv.oeste.exception.viacep.ViaCepServerDownException;
-import com.serv.oeste.models.dtos.reponses.EnderecoResponse;
-import com.serv.oeste.models.enums.Codigo;
-import com.serv.oeste.models.viacep.ViaCep;
+import com.serv.oeste.application.exceptions.address.AddressNotValidException;
+import com.serv.oeste.application.exceptions.RestTemplateException;
+import com.serv.oeste.application.exceptions.viacep.ViaCepNetworkException;
+import com.serv.oeste.application.exceptions.viacep.ViaCepServerDownException;
+import com.serv.oeste.application.dtos.reponses.EnderecoResponse;
+import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.entities.viacep.ViaCep;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.client.*;
 
 @Service
 @RequiredArgsConstructor
-public class EnderecoService {
+public class AddressService {
     private final RestTemplate restTemplate;
     
     public ResponseEntity<EnderecoResponse> getFields(String cep) {
@@ -30,7 +30,7 @@ public class EnderecoService {
             return new EnderecoResponse(viaCep);
         }
         catch (HttpClientErrorException e) {
-            throw new EnderecoNotValidException(Codigo.ENDERECO, "CEP inexistente!");
+            throw new AddressNotValidException(Codigo.ENDERECO, "CEP inexistente!");
         }
         catch (HttpServerErrorException e) {
             throw new ViaCepServerDownException();
