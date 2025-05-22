@@ -79,7 +79,7 @@ class ClientServiceTest {
             );
 
             // Assert
-            assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
             assertEquals("Cliente não encontrado!", exception.getExceptionResponse().getMessage());
             assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
         }
