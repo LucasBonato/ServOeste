@@ -21,7 +21,8 @@ public class Technician {
         this.situacao = situacao;
     }
 
-    public Technician(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
+    public Technician(Integer id, String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
+        this.id = id;
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.telefoneFixo = telefoneFixo;

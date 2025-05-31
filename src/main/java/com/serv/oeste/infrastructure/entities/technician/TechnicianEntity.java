@@ -64,6 +64,7 @@ public class TechnicianEntity {
                 .toList();
 
         return new Technician(
+                this.id,
                 this.nome,
                 this.sobrenome,
                 this.telefoneFixo,
