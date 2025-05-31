@@ -73,7 +73,7 @@ public class TechnicianService {
 
         Technician technician = technicianRepository.save(tecnicoRequest.toTechnician());
 
-        technician.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest.getEspecialidades_Ids()));
+        technician.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids()));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -87,12 +87,12 @@ public class TechnicianService {
 
         tecnico.setAll(
                 id,
-                tecnicoRequest.getNome(),
-                tecnicoRequest.getSobrenome(),
-                tecnicoRequest.getTelefoneFixo(),
-                tecnicoRequest.getTelefoneCelular(),
-                tecnicoRequest.getSituacao(),
-                getEspecialidadesTecnico(tecnicoRequest.getEspecialidades_Ids())
+                tecnicoRequest.nome(),
+                tecnicoRequest.sobrenome(),
+                tecnicoRequest.telefoneFixo(),
+                tecnicoRequest.telefoneCelular(),
+                tecnicoRequest.situacao(),
+                getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids())
         );
 
         return ResponseEntity.ok(new TecnicoWithSpecialityResponse(technicianRepository.save(tecnico)));
@@ -148,25 +148,25 @@ public class TechnicianService {
 
     private void verifyFieldsOfTecnico(TecnicoRequest tecnicoRequest) {
         final int MINIMO_DE_CARACTERES_ACEITO = 2;
-        if (StringUtils.isBlank(tecnicoRequest.getNome())) {
+        if (StringUtils.isBlank(tecnicoRequest.nome())) {
             throw new TechnicianNotValidException("O Nome do técnico não pode ser vazio!", Codigo.NOMESOBRENOME);
         }
-        if (tecnicoRequest.getNome().length() < MINIMO_DE_CARACTERES_ACEITO) {
+        if (tecnicoRequest.nome().length() < MINIMO_DE_CARACTERES_ACEITO) {
             throw new TechnicianNotValidException(String.format("O Nome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
         }
-        if (StringUtils.isBlank(tecnicoRequest.getSobrenome())) {
+        if (StringUtils.isBlank(tecnicoRequest.sobrenome())) {
             throw new TechnicianNotValidException("Digite Nome e Sobrenome!", Codigo.NOMESOBRENOME);
         }
-        if (tecnicoRequest.getSobrenome().length() < MINIMO_DE_CARACTERES_ACEITO) {
+        if (tecnicoRequest.sobrenome().length() < MINIMO_DE_CARACTERES_ACEITO) {
             throw new TechnicianNotValidException(String.format("O Sobrenome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
         }
-        if (tecnicoRequest.getTelefoneCelular().isBlank() && tecnicoRequest.getTelefoneFixo().isBlank()) {
+        if (tecnicoRequest.telefoneCelular().isBlank() && tecnicoRequest.telefoneFixo().isBlank()) {
             throw new TechnicianNotValidException("O técnico precisa ter no mínimo um telefone cadastrado!", Codigo.TELEFONES);
         }
-        if (tecnicoRequest.getTelefoneCelular().length() < 11 && !tecnicoRequest.getTelefoneCelular().isEmpty()) {
+        if (tecnicoRequest.telefoneCelular().length() < 11 && !tecnicoRequest.telefoneCelular().isEmpty()) {
             throw new TechnicianNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
         }
-        if (tecnicoRequest.getTelefoneFixo().length() < 10 && !tecnicoRequest.getTelefoneFixo().isEmpty()) {
+        if (tecnicoRequest.telefoneFixo().length() < 10 && !tecnicoRequest.telefoneFixo().isEmpty()) {
             throw new TechnicianNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
         }
     }
