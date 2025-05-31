@@ -68,7 +68,7 @@ class ClientServiceTest {
         }
 
         @Test
-        void fetchOneById_ClientDoNotExists_ShouldThrowClientNotFoundException() {
+        void fetchOneById_ClientDoesNotExists_ShouldThrowClientNotFoundException() {
             // Arrange
             when(clientRepository.findById(1)).thenReturn(Optional.empty());
 
