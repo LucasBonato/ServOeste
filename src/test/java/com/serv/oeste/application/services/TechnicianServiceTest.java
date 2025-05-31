@@ -17,12 +17,14 @@ import com.serv.oeste.domain.valueObjects.TechnicianFilter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -490,7 +492,7 @@ class TechnicianServiceTest {
     @Nested
     class Update {
         @Test
-        void update() {
+        void update_ValidRequestWithExistingTechnician_ShouldUpdateTechnicianAndReturnResponse() {
             // Arrange
             int technicianToBeUpdatedId = 1;
 
@@ -504,13 +506,13 @@ class TechnicianServiceTest {
             );
 
             Technician technician = new Technician(
-                    1,
-                    "Railson",
-                    "Ferreira dos Santos",
-                    "",
+                    technicianToBeUpdatedId,
+                    "NomeAntigo",
+                    "Sobrenome Antigo",
+                    "1187652345",
                     "11968949278",
-                    Situacao.ATIVO,
-                    List.of(MICROONDAS, OUTROS)
+                    Situacao.DESATIVADO,
+                    new ArrayList<>()
             );
 
             when(specialtyRepository.findById(MICROONDAS.getId())).thenReturn(Optional.of(MICROONDAS));
