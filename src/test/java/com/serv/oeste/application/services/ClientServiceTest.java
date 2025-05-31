@@ -435,12 +435,12 @@ class ClientServiceTest {
 
             Client client = new Client(
                     1,
-                    "João Silva Pereira",
-                    "1198762345",
-                    "11942368296",
-                    "Rua Qualquer Coisa, 275",
-                    "Bairro Qualquer",
-                    "São Paulo"
+                    "NomeAntigo + SobrenomeAntigo",
+                    "1112341234",
+                    "11989765327",
+                    "Rua Antiga, 123",
+                    "Bairro Antigo",
+                    "Municipio Antigo"
             );
 
             when(clientRepository.findById(id)).thenReturn(Optional.of(client));
@@ -453,12 +453,12 @@ class ClientServiceTest {
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
             assertEquals(id, response.getBody().id());
-            assertEquals(request.nome() + " " + request.sobrenome(), response.getBody().nome());
-            assertEquals(request.telefoneCelular(), response.getBody().telefoneCelular());
-            assertEquals(request.telefoneFixo(), response.getBody().telefoneFixo());
-            assertEquals(request.endereco(), response.getBody().endereco());
-            assertEquals(request.bairro(), response.getBody().bairro());
-            assertEquals(request.municipio(), response.getBody().municipio());
+            assertEquals("João Silva Pereira", response.getBody().nome());
+            assertEquals("11942368296", response.getBody().telefoneCelular());
+            assertEquals("1198762345", response.getBody().telefoneFixo());
+            assertEquals("Rua Qualquer Coisa, 275", response.getBody().endereco());
+            assertEquals("Bairro Qualquer", response.getBody().bairro());
+            assertEquals("São Paulo", response.getBody().municipio());
 
             verify(clientRepository).findById(id);
             verify(clientRepository).save(any(Client.class));
