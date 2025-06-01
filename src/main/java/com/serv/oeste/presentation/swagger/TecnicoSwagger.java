@@ -34,7 +34,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
     })
     ResponseEntity<TecnicoWithSpecialityResponse> fetchOneById(Integer id);
 
-    @Operation(description = "Forma de pegar informações para prencheer a tabela de disponibilidade de técnicos.")
+    @Operation(description = "Forma de pegar informações para preencher a tabela de disponibilidade de técnicos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Informações devolvidas com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
