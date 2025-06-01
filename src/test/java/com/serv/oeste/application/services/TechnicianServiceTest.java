@@ -1,6 +1,7 @@
 package com.serv.oeste.application.services;
 
 import com.serv.oeste.application.dtos.reponses.EspecialidadeResponse;
+import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
@@ -11,22 +12,24 @@ import com.serv.oeste.domain.contracts.repositories.ISpecialtyRepository;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.specialty.Specialty;
 import com.serv.oeste.domain.entities.technician.Technician;
+import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.Situacao;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -202,8 +205,98 @@ class TechnicianServiceTest {
 
     @Nested
     class FetchListAvailability {
+        private static Date toDate(LocalDate localDate) {
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+
+        @BeforeEach
+        void setup() {
+            LocalDate now = LocalDate.now();
+            Clock clock = Clock.fixed(now.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+
+            technicianService = new TechnicianService(
+                    technicianRepository,
+                    specialtyRepository,
+                    clock
+            );
+        }
+
         @Test
-        void fetchListAvailability() {
+        void fetchListAvailability_WhenTechniciansExistForSpecialty_ShouldReturnListWithGroupedAvailability() {
+            // Arrange
+            int specialtyId = 1;
+            int todayDayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+            int expectedInterval = todayDayOfWeek > 4 ? 4 : 3;
+
+            List<TechnicianAvailability> rawList = List.of(
+                    new TechnicianAvailability(1, "João", toDate(LocalDate.now()), 2, "MANHÃ", 2),
+                    new TechnicianAvailability(1, "João", toDate(LocalDate.now()), 2, "TARDE", 3),
+                    new TechnicianAvailability(2, "Maria", toDate(LocalDate.now()), 2, "TARDE", 1)
+            );
+
+            when(technicianRepository.getTechnicianAvailabilityBySpecialty(expectedInterval, specialtyId))
+                    .thenReturn(rawList);
+
+            // Act
+            ResponseEntity<List<TecnicoDisponibilidadeResponse>> response = technicianService.fetchListAvailability(specialtyId);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            List<TecnicoDisponibilidadeResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(2, body.size());
+
+            TecnicoDisponibilidadeResponse joao = body.stream()
+                    .filter(t -> t.getNome().equals("João"))
+                    .findFirst()
+                    .orElseThrow();
+            assertEquals(5, joao.getQuantidadeTotalServicos());
+
+            TecnicoDisponibilidadeResponse maria = body.stream()
+                    .filter(t -> t.getNome().equals("Maria"))
+                    .findFirst()
+                    .orElseThrow();
+            assertEquals(1, maria.getQuantidadeTotalServicos());
+
+            // Verifica dias e períodos
+            assertThat(joao.getDisponibilidades()).hasSize(2);
+        }
+
+        @Test
+        void fetchListAvailability_WhenNoTechnicianMatchesSpecialty_ShouldReturnEmptyList() {
+            // Arrange
+            when(technicianRepository.getTechnicianAvailabilityBySpecialty(anyInt(), anyInt()))
+                    .thenReturn(Collections.emptyList());
+
+            // Act
+            ResponseEntity<List<TecnicoDisponibilidadeResponse>> response = technicianService.fetchListAvailability(999);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertTrue(response.getBody().isEmpty());
+        }
+
+        @Test
+        void fetchListAvailability_shouldUseCorrectDayInterval_WhenTodayIsFridayOrLater() {
+            // Arrange
+            LocalDate friday = LocalDate.of(2024, 5, 31); // sexta-feira
+            Clock fixedClock = Clock.fixed(friday.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+
+            TechnicianService service = new TechnicianService(
+                    technicianRepository,
+                    specialtyRepository,
+                    fixedClock
+            );
+
+            when(technicianRepository.getTechnicianAvailabilityBySpecialty(eq(4), anyInt()))
+                    .thenReturn(Collections.emptyList());
+
+            // Act
+            service.fetchListAvailability(1);
+
+            // Assert
+            verify(technicianRepository).getTechnicianAvailabilityBySpecialty(4, 1);
         }
     }
 
@@ -322,7 +415,7 @@ class TechnicianServiceTest {
                     "",
                     "11968949278",
                     Enum.valueOf(Situacao.class, "ATIVO"),
-                    List.of(ADEGA.getId(), PURIFICADOR.getId())
+                    List.of(LAVA_LOUCA.getId(), LAVA_ROUPA.getId())
             );
 
             // Act
@@ -548,7 +641,80 @@ class TechnicianServiceTest {
     @Nested
     class DisableListByIds {
         @Test
-        void disableListByIds() {
+        void disableListByIds_DiableTechnicians_ShouldDisableAllTechnicians() {
+            // Arrange
+            Technician technician1 = new Technician(
+                    1,
+                    "Railson",
+                    "Ferreira dos Santos",
+                    "",
+                    "11968949278",
+                    Situacao.ATIVO,
+                    List.of(GELADEIRA, COOLER)
+            );
+
+            Technician technician2 = new Technician(
+                    2,
+                    "Tinoco",
+                    "Vordez Silva",
+                    "1198762345",
+                    "",
+                    Situacao.ATIVO,
+                    List.of(SECADORA, CLIMATIZADOR)
+            );
+
+            List<Integer> ids = List.of(1, 2);
+
+            when(technicianRepository.findById(1)).thenReturn(Optional.of(technician1));
+            when(technicianRepository.findById(2)).thenReturn(Optional.of(technician2));
+            // Act
+            ResponseEntity<Void> response = technicianService.disableListByIds(ids);
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+
+            assertEquals(Situacao.DESATIVADO, technician1.getSituacao());
+            assertEquals(Situacao.DESATIVADO, technician2.getSituacao());
+
+            verify(technicianRepository, times(1)).saveAll(any());
+            verify(technicianRepository).saveAll(
+                    argThat(list ->
+                        list.size() == 2 &&
+                        list.contains(technician1) &&
+                        list.contains(technician2) &&
+                        list.stream().allMatch(technician -> technician.getSituacao() == Situacao.DESATIVADO)
+                    )
+            );
+        }
+
+        @Test
+        void disableListByIds_WithEmptyList_ShouldReturnOkAndNotCallRepository() {
+            // Act
+            ResponseEntity<Void> response = technicianService.disableListByIds(List.of());
+
+            // Assert
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            verify(technicianRepository, never()).saveAll(any());
+        }
+
+        @Test
+        void disableListByIds_WhenTechnicianNotFound_ShouldThrowException() {
+            // Arrange
+            int idToBeFound = 1;
+            when(technicianRepository.findById(idToBeFound)).thenReturn(Optional.empty());
+
+            // Act
+            TechnicianNotFoundException exception = assertThrows(
+                    TechnicianNotFoundException.class,
+                    () -> technicianService.disableListByIds(List.of(idToBeFound))
+            );
+
+            // Assert
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+            assertEquals("Técnico não encontrado!", exception.getExceptionResponse().getMessage());
+            assertEquals(Codigo.TECNICO.getI(), exception.getExceptionResponse().getIdError());
+
+            verify(technicianRepository, never()).saveAll(any());
         }
     }
 }
