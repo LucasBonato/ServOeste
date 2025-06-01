@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class TechnicianService {
     private final ITechnicianRepository technicianRepository;
     private final ISpecialtyRepository specialtyRepository;
+    private final Clock clock;
 
     public ResponseEntity<TecnicoWithSpecialityResponse> fetchOneById(Integer id) {
         return ResponseEntity.ok(new TecnicoWithSpecialityResponse(getTecnicoById(id)));
@@ -47,7 +49,7 @@ public class TechnicianService {
     }
 
     public ResponseEntity<List<TecnicoDisponibilidadeResponse>> fetchListAvailability(Integer especialidadeId) {
-        int intervaloDeDias = (LocalDate.now().getDayOfWeek().getValue() > 4) ? 4 : 3;
+        int intervaloDeDias = (LocalDate.now(clock).getDayOfWeek().getValue() > 4) ? 4 : 3;
 
         List<TechnicianAvailability> tecnicosRaw = technicianRepository.getTechnicianAvailabilityBySpecialty(intervaloDeDias, especialidadeId);
 
@@ -104,7 +106,8 @@ public class TechnicianService {
                 .peek(tecnico -> tecnico.setSituacao(Situacao.DESATIVADO))
                 .collect(Collectors.toList());
 
-        technicianRepository.saveAll(tecnicos);
+        if (!tecnicos.isEmpty())
+            technicianRepository.saveAll(tecnicos);
 
         return ResponseEntity.ok().build();
     }
