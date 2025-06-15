@@ -43,7 +43,7 @@ public class ServiceService {
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
         verificarSelecionamentoDasEntidades(servicoRequest.idCliente());
         verificarCamposObrigatoriosServico(servicoRequest);
-        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, servicoRequest.idCliente());
+        ServicoResponse servicoResponse = criarServico(servicoRequest, servicoRequest.idCliente());
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -53,10 +53,13 @@ public class ServiceService {
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
         verificarCamposObrigatoriosServico(servicoRequest);
         ResponseEntity<ClienteResponse> response = clientService.create(clienteRequest);
-        assert response.getBody() != null;
-        int createdClientId = response.getBody().id();
-        verificarSelecionamentoDasEntidades(createdClientId);
-        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, createdClientId);
+
+        if (response.getBody() == null) {
+            throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível pegar o id do cliente!");
+        }
+
+        verificarSelecionamentoDasEntidades(response.getBody().id());
+        ServicoResponse servicoResponse = criarServico(servicoRequest, response.getBody().id());
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -169,9 +172,9 @@ public class ServiceService {
         }
     }
     
-    private void verificarSelecionamentoDasEntidades(Integer idCliente) {
+    protected void verificarSelecionamentoDasEntidades(Integer idCliente) {
         if (idCliente == null) {
-            throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado");
+            throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado!");
         }
     }
     
@@ -188,7 +191,7 @@ public class ServiceService {
         if (servicoRequest.descricao().length() < 10) {
             throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
-        if (servicoRequest.descricao().split(" ").length < 2) {
+        if (servicoRequest.descricao().split(" ").length < 3) {
             throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
         if (StringUtils.isBlank(servicoRequest.filial())) {
@@ -238,7 +241,7 @@ public class ServiceService {
         }
     }
     
-    private ServicoResponse cadastrarComVerificacoes(ServicoRequest servicoRequest, Integer idCliente) {
+    protected ServicoResponse criarServico(ServicoRequest servicoRequest, Integer idCliente) {
         Client cliente = clientService.getClienteById(idCliente);
         Technician tecnico = (servicoRequest.idTecnico() != null) ? technicianService.getTecnicoById(servicoRequest.idTecnico()) : null;
         verificarCamposNaoObrigatoriosServico(servicoRequest);
@@ -246,7 +249,7 @@ public class ServiceService {
         return cadastrarServico(servicoRequest, cliente, tecnico);
     }
     
-    private ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Client cliente, Technician tecnico) {
+    protected ServicoResponse cadastrarServico(ServicoRequest servicoRequest, Client cliente, Technician tecnico) {
         SituacaoServico situacao = (StringUtils.isBlank(servicoRequest.horarioPrevisto()) || (convertData(servicoRequest.dataAtendimento()) == null && tecnico == null))
                 ? SituacaoServico.AGUARDANDO_AGENDAMENTO
                 : SituacaoServico.AGUARDANDO_ATENDIMENTO;
