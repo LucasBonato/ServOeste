@@ -13,6 +13,8 @@ public class Technician {
     private Situacao situacao = Situacao.ATIVO;
     private List<Specialty> especialidades;
 
+    public Technician() {}
+
     public Technician(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao) {
         this.nome = nome;
         this.sobrenome = sobrenome;
