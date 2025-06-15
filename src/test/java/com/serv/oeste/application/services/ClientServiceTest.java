@@ -2,12 +2,14 @@ package com.serv.oeste.application.services;
 
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
+import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.application.exceptions.client.ClientNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IClientRepository;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.valueObjects.ClientFilter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +86,120 @@ class ClientServiceTest {
             assertEquals("Cliente não encontrado!", exception.getExceptionResponse().getMessage());
             assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
         }
+    }
+
+    @Nested
+    class FetchListByFilter {
+        final Client JOAO = new Client(1, "João Silva Pereira", "1176452476", "11946289576", "Rua Alguma Coisa", "Bairroso", "São Paulo");
+        final Client MARIA = new Client(2, "Maria Eduarda Ferreira", "1198762345", "11909871234", "Rua Alguma da Silva", "Bairro Diferenciado", "São Paulo");
+
+        @Test
+        void fetchListByFilter_NoFilter_ShouldReturnAllClients() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, null, null);
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO, MARIA));
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            List<ClienteResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(2, body.size());
+            assertTrue(body.stream().anyMatch(c -> c.id().equals(JOAO.getId())));
+            assertTrue(body.stream().anyMatch(c -> c.id().equals(MARIA.getId())));
+        }
+
+        @Test
+        void fetchListByFilter_FilterByNome_ShouldReturnMatchingClients() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter("Maria", null, null);
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(List.of(MARIA));
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            List<ClienteResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(1, body.size());
+            assertEquals(MARIA.getId(), body.getFirst().id());
+        }
+
+        @Test
+        void fetchListByFilter_FilterByTelefone_ShouldReturnClientsWithMatchingPhones() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, "1194628", null);
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO));
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            List<ClienteResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(1, body.size());
+            assertEquals(JOAO.getId(), body.getFirst().id());
+        }
+
+        @Test
+        void fetchListByFilter_FilterByEndereco_ShouldReturnClientsWithMatchingAddress() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, null, "Silva");
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(List.of(MARIA));
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            List<ClienteResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(1, body.size());
+            assertEquals(MARIA.getId(), body.getFirst().id());
+        }
+
+        @Test
+        void fetchListByFilter_AllFieldsMatch_ShouldReturnCorrectClient() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter("João", "1194628", "Rua Alguma");
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO));
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            List<ClienteResponse> body = response.getBody();
+            assertNotNull(body);
+            assertEquals(1, body.size());
+            assertEquals(JOAO.getId(), body.getFirst().id());
+        }
+
+        @Test
+        void fetchListByFilter_NoMatch_ShouldReturnEmptyList() {
+            // Arrange
+            ClienteRequestFilter filterRequest = new ClienteRequestFilter("Inexistente", null, null);
+            ClientFilter filter = filterRequest.toClientFilter();
+
+            when(clientRepository.filter(filter)).thenReturn(Collections.emptyList());
+
+            // Act
+            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+
+            // Assert
+            assertNotNull(response.getBody());
+            assertTrue(response.getBody().isEmpty());
+        }
+
     }
 
     @Nested
