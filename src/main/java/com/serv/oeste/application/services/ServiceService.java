@@ -1,5 +1,6 @@
 package com.serv.oeste.application.services;
 
+import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.ServicoRequest;
@@ -51,9 +52,11 @@ public class ServiceService {
     
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
         verificarCamposObrigatoriosServico(servicoRequest);
-        clientService.create(clienteRequest);
-        verificarSelecionamentoDasEntidades(ClientService.idUltimoCliente);
-        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, ClientService.idUltimoCliente);
+        ResponseEntity<ClienteResponse> response = clientService.create(clienteRequest);
+        assert response.getBody() != null;
+        int createdClientId = response.getBody().id();
+        verificarSelecionamentoDasEntidades(createdClientId);
+        ServicoResponse servicoResponse = cadastrarComVerificacoes(servicoRequest, createdClientId);
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)

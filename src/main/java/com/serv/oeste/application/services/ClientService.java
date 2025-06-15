@@ -25,8 +25,7 @@ import java.util.stream.Collectors;
 public class ClientService {
     private final IClientRepository clientRepository;
     private final IServiceRepository serviceRepository;
-    public static Integer idUltimoCliente;
-    
+
     @Cacheable("clienteCache")
     public ResponseEntity<ClienteResponse> fetchOneById(Integer id) {
         return ResponseEntity.ok(getClienteResponse(getClienteById(id)));
@@ -47,7 +46,6 @@ public class ClientService {
         
         Client cliente = clientRepository.save(clienteRequest.toClient());
         
-        idUltimoCliente = cliente.getId();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(getClienteResponse(cliente));
