@@ -73,13 +73,15 @@ public class TechnicianService {
     public ResponseEntity<TecnicoWithSpecialityResponse> create(TecnicoRequest tecnicoRequest) {
         verifyFieldsOfTecnico(tecnicoRequest);
 
-        Technician technician = technicianRepository.save(tecnicoRequest.toTechnician());
-
+        Technician technician = tecnicoRequest.toTechnician();
+        technician.setSituacao(Situacao.ATIVO);
         technician.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids()));
+
+        Technician newTechnician = technicianRepository.save(technician);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new TecnicoWithSpecialityResponse(technician));
+                .body(new TecnicoWithSpecialityResponse(newTechnician));
     }
 
     public ResponseEntity<TecnicoWithSpecialityResponse> update(Integer id, TecnicoRequest tecnicoRequest) {
