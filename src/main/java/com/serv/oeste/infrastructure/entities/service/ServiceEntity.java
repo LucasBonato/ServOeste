@@ -128,7 +128,7 @@ public class ServiceEntity {
                 this.dataAtendimentoPrevisto,
                 this.dataAtendimentoEfetiva,
                 this.cliente.toClient(),
-                this.tecnico.toTechnician()
+                this.tecnico == null ? null : this.tecnico.toTechnician()
         );
     }
 
