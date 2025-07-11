@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface ITechnicianJpaRepository extends JpaRepository<TechnicianEntity, Integer>, JpaSpecificationExecutor<TechnicianEntity> {
-    @Query(value = "CALL GetTabelaDisponibilidade(:days, :especialidadeId)", nativeQuery = true)
+    @Query(value = "CALL GetTabelaDisponibilidade(:days, :specialtyId)", nativeQuery = true)
     List<TechnicianAvailabilityProjection> getTechnicianAvailabilityBySpecialty(@Param("days") Integer days, @Param("specialtyId") Integer specialtyId);
 }
