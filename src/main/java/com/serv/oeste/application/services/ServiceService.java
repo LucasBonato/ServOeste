@@ -10,15 +10,17 @@ import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
+import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,22 +29,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class ServiceService {
     private final ClientService clientService;
     private final TechnicianService technicianService;
     private final IServiceRepository serviceRepository;
+    private final Logger logger = LoggerFactory.getLogger(ServiceService.class);
     
     @Cacheable("allServicos")
     public ResponseEntity<List<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter) {
-        List<com.serv.oeste.domain.entities.service.Service> servicos = serviceRepository.filter(servicoRequestFilter.toServiceFilter());
+        logger.debug("DEBUG - Fetching services with filter: {}", servicoRequestFilter);
+        List<Service> servicos = serviceRepository.filter(servicoRequestFilter.toServiceFilter());
+        logger.info("INFO - Found {} services with filter: {}", servicos.size(), servicoRequestFilter);
         return ResponseEntity.ok(getServicosResponse(servicos));
     }
     
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
+        logger.info("INFO - Creating new service");
         verificarSelecionamentoDasEntidades(servicoRequest.idCliente());
         verificarCamposObrigatoriosServico(servicoRequest);
+        logger.info("DEBUG - Business validation passed for service");
         ServicoResponse servicoResponse = criarServico(servicoRequest, servicoRequest.idCliente());
         
         return ResponseEntity
@@ -51,15 +58,21 @@ public class ServiceService {
     }
     
     public ResponseEntity<ServicoResponse> cadastrarComClienteNaoExistente(ClienteRequest clienteRequest, ServicoRequest servicoRequest) {
+        logger.info("INFO - Creating new service and client");
         verificarCamposObrigatoriosServico(servicoRequest);
+        logger.info("INFO - Creating new client for service");
         ResponseEntity<ClienteResponse> response = clientService.create(clienteRequest);
 
         if (response.getBody() == null) {
+            logger.error("ERROR - Could not create client with: {}", clienteRequest);
             throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível pegar o id do cliente!");
         }
 
         verificarSelecionamentoDasEntidades(response.getBody().id());
+        logger.info("DEBUG - Business validation passed for service and client");
+
         ServicoResponse servicoResponse = criarServico(servicoRequest, response.getBody().id());
+        logger.info("INFO - Service Created successfully with id={}, clientId={}, technicianId={}", servicoResponse.id(), servicoResponse.idCliente(), servicoResponse.idTecnico());
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -67,14 +80,22 @@ public class ServiceService {
     }
     
     public ResponseEntity<ServicoResponse> update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
-        com.serv.oeste.domain.entities.service.Service servico = serviceRepository.findById(id).orElseThrow(ServiceNotFoundException::new);
+        logger.info("INFO - Updating service with Id: {}", id);
+        Service servico = serviceRepository
+                .findById(id)
+                .orElseThrow(() -> {
+                    logger.error("ERROR - Service with Id {} not found", id);
+                    return new ServiceNotFoundException();
+                });
         
         verificarSelecionamentoDasEntidades(servicoUpdateRequest.idCliente(), servicoUpdateRequest.idTecnico(), servicoUpdateRequest.situacao());
         verificarCamposUpdate(servicoUpdateRequest);
+
+        logger.debug("DEBUG - Fetching related client and technician...");
         Client cliente = clientService.getClienteById(servicoUpdateRequest.idCliente());
         Technician tecnico = technicianService.getTecnicoById(servicoUpdateRequest.idTecnico());
         
-        com.serv.oeste.domain.entities.service.Service servicoUpdated = serviceRepository.save(new com.serv.oeste.domain.entities.service.Service(
+        Service servicoUpdated = serviceRepository.save(new Service(
                 id,
                 servicoUpdateRequest.equipamento(),
                 servicoUpdateRequest.marca(),
@@ -96,11 +117,13 @@ public class ServiceService {
                 cliente,
                 tecnico
         ));
-        
+
+        logger.info("INFO - Service with Id {} updated successfully", id);
         return ResponseEntity.ok(getServicoResponse(servicoUpdated));
     }
     
     public ResponseEntity<Void> deleteListByIds(List<Integer> ids) {
+        logger.info("INFO - Deleting services with Ids: {}", ids);
         ids.stream()
                 .filter(id -> serviceRepository.findById(id).isPresent())
                 .forEach(serviceRepository::deleteById);
@@ -108,14 +131,14 @@ public class ServiceService {
         return ResponseEntity.ok().build();
     }
     
-    private List<ServicoResponse> getServicosResponse(List<com.serv.oeste.domain.entities.service.Service> servicos) {
+    private List<ServicoResponse> getServicosResponse(List<Service> servicos) {
         return servicos
                 .stream()
                 .map(this::getServicoResponse)
                 .collect(Collectors.toList());
     }
     
-    private ServicoResponse getServicoResponse(com.serv.oeste.domain.entities.service.Service servico) {
+    private ServicoResponse getServicoResponse(Service servico) {
         Boolean garatia = null;
         if (servico.getDataInicioGarantia() != null) {
             java.sql.Date dataHoje = java.sql.Date.valueOf(LocalDate.now());
@@ -242,6 +265,7 @@ public class ServiceService {
     }
     
     protected ServicoResponse criarServico(ServicoRequest servicoRequest, Integer idCliente) {
+        logger.info("INFO - Creating service for client id {}", idCliente);
         Client cliente = clientService.getClienteById(idCliente);
         Technician tecnico = (servicoRequest.idTecnico() != null) ? technicianService.getTecnicoById(servicoRequest.idTecnico()) : null;
         verificarCamposNaoObrigatoriosServico(servicoRequest);
@@ -255,10 +279,11 @@ public class ServiceService {
                 : SituacaoServico.AGUARDANDO_ATENDIMENTO;
         
         if (situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) && tecnico == null) {
+            logger.warn("WARN - Technician not selected but situation needs one");
             throw new ServiceNotValidException(Codigo.TECNICO, "Técnico não selecionado");
         }
         
-        com.serv.oeste.domain.entities.service.Service novoServico = new com.serv.oeste.domain.entities.service.Service(
+        Service novoServico = serviceRepository.save(new Service(
                 servicoRequest.equipamento(),
                 servicoRequest.marca(),
                 servicoRequest.filial(),
@@ -268,7 +293,9 @@ public class ServiceService {
                 StringUtils.isBlank(servicoRequest.dataAtendimento()) ? null : convertData(servicoRequest.dataAtendimento()),
                 cliente,
                 tecnico
-        );
-        return getServicoResponse(serviceRepository.save(novoServico));
+        ));
+
+        logger.info("Service created successfully for client ID {}", cliente.getId());
+        return getServicoResponse(novoServico);
     }
 }
