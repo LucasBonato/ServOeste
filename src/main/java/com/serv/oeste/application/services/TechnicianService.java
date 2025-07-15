@@ -19,6 +19,8 @@ import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.Situacao;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,22 +36,30 @@ public class TechnicianService {
     private final ITechnicianRepository technicianRepository;
     private final ISpecialtyRepository specialtyRepository;
     private final Clock clock;
+    private final Logger logger = LoggerFactory.getLogger(TechnicianService.class);
 
     public ResponseEntity<TecnicoWithSpecialityResponse> fetchOneById(Integer id) {
-        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(getTecnicoById(id)));
+        logger.debug("DEBUG - Fetching technician by ID: {}", id);
+        Technician technician = getTecnicoById(id);
+        logger.info("INFO - Technician found: id={}, nome={}", id, technician.getNome());
+
+        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(technician));
     }
 
     public ResponseEntity<List<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filtroRequest) {
+        logger.debug("DEBUG - Fetching technicians with filter: {}", filtroRequest);
         List<TecnicoResponse> tecnicos = technicianRepository.filter(filtroRequest.toTechnicianFilter())
                 .stream()
                 .map(TecnicoResponse::new)
                 .collect(Collectors.toList());
+        logger.info("INFO - Found {} technicians with filter: {}", tecnicos.size(), filtroRequest);
 
         return ResponseEntity.ok(tecnicos);
     }
 
     public ResponseEntity<List<TecnicoDisponibilidadeResponse>> fetchListAvailability(Integer especialidadeId) {
         int intervaloDeDias = (LocalDate.now(clock).getDayOfWeek().getValue() > 4) ? 4 : 3;
+        logger.debug("DEBUG - Fetching technicians availability with day interval of: {}", intervaloDeDias);
 
         List<TechnicianAvailability> tecnicosRaw = technicianRepository.getTechnicianAvailabilityBySpecialty(intervaloDeDias, especialidadeId);
 
@@ -66,18 +76,22 @@ public class TechnicianService {
                     );
                 })
                 .toList();
+        logger.info("INFO - Found {} technicians available with interval={}, specialtyId={}", tecnicos.size(), intervaloDeDias, especialidadeId);
 
         return ResponseEntity.ok(tecnicos);
     }
 
     public ResponseEntity<TecnicoWithSpecialityResponse> create(TecnicoRequest tecnicoRequest) {
+        logger.info("INFO - Creating new Technician");
         verifyFieldsOfTecnico(tecnicoRequest);
+        logger.debug("DEBUG - Business validation passed for technician");
 
         Technician technician = tecnicoRequest.toTechnician();
         technician.setSituacao(Situacao.ATIVO);
         technician.setEspecialidades(getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids()));
 
         Technician newTechnician = technicianRepository.save(technician);
+        logger.info("INFO - Technician Created successfully with id={}", newTechnician.getId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -85,6 +99,7 @@ public class TechnicianService {
     }
 
     public ResponseEntity<TecnicoWithSpecialityResponse> update(Integer id, TecnicoRequest tecnicoRequest) {
+        logger.info("INFO - Updating technician id={}", id);
         Technician tecnico = getTecnicoById(id);
 
         verifyFieldsOfTecnico(tecnicoRequest);
@@ -99,10 +114,14 @@ public class TechnicianService {
                 getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids())
         );
 
-        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(technicianRepository.save(tecnico)));
+        Technician technicianUpdated = technicianRepository.save(tecnico);
+        logger.info("INFO - technician updated id={}", technicianUpdated.getId());
+
+        return ResponseEntity.ok(new TecnicoWithSpecialityResponse(technicianUpdated));
     }
 
     public ResponseEntity<Void> disableListByIds(List<Integer> ids) {
+        logger.info("INFO - Disabling technicians by ids: {}", ids);
         List<Technician> tecnicos = ids.stream()
                 .map(this::getTecnicoById)
                 .peek(tecnico -> tecnico.setSituacao(Situacao.DESATIVADO))
@@ -115,7 +134,12 @@ public class TechnicianService {
     }
 
     protected Technician getTecnicoById(Integer id) {
-        return technicianRepository.findById(id).orElseThrow(TechnicianNotFoundException::new);
+        return technicianRepository
+                .findById(id)
+                .orElseThrow(() -> {
+                    logger.error("ERROR - Technician with id={} not found", id);
+                    return new TechnicianNotFoundException();
+                });
     }
 
     private Availability getAvailabilityFromRaw(TechnicianAvailability technicianAvailability) {
@@ -143,15 +167,25 @@ public class TechnicianService {
 
     private List<Specialty> getEspecialidadesTecnico(List<Integer> specialtyIds) {
         if (specialtyIds.isEmpty()) {
+            logger.error("ERROR - Specialties is empty");
             throw new TechnicianSpecialtyEmptyException();
         }
 
         return specialtyIds.stream()
-                .map(id -> specialtyRepository.findById(id).orElseThrow(SpecialtyNotFoundException::new))
+                .map(id ->
+                        specialtyRepository
+                            .findById(id)
+                            .orElseThrow(() -> {
+                                logger.error("ERROR - Specialty with id={} not found", id);
+                                return new SpecialtyNotFoundException();
+                            })
+                )
                 .collect(Collectors.toList());
     }
 
     private void verifyFieldsOfTecnico(TecnicoRequest tecnicoRequest) {
+        logger.debug("DEBUG - Validating business rules for technician: nome={}, sobrenome={}", tecnicoRequest.nome(), tecnicoRequest.sobrenome());
+
         final int MINIMO_DE_CARACTERES_ACEITO = 2;
         if (StringUtils.isBlank(tecnicoRequest.nome())) {
             throw new TechnicianNotValidException("O Nome do técnico não pode ser vazio!", Codigo.NOMESOBRENOME);
