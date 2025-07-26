@@ -4,6 +4,7 @@ import com.serv.oeste.application.dtos.reponses.EspecialidadeResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
@@ -15,6 +16,8 @@ import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.valueObjects.PageFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -135,15 +138,22 @@ class TechnicianServiceTest {
             // Arrange
             TecnicoRequestFilter filterRequest = new TecnicoRequestFilter(null, null, null, null, null);
             TechnicianFilter filter = filterRequest.toTechnicianFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(technicianRepository.filter(filter)).thenReturn(List.of(JOAO, MARIA));
+            when(technicianRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(JOAO, MARIA),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<TecnicoResponse> body = response.getBody();
-            assertNotNull(body);
+            assertNotNull(response.getBody());
+            List<TecnicoResponse> body = response.getBody().getContent();
             assertEquals(2, body.size());
             assertTrue(body.stream().anyMatch(t -> t.id().equals(JOAO.getId())));
             assertTrue(body.stream().anyMatch(t -> t.id().equals(MARIA.getId())));
@@ -154,15 +164,22 @@ class TechnicianServiceTest {
             // Arrange
             TecnicoRequestFilter filterRequest = new TecnicoRequestFilter(null, "João", null, null, null);
             TechnicianFilter filter = filterRequest.toTechnicianFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(technicianRepository.filter(filter)).thenReturn(List.of(JOAO));
+            when(technicianRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(JOAO),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<TecnicoResponse> body = response.getBody();
-            assertNotNull(body);
+            assertNotNull(response.getBody());
+            List<TecnicoResponse> body = response.getBody().getContent();
             assertEquals(1, body.size());
             assertEquals("João", body.getFirst().nome());
         }
@@ -172,15 +189,22 @@ class TechnicianServiceTest {
             // Arrange
             TecnicoRequestFilter filterRequest = new TecnicoRequestFilter(null, null, "ATIVO", null, null);
             TechnicianFilter filter = filterRequest.toTechnicianFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(technicianRepository.filter(filter)).thenReturn(List.of(JOAO));
+            when(technicianRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(JOAO),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<TecnicoResponse> body = response.getBody();
-            assertNotNull(body);
+            assertNotNull(response.getBody());
+            List<TecnicoResponse> body = response.getBody().getContent();
             assertEquals(1, body.size());
             assertEquals(Situacao.ATIVO, body.getFirst().situacao());
         }
@@ -190,15 +214,22 @@ class TechnicianServiceTest {
             // Arrange
             TecnicoRequestFilter filterRequest = new TecnicoRequestFilter(null, "Fulano", null, null, null);
             TechnicianFilter filter = filterRequest.toTechnicianFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(technicianRepository.filter(filter)).thenReturn(List.of());
+            when(technicianRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<TecnicoResponse>> response = technicianService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<TecnicoResponse> body = response.getBody();
-            assertNotNull(body);
+            assertNotNull(response.getBody());
+            List<TecnicoResponse> body = response.getBody().getContent();
             assertTrue(body.isEmpty());
         }
     }
