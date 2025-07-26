@@ -3,6 +3,7 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.application.exceptions.client.ClientNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IClientRepository;
@@ -10,6 +11,8 @@ import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.valueObjects.ClientFilter;
+import com.serv.oeste.domain.valueObjects.PageFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -98,14 +101,24 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, null, null);
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO, MARIA));
+            when(clientRepository.filter(filter, pageFilter))
+                    .thenReturn(new PageResponse<>(
+                            List.of(JOAO, MARIA),
+                            1,
+                            0,
+                            10
+                        )
+                    );
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<ClienteResponse> body = response.getBody();
+            assertNotNull(response.getBody());
+            List<ClienteResponse> body = response.getBody().getContent();
             assertNotNull(body);
             assertEquals(2, body.size());
             assertTrue(body.stream().anyMatch(c -> c.id().equals(JOAO.getId())));
@@ -117,14 +130,22 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter("Maria", null, null);
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(List.of(MARIA));
+            when(clientRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(MARIA),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<ClienteResponse> body = response.getBody();
+            assertNotNull(response.getBody());
+            List<ClienteResponse> body = response.getBody().getContent();
             assertNotNull(body);
             assertEquals(1, body.size());
             assertEquals(MARIA.getId(), body.getFirst().id());
@@ -135,14 +156,22 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, "1194628", null);
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO));
+            when(clientRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(JOAO),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<ClienteResponse> body = response.getBody();
+            assertNotNull(response.getBody());
+            List<ClienteResponse> body = response.getBody().getContent();
             assertNotNull(body);
             assertEquals(1, body.size());
             assertEquals(JOAO.getId(), body.getFirst().id());
@@ -153,14 +182,22 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter(null, null, "Silva");
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(List.of(MARIA));
+            when(clientRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(MARIA),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<ClienteResponse> body = response.getBody();
+            assertNotNull(response.getBody());
+            List<ClienteResponse> body = response.getBody().getContent();
             assertNotNull(body);
             assertEquals(1, body.size());
             assertEquals(MARIA.getId(), body.getFirst().id());
@@ -171,14 +208,22 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter("João", "1194628", "Rua Alguma");
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(List.of(JOAO));
+            when(clientRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(JOAO),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            List<ClienteResponse> body = response.getBody();
+            assertNotNull(response.getBody());
+            List<ClienteResponse> body = response.getBody().getContent();
             assertNotNull(body);
             assertEquals(1, body.size());
             assertEquals(JOAO.getId(), body.getFirst().id());
@@ -189,15 +234,22 @@ class ClientServiceTest {
             // Arrange
             ClienteRequestFilter filterRequest = new ClienteRequestFilter("Inexistente", null, null);
             ClientFilter filter = filterRequest.toClientFilter();
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
 
-            when(clientRepository.filter(filter)).thenReturn(Collections.emptyList());
+            when(clientRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    Collections.emptyList(),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ClienteResponse>> response = clientService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
             assertNotNull(response.getBody());
-            assertTrue(response.getBody().isEmpty());
+            assertTrue(response.getBody().getContent().isEmpty());
         }
 
     }

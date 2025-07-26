@@ -2,10 +2,7 @@ package com.serv.oeste.application.services;
 
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
-import com.serv.oeste.application.dtos.requests.ClienteRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.application.dtos.requests.*;
 import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
@@ -21,6 +18,8 @@ import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.application.factory.ClientFactory;
 import com.serv.oeste.application.factory.ServiceFactory;
 import com.serv.oeste.application.factory.TechnicianFactory;
+import com.serv.oeste.domain.valueObjects.PageFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,6 +58,9 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequestFilter filterRequest = mock(ServicoRequestFilter.class);
             ServiceFilter filter = mock(ServiceFilter.class);
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
+            PageFilter pageFilter = pageFilterRequest.toPageFilter();
+
             when(filterRequest.toServiceFilter()).thenReturn(filter);
 
             LocalDate hoje = LocalDate.now();
@@ -67,35 +69,48 @@ class ServiceServiceTest {
 
             Service service = ServiceFactory.createWithGarantia(inicioGarantia, fimGarantia);
 
-            when(serviceRepository.filter(filter)).thenReturn(List.of(service));
+            when(serviceRepository.filter(filter, pageFilter)).thenReturn(new PageResponse<>(
+                    List.of(service),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
+            assertNotNull(response.getBody());
+            List<ServicoResponse> content = response.getBody().getContent();
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
-            assertEquals(1, response.getBody().size());
-            assertEquals("Monitor", response.getBody().getFirst().equipamento());
-            assertEquals("João Silva", response.getBody().getFirst().nomeCliente());
-            assertEquals("Carlos Silva", response.getBody().getFirst().nomeTecnico());
+            assertEquals(1, content.size());
+            assertEquals("Monitor", content.getFirst().equipamento());
+            assertEquals("João Silva", content.getFirst().nomeCliente());
+            assertEquals("Carlos Silva", content.getFirst().nomeTecnico());
         }
 
         @Test
         void fetchListByFilter_ValidFilterWithNoResults_ReturnsEmptyList() {
             // Arrange
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
             ServicoRequestFilter filterRequest = mock(ServicoRequestFilter.class);
             ServiceFilter filter = mock(ServiceFilter.class);
             when(filterRequest.toServiceFilter()).thenReturn(filter);
-            when(serviceRepository.filter(any())).thenReturn(Collections.emptyList());
+            when(serviceRepository.filter(any(), any())).thenReturn(new PageResponse<>(
+                    Collections.emptyList(),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
-            assertTrue(response.getBody().isEmpty());
+            assertTrue(response.getBody().getContent().isEmpty());
         }
 
         @Test
@@ -103,6 +118,7 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequestFilter filterRequest = mock(ServicoRequestFilter.class);
             ServiceFilter filter = mock(ServiceFilter.class);
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
             when(filterRequest.toServiceFilter()).thenReturn(filter);
 
             Service service = ServiceFactory.create(
@@ -128,15 +144,20 @@ class ServiceServiceTest {
                     null
             );
 
-            when(serviceRepository.filter(any())).thenReturn(List.of(service));
+            when(serviceRepository.filter(any(), any())).thenReturn(new PageResponse<>(
+                    List.of(service),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
-            ServicoResponse servicoResponse = response.getBody().getFirst();
+            ServicoResponse servicoResponse = response.getBody().getContent().getFirst();
             assertEquals("Impressora", servicoResponse.equipamento());
             assertEquals("João Silva", servicoResponse.nomeCliente());
             assertNull(servicoResponse.nomeTecnico());
@@ -146,6 +167,7 @@ class ServiceServiceTest {
         @Test
         void fetchListByFilter_ServiceWithWarrantyInDateRange_ReturnsGarantiaTrue() {
             // Arrange
+            PageFilterRequest pageFilterRequest = new PageFilterRequest(10, 0);
             ServicoRequestFilter filterRequest = mock(ServicoRequestFilter.class);
             ServiceFilter filter = mock(ServiceFilter.class);
             when(filterRequest.toServiceFilter()).thenReturn(filter);
@@ -155,15 +177,20 @@ class ServiceServiceTest {
             Date fimGarantia = java.sql.Date.valueOf(hoje.plusDays(5));
 
             var service = ServiceFactory.createWithGarantia(inicioGarantia, fimGarantia);
-            when(serviceRepository.filter(any())).thenReturn(List.of(service));
+            when(serviceRepository.filter(any(), any())).thenReturn(new PageResponse<>(
+                    List.of(service),
+                    1,
+                    0,
+                    10
+            ));
 
             // Act
-            ResponseEntity<List<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest);
+            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
             assertEquals(HttpStatus.OK, response.getStatusCode());
             assertNotNull(response.getBody());
-            assertTrue(response.getBody().getFirst().garantia());
+            assertTrue(response.getBody().getContent().getFirst().garantia());
         }
     }
 
