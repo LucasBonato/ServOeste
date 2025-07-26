@@ -1,5 +1,6 @@
 package com.serv.oeste.presentation.swagger;
 
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.exceptions.ExceptionResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
@@ -7,6 +8,7 @@ import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.application.dtos.requests.TecnicoDisponibilidadeRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +27,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
             @ApiResponse(responseCode = "200", description = "[Ok] Lista de técnicos trazida com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    ResponseEntity<List<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filter);
+    ResponseEntity<PageResponse<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filter, PageFilterRequest pageFilter);
 
     @Operation(description = "Forma de trazer o registro de um técnico atravez de seu id")
     @ApiResponses(value = {

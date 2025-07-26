@@ -1,5 +1,7 @@
 package com.serv.oeste.presentation.controllers;
 
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.presentation.swagger.ClienteSwagger;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
@@ -22,8 +24,11 @@ public class ClienteController implements ClienteSwagger {
     }
 
     @PostMapping("/find")
-    public ResponseEntity<List<ClienteResponse>> fetchListByFilter(@RequestBody ClienteRequestFilter filter){
-        return clientService.fetchListByFilter(filter);
+    public ResponseEntity<PageResponse<ClienteResponse>> fetchListByFilter(
+            @RequestBody ClienteRequestFilter filter,
+            @ModelAttribute PageFilterRequest pageFilter
+    ){
+        return clientService.fetchListByFilter(filter, pageFilter);
     }
 
     @PostMapping

@@ -1,11 +1,9 @@
 package com.serv.oeste.presentation.swagger;
 
+import com.serv.oeste.application.dtos.requests.*;
 import com.serv.oeste.application.exceptions.ExceptionResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
-import com.serv.oeste.application.dtos.requests.ClienteServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +21,7 @@ public interface ServicoSwagger extends SwaggerConfiguration {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Lista de serviços voltada com sucesso.", useReturnTypeSchema = true),
     })
-    ResponseEntity<List<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter);
+    ResponseEntity<PageResponse<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter, PageFilterRequest pageFilter);
 
     @Operation(description = "Forma de registrar um novo serviço em um cliente já existente.")
     @ApiResponses(value = {

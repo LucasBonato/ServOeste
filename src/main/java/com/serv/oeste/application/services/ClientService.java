@@ -3,12 +3,14 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.application.exceptions.client.ClientNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IClientRepository;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,15 +40,16 @@ public class ClientService {
     }
     
     @Cacheable("allClientes")
-    public ResponseEntity<List<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filtroRequest) {
+    public ResponseEntity<PageResponse<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
         logger.debug("DEBUG - Fetching clients with filter: {}", filtroRequest);
-        List<ClienteResponse> response = clientRepository.filter(filtroRequest.toClientFilter())
-                .stream()
-                .map(ClienteResponse::new)
-                .collect(Collectors.toList());
-        logger.info("INFO - Found {} clients with filter: {}", response.size(), filtroRequest);
+        PageResponse<ClienteResponse> clientsResponse = clientRepository.filter(
+                    filtroRequest.toClientFilter(),
+                    pageFilterRequest.toPageFilter()
+                )
+                .map(ClienteResponse::new);
+        logger.info("INFO - Found {} clients with filter: {}", clientsResponse.getPage().getTotalPages(), filtroRequest);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(clientsResponse);
     }
     
     public ResponseEntity<ClienteResponse> create(ClienteRequest clienteRequest) {

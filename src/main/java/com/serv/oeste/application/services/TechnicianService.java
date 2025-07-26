@@ -3,6 +3,7 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.application.exceptions.technician.SpecialtyNotFoundException;
@@ -17,6 +18,7 @@ import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -46,13 +48,11 @@ public class TechnicianService {
         return ResponseEntity.ok(new TecnicoWithSpecialityResponse(technician));
     }
 
-    public ResponseEntity<List<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filtroRequest) {
+    public ResponseEntity<PageResponse<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
         logger.debug("DEBUG - Fetching technicians with filter: {}", filtroRequest);
-        List<TecnicoResponse> tecnicos = technicianRepository.filter(filtroRequest.toTechnicianFilter())
-                .stream()
-                .map(TecnicoResponse::new)
-                .collect(Collectors.toList());
-        logger.info("INFO - Found {} technicians with filter: {}", tecnicos.size(), filtroRequest);
+        PageResponse<TecnicoResponse> tecnicos = technicianRepository.filter(filtroRequest.toTechnicianFilter(), pageFilterRequest.toPageFilter())
+                .map(TecnicoResponse::new);
+        logger.info("INFO - Found {} technicians with filter: {}", tecnicos.getPage().getTotalElements(), filtroRequest);
 
         return ResponseEntity.ok(tecnicos);
     }

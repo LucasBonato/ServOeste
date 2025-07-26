@@ -2,10 +2,7 @@ package com.serv.oeste.application.services;
 
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
-import com.serv.oeste.application.dtos.requests.ClienteRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.application.dtos.requests.*;
 import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
@@ -14,6 +11,7 @@ import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.SituacaoServico;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -38,11 +35,12 @@ public class ServiceService {
     private final Logger logger = LoggerFactory.getLogger(ServiceService.class);
     
     @Cacheable("allServicos")
-    public ResponseEntity<List<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter) {
+    public ResponseEntity<PageResponse<ServicoResponse>> fetchListByFilter(ServicoRequestFilter servicoRequestFilter, PageFilterRequest pageFilter) {
         logger.debug("DEBUG - Fetching services with filter: {}", servicoRequestFilter);
-        List<Service> servicos = serviceRepository.filter(servicoRequestFilter.toServiceFilter());
-        logger.info("INFO - Found {} services with filter: {}", servicos.size(), servicoRequestFilter);
-        return ResponseEntity.ok(getServicosResponse(servicos));
+        PageResponse<ServicoResponse> servicos = serviceRepository.filter(servicoRequestFilter.toServiceFilter(), pageFilter.toPageFilter())
+                .map(this::getServicoResponse);
+        logger.info("INFO - Found {} services with filter: {}", servicos.getPage().getTotalPages(), servicoRequestFilter);
+        return ResponseEntity.ok(servicos);
     }
     
     public ResponseEntity<ServicoResponse> cadastrarComClienteExistente(ServicoRequest servicoRequest) {
@@ -130,14 +128,7 @@ public class ServiceService {
         
         return ResponseEntity.ok().build();
     }
-    
-    private List<ServicoResponse> getServicosResponse(List<Service> servicos) {
-        return servicos
-                .stream()
-                .map(this::getServicoResponse)
-                .collect(Collectors.toList());
-    }
-    
+
     private ServicoResponse getServicoResponse(Service servico) {
         Boolean garatia = null;
         if (servico.getDataInicioGarantia() != null) {

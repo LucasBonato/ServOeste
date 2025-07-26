@@ -6,6 +6,8 @@ import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
+import com.serv.oeste.domain.valueObjects.PageFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
 import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
@@ -17,10 +19,12 @@ import com.serv.oeste.infrastructure.specifications.ServiceSpecifications;
 import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -36,7 +40,7 @@ public class ServiceRepository implements IServiceRepository {
     }
 
     @Override
-    public List<Service> filter(ServiceFilter filter) {
+    public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
         Specification<ServiceEntity> specification = new SpecificationBuilder<ServiceEntity>()
                 .addIfNotNull(filter.servicoId(), ServiceSpecifications::hasServicoId)
                 .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientById(id)))
@@ -68,9 +72,17 @@ public class ServiceRepository implements IServiceRepository {
                 )
                 .build();
 
-        return serviceJpaRepository.findAll(specification).stream()
-                .map(ServiceEntity::toService)
-                .toList();
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+
+        Page<Service> servicesPaged = serviceJpaRepository.findAll(specification, pageable)
+                .map(ServiceEntity::toService);
+
+        return new PageResponse<>(
+                servicesPaged.getContent(),
+                servicesPaged.getTotalPages(),
+                servicesPaged.getNumber(),
+                servicesPaged.getSize()
+        );
     }
 
     @Override

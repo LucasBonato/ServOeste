@@ -1,15 +1,18 @@
 package com.serv.oeste.presentation.swagger;
 
-import com.serv.oeste.application.exceptions.ExceptionResponse;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
+import com.serv.oeste.application.exceptions.ExceptionResponse;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -35,7 +38,7 @@ public interface ClienteSwagger extends SwaggerConfiguration{
             @ApiResponse(responseCode = "200", description = "[Ok] Clientes devolvidos com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
     })
-    ResponseEntity<List<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filter);
+    ResponseEntity<PageResponse<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filter, PageFilterRequest pageFilter);
 
     @Operation(description = "Forma de criar um novo registro de um cliente sem nenhum serviço conectado ao cliente.")
     @ApiResponses(value = {
