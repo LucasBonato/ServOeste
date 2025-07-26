@@ -1,9 +1,7 @@
 package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.application.dtos.requests.ClienteServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequest;
-import com.serv.oeste.application.dtos.requests.ServicoRequestFilter;
-import com.serv.oeste.application.dtos.requests.ServicoUpdateRequest;
+import com.serv.oeste.application.dtos.requests.*;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.presentation.swagger.ServicoSwagger;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
 import com.serv.oeste.application.services.ServiceService;
@@ -19,8 +17,11 @@ public class ServicoController implements ServicoSwagger {
     @Autowired private ServiceService serviceService;
 
     @PostMapping("/find")
-    public ResponseEntity<List<ServicoResponse>> fetchListByFilter(@RequestBody ServicoRequestFilter servicoRequestFilter) {
-        return serviceService.fetchListByFilter(servicoRequestFilter);
+    public ResponseEntity<PageResponse<ServicoResponse>> fetchListByFilter(
+            @RequestBody ServicoRequestFilter servicoRequestFilter,
+            @ModelAttribute PageFilterRequest pageFilter
+    ) {
+        return serviceService.fetchListByFilter(servicoRequestFilter, pageFilter);
     }
 
     @PostMapping

@@ -4,6 +4,8 @@ import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
+import com.serv.oeste.domain.valueObjects.PageFilter;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
 import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
@@ -11,6 +13,9 @@ import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
 import com.serv.oeste.infrastructure.specifications.TechnicianSpecifications;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +53,7 @@ public class TechnicianRepository implements ITechnicianRepository {
     }
 
     @Override
-    public List<Technician> filter(TechnicianFilter filter) {
+    public PageResponse<Technician> filter(TechnicianFilter filter, PageFilter pageFilter) {
         Specification<TechnicianEntity> specification = new SpecificationBuilder<TechnicianEntity>()
                 .addIfNotNull(filter.id(), TechnicianSpecifications::hasId)
                 .addIf(StringUtils::isNotBlank, filter.nome(), TechnicianSpecifications::hasNomeCompleto)
@@ -57,9 +62,17 @@ public class TechnicianRepository implements ITechnicianRepository {
                 .addIf(StringUtils::isNotBlank, filter.telefone(), TechnicianSpecifications::hasTelefone)
                 .build();
 
-        return technicianJpaRepository.findAll(specification).stream()
-                .map(TechnicianEntity::toTechnician)
-                .toList();
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+
+        Page<Technician> techniciansPaged = technicianJpaRepository.findAll(specification, pageable)
+                .map(TechnicianEntity::toTechnician);
+
+        return new PageResponse<>(
+                techniciansPaged.getContent(),
+                techniciansPaged.getTotalPages(),
+                techniciansPaged.getNumber(),
+                techniciansPaged.getSize()
+        );
     }
 
     private static TechnicianAvailability toTechnicianAvailability(TechnicianAvailabilityProjection projection) {

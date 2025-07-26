@@ -1,5 +1,7 @@
 package com.serv.oeste.presentation.controllers;
 
+import com.serv.oeste.application.dtos.requests.PageFilterRequest;
+import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.presentation.swagger.TecnicoSwagger;
 import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
 import com.serv.oeste.application.dtos.reponses.TecnicoDisponibilidadeResponse;
@@ -20,8 +22,11 @@ public class TecnicoController implements TecnicoSwagger {
     @Autowired private TechnicianService technicianService;
 
     @PostMapping("/find")
-    public ResponseEntity<List<TecnicoResponse>> fetchListByFilter(@RequestBody TecnicoRequestFilter filter){
-        return technicianService.fetchListByFilter(filter);
+    public ResponseEntity<PageResponse<TecnicoResponse>> fetchListByFilter(
+            @RequestBody TecnicoRequestFilter filter,
+            @ModelAttribute PageFilterRequest pageFilter
+    ){
+        return technicianService.fetchListByFilter(filter, pageFilter);
     }
 
     @GetMapping("/{id}")
