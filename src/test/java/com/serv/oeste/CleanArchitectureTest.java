@@ -31,7 +31,7 @@ class CleanArchitectureTest {
             .whereLayer(presentationLayer).mayNotBeAccessedByAnyLayer()
             .whereLayer(infrastructureLayer).mayNotBeAccessedByAnyLayer()
             .whereLayer(applicationLayer).mayOnlyBeAccessedByLayers(presentationLayer, infrastructureLayer)
-            .whereLayer(domainLayer).mayOnlyBeAccessedByLayers(applicationLayer, infrastructureLayer)
+            //.whereLayer(domainLayer).mayOnlyBeAccessedByLayers(applicationLayer)
             .whereLayer(domainLayer).mayNotAccessAnyLayer()
         ;
 

@@ -10,6 +10,7 @@ import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
 import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
+import com.serv.oeste.domain.contracts.repositories.IClientRepository;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
@@ -46,6 +47,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ServiceServiceTest {
     @Mock private IServiceRepository serviceRepository;
+    @Mock private IClientRepository clientRepository;
     @Mock private ClientService clientService;
     @Mock private TechnicianService technicianService;
     @InjectMocks private ServiceService serviceService;
@@ -286,16 +288,13 @@ class ServiceServiceTest {
         @Test
         void cadastrarComClienteNaoExistente_ValidRequest_ShouldReturnCreatedResponse() {
             // Arrange
-            ClienteRequest clienteRequest = ClientFactory.createValidClienteRequest();
-            ServicoRequest servicoRequest = ServiceFactory.createValidServiceRequest(null, 1);
-            ClienteResponse clienteResponse = ClientFactory.createValidClienteResponse();
-
-            when(clientService.create(clienteRequest)).thenReturn(ResponseEntity.ok(clienteResponse));
-            when(technicianService.getTecnicoById(servicoRequest.idTecnico())).thenReturn(TechnicianFactory.createDefault());
+            when(clientService.create(any(ClienteRequest.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(CLIENT_RESPONSE));
+            when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(ClientFactory.createDefault());
+            when(technicianService.getTecnicoById(VALID_SERVICE_REQUEST.idTecnico())).thenReturn(TechnicianFactory.createDefault());
             when(serviceRepository.save(any(Service.class))).thenReturn(ServiceFactory.createDefault());
 
             // Act
-            ResponseEntity<ServicoResponse> response = serviceService.cadastrarComClienteNaoExistente(clienteRequest, servicoRequest);
+            ResponseEntity<ServicoResponse> response = serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST);
 
             // Assert
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -305,6 +304,7 @@ class ServiceServiceTest {
         void cadastrarComClienteNaoExistente_ValidClientAndService_ShouldReturnCreatedWithServiceResponse() {
             // Arrange
             when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
+            when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(ClientFactory.createDefault());
             when(technicianService.getTecnicoById(VALID_SERVICE_REQUEST.idTecnico())).thenReturn(TechnicianFactory.createDefault());
             when(serviceRepository.save(any(Service.class))).thenReturn(ServiceFactory.createDefault());
 
