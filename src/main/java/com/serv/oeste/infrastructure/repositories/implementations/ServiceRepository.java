@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +73,9 @@ public class ServiceRepository implements IServiceRepository {
                 )
                 .build();
 
-        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Service> servicesPaged = serviceJpaRepository.findAll(specification, pageable)
                 .map(ServiceEntity::toService);
