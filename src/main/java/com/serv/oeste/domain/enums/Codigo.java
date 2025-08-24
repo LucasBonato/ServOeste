@@ -18,7 +18,9 @@ public enum Codigo {
     HORARIO(15),
     DATA(16),
     CONHECIMENTO(17),
-    SERVICO(18);
+    SERVICO(18),
+    USER(19),
+    AUTH(20);
 
     private final Integer i;
 
