@@ -48,6 +48,11 @@ springdoc:
   swagger-ui:
     path: /swagger
 
+security:
+  jwt:
+    secret: ${JWT_TOKEN_SECRET}
+    valid-time: ${JWT_TOKEN_EXPIRATION_TIME}
+    refresh-time: ${REFRESH_TOKEN_EXPIRATION_TIME}
 #logging:
 #  level:
 #    org:
