@@ -1,4 +1,4 @@
-package com.serv.oeste.infrastructure.security;
+package com.serv.oeste.application.services;
 
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
 import com.serv.oeste.domain.entities.user.User;
