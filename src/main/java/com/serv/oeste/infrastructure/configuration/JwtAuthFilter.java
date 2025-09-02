@@ -1,9 +1,8 @@
 package com.serv.oeste.infrastructure.configuration;
 
-import com.serv.oeste.application.exceptions.auth.AuthRefreshTokenRevokedException;
 import com.serv.oeste.application.exceptions.auth.AuthTokenExpiredException;
 import com.serv.oeste.domain.contracts.security.ITokenVerifier;
-import com.serv.oeste.infrastructure.security.UserDetailsService;
+import com.serv.oeste.application.services.UserDetailsService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

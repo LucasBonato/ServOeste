@@ -12,7 +12,6 @@ import com.serv.oeste.domain.contracts.security.ITokenGenerator;
 import com.serv.oeste.domain.entities.user.RefreshToken;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.enums.Roles;
-import com.serv.oeste.infrastructure.security.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
