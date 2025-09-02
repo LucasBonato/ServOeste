@@ -48,9 +48,7 @@ public class RefreshTokenService implements IRefreshTokenStore {
     }
 
     @Override
-    public Optional<RefreshToken> findValid(String token) {
-        String tokenHash = sha256Hex(token);
-
+    public Optional<RefreshToken> findValid(String tokenHash) {
         return refreshTokenRepository.findByTokenHash(tokenHash)
                 .filter(refreshToken -> refreshToken.getRevokedAt() == null)
                 .filter(refreshToken -> refreshToken.getExpiresAt().isAfter(Instant.now()));
