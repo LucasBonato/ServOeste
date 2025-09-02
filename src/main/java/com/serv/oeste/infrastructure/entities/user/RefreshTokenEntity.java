@@ -2,7 +2,9 @@ package com.serv.oeste.infrastructure.entities.user;
 
 import com.serv.oeste.domain.entities.user.RefreshToken;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -16,6 +18,8 @@ import java.util.UUID;
         @Index(columnList = "Username"),
         @Index(columnList = "Token_Hash")
 })
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefreshTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
