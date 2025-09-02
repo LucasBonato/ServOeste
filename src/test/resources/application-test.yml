@@ -8,3 +8,11 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+security:
+  jwt:
+    secret: some-secret-for-test-and-some-more-things-id
+    valid-time: 60000
+    refresh-time: 120000
