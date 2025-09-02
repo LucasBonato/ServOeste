@@ -6,7 +6,6 @@ import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
 import com.serv.oeste.application.exceptions.auth.AuthInvalidCredentialsException;
 import com.serv.oeste.application.exceptions.auth.AuthNotValidException;
 import com.serv.oeste.application.exceptions.auth.AuthRefreshTokenRevokedException;
-import com.serv.oeste.application.exceptions.auth.AuthTokenExpiredException;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
 import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
 import com.serv.oeste.domain.contracts.security.ITokenGenerator;
