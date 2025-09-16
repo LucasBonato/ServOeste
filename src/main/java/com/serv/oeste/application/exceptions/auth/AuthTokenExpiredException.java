@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class AuthTokenExpiredException extends BaseException {
     public AuthTokenExpiredException() {
-        super(HttpStatus.UNAUTHORIZED, new ExceptionResponse(Codigo.AUTH, "The token has expired, please refresh it"));
+        super(HttpStatus.UNAUTHORIZED, new ExceptionResponse(Codigo.AUTH, "O token expirou, atualize a página"));
     }
 }
