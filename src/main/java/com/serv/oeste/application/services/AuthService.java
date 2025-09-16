@@ -33,10 +33,10 @@ public class AuthService {
 
     public ResponseEntity<Void> register(AuthRegisterRequest registerRequest) {
         if (registerRequest.role() == Roles.ADMIN)
-            throw new AuthNotValidException("Invalid register, cannot register an ADMIN user");
+            throw new AuthNotValidException("Cadastro inválido, não é possível registrar um usuário ADMIN");
 
         if (userRepository.findByUsername(registerRequest.username()).isPresent())
-            throw new AuthNotValidException("Username is already in use");
+            throw new AuthNotValidException("Nome de usuário já está em uso");
 
         userRepository.save(new User(
             registerRequest.username(),
