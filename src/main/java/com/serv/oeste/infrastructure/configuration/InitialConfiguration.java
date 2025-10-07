@@ -23,13 +23,11 @@ public class InitialConfiguration implements CommandLineRunner {
 
         userRepository.findByUsername(username).ifPresentOrElse(
             user -> logger.info("Admin user is already created"),
-            () -> {
-                userRepository.save(new User(
-                        username,
-                        passwordEncoder.encode("teste"),
-                        Roles.ADMIN
-                ));
-            }
+            () -> userRepository.save(new User(
+                    username,
+                    passwordEncoder.encode("teste"),
+                    Roles.ADMIN
+            ))
         );
     }
 }

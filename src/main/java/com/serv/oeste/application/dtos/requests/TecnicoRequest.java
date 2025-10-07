@@ -2,8 +2,6 @@ package com.serv.oeste.application.dtos.requests;
 
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Situacao;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
