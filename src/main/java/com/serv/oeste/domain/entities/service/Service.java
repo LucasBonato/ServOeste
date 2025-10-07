@@ -87,13 +87,25 @@ public class Service {
         this.tecnico = tecnico;
     }
 
-    private static String getHistory(String history, SituacaoServico situacao, String descricao) {
-        return history + String.format(
-                "[%TD] - %s - %s%n",
-                LocalDate.now(),
-                ((situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) || situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO)) ? "ABERTURA: " : "") + situacao.getSituacao().toUpperCase(),
-                descricao
+     private static String getHistory(String history, SituacaoServico situation, String description ) {
+        String formattedSituation = situation.getSituacao().toUpperCase();
+
+        if (history.isEmpty()) {
+            formattedSituation = "ABERTURA: " + formattedSituation;
+        }
+
+        String newEntry = String.format(
+                " %s - %s - [%TD]",
+                formattedSituation,
+                description,
+                LocalDate.now()
         );
+
+        if (!history.isEmpty()) {
+            return history + newEntry;
+        }
+
+        return newEntry;
     }
 
     public Integer getId() {
