@@ -39,10 +39,8 @@ public class TechnicianRepository implements ITechnicianRepository {
     }
 
     @Override
-    public List<Technician> saveAll(List<Technician> technicians) {
-        return technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList()).stream()
-                .map(TechnicianEntity::toTechnician)
-                .toList();
+    public void saveAll(List<Technician> technicians) {
+        technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList());
     }
 
     @Override
