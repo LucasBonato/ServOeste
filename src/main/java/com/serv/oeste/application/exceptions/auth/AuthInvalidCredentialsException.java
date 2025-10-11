@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class AuthInvalidCredentialsException extends BaseException {
     public AuthInvalidCredentialsException() {
-        super(HttpStatus.UNAUTHORIZED, new ExceptionResponse(Codigo.AUTH, "Invalid username or password"));
+        super(HttpStatus.UNAUTHORIZED, new ExceptionResponse(Codigo.AUTH, "Credenciais inválidas"));
     }
 }
