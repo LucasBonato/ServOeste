@@ -32,8 +32,7 @@ public class ClientFactory {
 
     public static Client createWithSobrenome() {
         return new Client(
-                "Maria",
-                "Oliveira",
+                "Maria Oliveira",
                 "2123456789",
                 "21912345678",
                 "Av. Atlântica, 456",
@@ -123,7 +122,7 @@ public class ClientFactory {
             String bairro,
             String municipio
     ) {
-        return new Client(nome, sobrenome, telefoneFixo, telefoneCelular, endereco, bairro, municipio);
+        return new Client(nome + " " + sobrenome, telefoneFixo, telefoneCelular, endereco, bairro, municipio);
     }
 
     // Special cases

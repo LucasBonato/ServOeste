@@ -1,7 +1,7 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
-import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
+import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;

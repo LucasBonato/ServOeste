@@ -6,18 +6,18 @@ import com.serv.oeste.application.dtos.reponses.TecnicoWithSpecialityResponse;
 import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
-import com.serv.oeste.application.exceptions.technician.SpecialtyNotFoundException;
-import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
-import com.serv.oeste.application.exceptions.technician.TechnicianNotValidException;
-import com.serv.oeste.application.exceptions.technician.TechnicianSpecialtyEmptyException;
 import com.serv.oeste.domain.contracts.repositories.ISpecialtyRepository;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.specialty.Specialty;
 import com.serv.oeste.domain.entities.technician.Availability;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
-import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.exceptions.technician.SpecialtyNotFoundException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotValidException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianSpecialtyEmptyException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -188,25 +188,25 @@ public class TechnicianService {
 
         final int MINIMO_DE_CARACTERES_ACEITO = 2;
         if (StringUtils.isBlank(tecnicoRequest.nome())) {
-            throw new TechnicianNotValidException("O Nome do técnico não pode ser vazio!", Codigo.NOMESOBRENOME);
+            throw new TechnicianNotValidException(ErrorFields.NOMESOBRENOME, "O Nome do técnico não pode ser vazio!");
         }
         if (tecnicoRequest.nome().length() < MINIMO_DE_CARACTERES_ACEITO) {
-            throw new TechnicianNotValidException(String.format("O Nome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
+            throw new TechnicianNotValidException(ErrorFields.NOMESOBRENOME, String.format("O Nome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
         }
         if (StringUtils.isBlank(tecnicoRequest.sobrenome())) {
-            throw new TechnicianNotValidException("Digite Nome e Sobrenome!", Codigo.NOMESOBRENOME);
+            throw new TechnicianNotValidException(ErrorFields.NOMESOBRENOME, "Digite Nome e Sobrenome!");
         }
         if (tecnicoRequest.sobrenome().length() < MINIMO_DE_CARACTERES_ACEITO) {
-            throw new TechnicianNotValidException(String.format("O Sobrenome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO), Codigo.NOMESOBRENOME);
+            throw new TechnicianNotValidException(ErrorFields.NOMESOBRENOME, String.format("O Sobrenome do técnico precisa ter no mínimo %d caracteres!", MINIMO_DE_CARACTERES_ACEITO));
         }
         if (tecnicoRequest.telefoneCelular().isBlank() && tecnicoRequest.telefoneFixo().isBlank()) {
-            throw new TechnicianNotValidException("O técnico precisa ter no mínimo um telefone cadastrado!", Codigo.TELEFONES);
+            throw new TechnicianNotValidException(ErrorFields.TELEFONES, "O técnico precisa ter no mínimo um telefone cadastrado!");
         }
         if (tecnicoRequest.telefoneCelular().length() < 11 && !tecnicoRequest.telefoneCelular().isEmpty()) {
-            throw new TechnicianNotValidException("Telefone celular inválido!", Codigo.TELEFONECELULAR);
+            throw new TechnicianNotValidException(ErrorFields.TELEFONECELULAR, "Telefone celular inválido!");
         }
         if (tecnicoRequest.telefoneFixo().length() < 10 && !tecnicoRequest.telefoneFixo().isEmpty()) {
-            throw new TechnicianNotValidException("Telefone Fixo Inválido!", Codigo.TELEFONEFIXO);
+            throw new TechnicianNotValidException(ErrorFields.TELEFONEFIXO, "Telefone Fixo Inválido!");
         }
     }
 }
