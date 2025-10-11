@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.application.exceptions.auth.AuthNotValidException;
+import com.serv.oeste.domain.exceptions.auth.AuthNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IRefreshTokenRepository;
 import com.serv.oeste.domain.entities.user.RefreshToken;
 import com.serv.oeste.infrastructure.entities.user.RefreshTokenEntity;

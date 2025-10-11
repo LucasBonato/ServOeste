@@ -7,6 +7,7 @@ import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.ClienteRequestFilter;
 import com.serv.oeste.application.services.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ClienteController implements ClienteSwagger {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> create(@RequestBody ClienteRequest clienteRequest) {
+    public ResponseEntity<ClienteResponse> create(@Valid @RequestBody ClienteRequest clienteRequest) {
         return clientService.create(clienteRequest);
     }
 

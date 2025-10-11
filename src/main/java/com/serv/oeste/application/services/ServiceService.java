@@ -3,14 +3,14 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
 import com.serv.oeste.application.dtos.requests.*;
-import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
-import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.enums.SituacaoServico;
+import com.serv.oeste.domain.exceptions.service.ServiceNotFoundException;
+import com.serv.oeste.domain.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class ServiceService {
 
         if (response.getBody() == null) {
             logger.error("ERROR - Could not create client with: {}", clienteRequest);
-            throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível pegar o id do cliente!");
+            throw new ServiceNotValidException(ErrorFields.CLIENTE, "Não foi possível pegar o id do cliente!");
         }
 
         verificarSelecionamentoDasEntidades(response.getBody().id());
@@ -172,44 +172,44 @@ public class ServiceService {
             dataFormatada = formatter.parse(data);
         }
         catch (ParseException e) {
-            throw new ServiceNotValidException(Codigo.DATA, "Data em formato errado, formato correto: dd/MM/YYYY");
+            throw new ServiceNotValidException(ErrorFields.DATA, "Data em formato errado, formato correto: dd/MM/YYYY");
         }
         return dataFormatada;
     }
     
     private void verificarSelecionamentoDasEntidades(Integer idCliente, Integer idTecnico, SituacaoServico situacao) {
         if (idCliente == null) {
-            throw new ServiceNotValidException(Codigo.CLIENTE, "Cliente não selecionado");
+            throw new ServiceNotValidException(ErrorFields.CLIENTE, "Cliente não selecionado");
         }
         if ((!situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO)) && idTecnico == null) {
-            throw new ServiceNotValidException(Codigo.TECNICO, "Técnico não selecionado");
+            throw new ServiceNotValidException(ErrorFields.TECNICO, "Técnico não selecionado");
         }
     }
     
     protected void verificarSelecionamentoDasEntidades(Integer idCliente) {
         if (idCliente == null) {
-            throw new ServiceNotValidException(Codigo.CLIENTE, "Não foi possível encontrar o último cliente cadastrado!");
+            throw new ServiceNotValidException(ErrorFields.CLIENTE, "Não foi possível encontrar o último cliente cadastrado!");
         }
     }
     
     private void verificarCamposObrigatoriosServico(ServicoRequest servicoRequest) {
         if (StringUtils.isBlank(servicoRequest.equipamento())) {
-            throw new ServiceNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
+            throw new ServiceNotValidException(ErrorFields.EQUIPAMENTO, "Equipamento é obrigatório");
         }
         if (StringUtils.isBlank(servicoRequest.marca())) {
-            throw new ServiceNotValidException(Codigo.MARCA, "Marca é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.MARCA, "Marca é obrigatória");
         }
         if (StringUtils.isBlank(servicoRequest.descricao())) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição é obrigatória");
         }
         if (servicoRequest.descricao().length() < 10) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
         if (servicoRequest.descricao().split(" ").length < 3) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
         if (StringUtils.isBlank(servicoRequest.filial())) {
-            throw new ServiceNotValidException(Codigo.FILIAL, "A filial é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.FILIAL, "A filial é obrigatória");
         }
     }
     
@@ -218,40 +218,40 @@ public class ServiceService {
             convertData(servicoRequest.dataAtendimento());
         }
         if (StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
-            throw new ServiceNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
+            throw new ServiceNotValidException(ErrorFields.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
     }
     
     private void verificarCamposUpdate(ServicoUpdateRequest servicoRequest) {
         if (StringUtils.isBlank(servicoRequest.equipamento())) {
-            throw new ServiceNotValidException(Codigo.EQUIPAMENTO, "Equipamento é obrigatório");
+            throw new ServiceNotValidException(ErrorFields.EQUIPAMENTO, "Equipamento é obrigatório");
         }
         if (StringUtils.isBlank(servicoRequest.marca())) {
-            throw new ServiceNotValidException(Codigo.MARCA, "Marca é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.MARCA, "Marca é obrigatória");
         }
         if (StringUtils.isBlank(servicoRequest.descricao())) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição é obrigatória");
         }
         if (servicoRequest.descricao().length() < 10) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         }
         if (servicoRequest.descricao().split(" ").length < 2) {
-            throw new ServiceNotValidException(Codigo.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
+            throw new ServiceNotValidException(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         }
         if (StringUtils.isBlank(servicoRequest.filial())) {
-            throw new ServiceNotValidException(Codigo.FILIAL, "A filial é obrigatória");
+            throw new ServiceNotValidException(ErrorFields.FILIAL, "A filial é obrigatória");
         }
         if (StringUtils.isNotBlank(servicoRequest.horarioPrevisto()) && (!servicoRequest.horarioPrevisto().equalsIgnoreCase("MANHA") && !servicoRequest.horarioPrevisto().equalsIgnoreCase("TARDE"))) {
-            throw new ServiceNotValidException(Codigo.HORARIO, "Horário enviado de forma errada, manha ou tarde");
+            throw new ServiceNotValidException(ErrorFields.HORARIO, "Horário enviado de forma errada, manha ou tarde");
         }
         if (servicoRequest.valor() != null && servicoRequest.valor() < 0) {
-            throw new ServiceNotValidException(Codigo.SERVICO, "O Valor não pode ser negativo.");
+            throw new ServiceNotValidException(ErrorFields.SERVICO, "O Valor não pode ser negativo.");
         }
         if (servicoRequest.valorComissao() != null && servicoRequest.valorComissao() < 0) {
-            throw new ServiceNotValidException(Codigo.SERVICO, "O Valor da Comissão não pode ser negativo.");
+            throw new ServiceNotValidException(ErrorFields.SERVICO, "O Valor da Comissão não pode ser negativo.");
         }
         if (servicoRequest.valorPecas() != null && servicoRequest.valorPecas() < 0) {
-            throw new ServiceNotValidException(Codigo.SERVICO, "O Valor das Peças não pode ser negativo.");
+            throw new ServiceNotValidException(ErrorFields.SERVICO, "O Valor das Peças não pode ser negativo.");
         }
     }
     
@@ -271,7 +271,7 @@ public class ServiceService {
         
         if (situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) && tecnico == null) {
             logger.warn("WARN - Technician not selected but situation needs one");
-            throw new ServiceNotValidException(Codigo.TECNICO, "Técnico não selecionado");
+            throw new ServiceNotValidException(ErrorFields.TECNICO, "Técnico não selecionado");
         }
         
         Service novoServico = serviceRepository.save(new Service(

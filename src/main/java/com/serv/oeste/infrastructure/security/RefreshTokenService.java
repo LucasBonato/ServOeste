@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.security;
 
-import com.serv.oeste.application.exceptions.auth.AuthRefreshTokenRevokedException;
+import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
 import com.serv.oeste.domain.contracts.repositories.IRefreshTokenRepository;
 import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
 import com.serv.oeste.domain.entities.user.RefreshToken;

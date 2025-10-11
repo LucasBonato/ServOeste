@@ -1,12 +1,12 @@
 package com.serv.oeste.application.services;
 
-import com.serv.oeste.application.exceptions.address.AddressNotValidException;
-import com.serv.oeste.application.exceptions.RestTemplateException;
-import com.serv.oeste.application.exceptions.viacep.ViaCepNetworkException;
-import com.serv.oeste.application.exceptions.viacep.ViaCepServerDownException;
 import com.serv.oeste.application.dtos.reponses.EnderecoResponse;
-import com.serv.oeste.domain.enums.Codigo;
+import com.serv.oeste.domain.enums.ErrorFields;
+import com.serv.oeste.domain.exceptions.external.RestTemplateException;
+import com.serv.oeste.domain.exceptions.external.ExternalNetworkException;
+import com.serv.oeste.domain.exceptions.external.ExternalServerDownException;
 import com.serv.oeste.domain.entities.viacep.ViaCep;
+import com.serv.oeste.domain.exceptions.address.AddressNotValidException;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +30,16 @@ public class AddressService {
             return new EnderecoResponse(viaCep);
         }
         catch (HttpClientErrorException e) {
-            throw new AddressNotValidException(Codigo.ENDERECO, "CEP inexistente!");
+            throw new AddressNotValidException();
         }
         catch (HttpServerErrorException e) {
-            throw new ViaCepServerDownException();
+            throw new ExternalServerDownException(ErrorFields.CEP, "Servidor da ViaCep caiu.");
         }
         catch (ResourceAccessException e) {
-            throw new ViaCepNetworkException("Problema de rede ao acessar o serviço ViaCep");
+            throw new ExternalNetworkException(ErrorFields.CEP, "Problema de rede ao acessar o serviço ViaCep");
         }
         catch (RestClientException e) {
-            throw new RestTemplateException("Erro no RestTemplate, consulte um desenvolvedor!");
+            throw new RestTemplateException(ErrorFields.CEP, "Erro no RestTemplate, consulte um desenvolvedor!");
         }
     }
 }
