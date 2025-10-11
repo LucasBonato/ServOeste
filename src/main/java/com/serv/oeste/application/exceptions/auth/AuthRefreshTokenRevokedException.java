@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class AuthRefreshTokenRevokedException extends BaseException {
     public AuthRefreshTokenRevokedException() {
-        super(HttpStatus.FORBIDDEN, new ExceptionResponse(Codigo.AUTH, "The Refresh token has been revoked, please login"));
+        super(HttpStatus.FORBIDDEN, new ExceptionResponse(Codigo.AUTH, "O token de atualização foi revogado, faça login"));
     }
 }
