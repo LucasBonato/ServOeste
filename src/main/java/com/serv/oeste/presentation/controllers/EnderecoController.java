@@ -17,6 +17,6 @@ public class EnderecoController implements EnderecoSwagger {
 
     @GetMapping
     public ResponseEntity<EnderecoResponse> getFieldsEndereco(@RequestParam(value = "cep") String cep){
-        return addressService.getFields(cep);
+        return ResponseEntity.ok(addressService.getFields(cep));
     }
 }
