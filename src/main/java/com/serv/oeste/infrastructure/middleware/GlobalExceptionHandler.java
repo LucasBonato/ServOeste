@@ -31,20 +31,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    private HttpStatusCode getStatusCode(DomainException exception) {
-        if (exception instanceof NotFoundException)
-            return NOT_FOUND;
-        if (exception instanceof InternalServerErrorException)
-            return INTERNAL_SERVER_ERROR;
-        if (exception instanceof ForbiddenException)
-            return FORBIDDEN;
-        if (exception instanceof ServiceUnavailableException)
-            return SERVICE_UNAVAILABLE;
-        if (exception instanceof UnauthorizedException)
-            return UNAUTHORIZED;
-        return BAD_REQUEST;
-    }
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException exception,
@@ -72,6 +58,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return new ResponseEntity<>(problemDetail, exception.getStatusCode());
+    }
+
+    private HttpStatusCode getStatusCode(DomainException exception) {
+        if (exception instanceof NotFoundException)
+            return NOT_FOUND;
+        if (exception instanceof InternalServerErrorException)
+            return INTERNAL_SERVER_ERROR;
+        if (exception instanceof ForbiddenException)
+            return FORBIDDEN;
+        if (exception instanceof ServiceUnavailableException)
+            return SERVICE_UNAVAILABLE;
+        if (exception instanceof UnauthorizedException)
+            return UNAUTHORIZED;
+        return BAD_REQUEST;
     }
 
     private ProblemDetail toProblemDetail(HttpStatusCode status, Map<String, List<String>> errors, String message) {

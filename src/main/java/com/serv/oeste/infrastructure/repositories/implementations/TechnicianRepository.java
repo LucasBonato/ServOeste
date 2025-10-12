@@ -34,6 +34,13 @@ public class TechnicianRepository implements ITechnicianRepository {
     }
 
     @Override
+    public List<Technician> findAllById(List<Integer> ids) {
+        return technicianJpaRepository.findAllById(ids).stream()
+                .map(TechnicianEntity::toTechnician)
+                .toList();
+    }
+
+    @Override
     public Technician save(Technician technician) {
         return technicianJpaRepository.save(new TechnicianEntity(technician)).toTechnician();
     }

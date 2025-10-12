@@ -1,8 +1,8 @@
 package com.serv.oeste.infrastructure.configuration;
 
-import com.serv.oeste.domain.exceptions.auth.AuthTokenExpiredException;
-import com.serv.oeste.domain.contracts.security.ITokenVerifier;
 import com.serv.oeste.application.services.UserDetailsService;
+import com.serv.oeste.domain.contracts.security.ITokenVerifier;
+import com.serv.oeste.domain.exceptions.auth.AuthTokenExpiredException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

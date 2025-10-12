@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class NotValidException extends DomainException {
-    public NotValidException(ErrorFields field, List<String> messages) {
-        super(field, messages);
-    }
-
     public NotValidException(ErrorFields field, String message) {
         super(field, message);
     }

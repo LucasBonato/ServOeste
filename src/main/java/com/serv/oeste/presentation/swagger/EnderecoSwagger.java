@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 
 @Tag(name = "Endereço")
 public interface EnderecoSwagger extends SwaggerConfiguration {
-    @Operation(description = "Forma de trazer as iformações de um endereço através do CEP, utilizando a API ViaCEP.")
+    @Operation(description = "Forma de trazer as informações de um endereço através do CEP, utilizando a API ViaCEP.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Endereço devolvido com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "[BadRequest] Alguma informação foi passada de forma errada.", content = @Content(schema = @Schema(implementation = DomainException.class))),

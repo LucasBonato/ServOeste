@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface ITechnicianRepository {
     Technician save(Technician technician);
     Optional<Technician> findById(Integer id);
+    List<Technician> findAllById(List<Integer> ids);
     void saveAll(List<Technician> technicians);
     List<TechnicianAvailability> getTechnicianAvailabilityBySpecialty(Integer days, Integer specialtyId);
     PageResponse<Technician> filter(TechnicianFilter filter, PageFilter pageFilter);
