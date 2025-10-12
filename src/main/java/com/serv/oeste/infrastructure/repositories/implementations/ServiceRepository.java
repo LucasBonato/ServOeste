@@ -26,7 +26,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -34,11 +36,6 @@ public class ServiceRepository implements IServiceRepository {
     private final IServiceJpaRepository serviceJpaRepository;
     private final IClientJpaRepository clientJpaRepository;
     private final ITechnicianJpaRepository technicianJpaRepository;
-
-    @Override
-    public boolean existsByClienteId(Integer clienteId) {
-        return serviceJpaRepository.existsByClienteId(clienteId);
-    }
 
     @Override
     public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
@@ -101,6 +98,11 @@ public class ServiceRepository implements IServiceRepository {
     @Override
     public void deleteById(Integer id) {
         serviceJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Set<Integer> findAllClientIdsWithServices(List<Integer> clientIds) {
+        return serviceJpaRepository.findDistinctClienteIdsWithServices(clientIds);
     }
 
     private Client getClientById(Integer id) {

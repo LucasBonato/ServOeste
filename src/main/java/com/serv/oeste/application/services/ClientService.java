@@ -15,12 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,16 +28,16 @@ public class ClientService {
     private final Logger logger = LoggerFactory.getLogger(ClientService.class);
 
     @Cacheable("clienteCache")
-    public ResponseEntity<ClienteResponse> fetchOneById(Integer id) {
+    public ClienteResponse fetchOneById(Integer id) {
         logger.debug("DEBUG - Fetching client by ID: {}", id);
         Client client = getClienteById(id);
         logger.info("INFO - Client found: id={}, nome={}", id, client.getNome());
 
-        return ResponseEntity.ok(getClienteResponse(client));
+        return getClienteResponse(client);
     }
     
     @Cacheable("allClientes")
-    public ResponseEntity<PageResponse<ClienteResponse>> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
+    public PageResponse<ClienteResponse> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
         logger.debug("DEBUG - Fetching clients with filter: {}", filtroRequest);
         PageResponse<ClienteResponse> clientsResponse = clientRepository.filter(
                     filtroRequest.toClientFilter(),
@@ -48,21 +46,20 @@ public class ClientService {
                 .map(ClienteResponse::new);
         logger.info("INFO - Found {} clients with filter: {}", clientsResponse.getPage().getTotalPages(), filtroRequest);
 
-        return ResponseEntity.ok(clientsResponse);
+        return clientsResponse;
     }
     
-    public ResponseEntity<ClienteResponse> create(ClienteRequest clienteRequest) {
+    public ClienteResponse create(ClienteRequest clienteRequest) {
         logger.info("INFO - Creating new client");
 
         Client cliente = clientRepository.save(clienteRequest.toClient());
+
         logger.info("INFO - Client Created successfully with id={}", cliente.getId());
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(getClienteResponse(cliente));
+        return getClienteResponse(cliente);
     }
     
-    public ResponseEntity<ClienteResponse> update(Integer id, ClienteRequest clienteRequest) {
+    public ClienteResponse update(Integer id, ClienteRequest clienteRequest) {
         logger.info("INFO - Updating client id={}", id);
 
         Client cliente = getClienteById(id);
@@ -79,34 +76,31 @@ public class ClientService {
         Client clientUpdated = clientRepository.save(cliente);
         logger.info("INFO - Client updated id={}", clientUpdated.getId());
 
-        return ResponseEntity.ok(getClienteResponse(cliente));
+        return getClienteResponse(cliente);
     }
-    
-    public ResponseEntity<Void> deleteListByIds(List<Integer> ids) {
-        logger.info("INFO - Deleting clients by ids: {}", ids);
-        List<Integer> clientesNaoExcluidos = new ArrayList<>();
-        
-        ids.stream()
-                .filter(id -> clientRepository.findById(id).isPresent())
-                .filter(id -> {
-                    boolean possuiServicos = serviceRepository.existsByClienteId(id);
-                    if (possuiServicos) {
-                        logger.warn("WARN - Client id={} has associated services and cannot be deleted", id);
-                        clientesNaoExcluidos.add(id);
-                    }
-                    return !possuiServicos;
-                })
-                .forEach(id -> {
-                    clientRepository.deleteById(id);
-                    logger.info("INFO - Client id={} deleted", id);
-                });
-        
-        if (!clientesNaoExcluidos.isEmpty()) {
-            logger.error("ERROR - Some clients could not be deleted due to service relations: {}", clientesNaoExcluidos);
-            throw new ClientNotValidException(ErrorFields.CLIENTE, "O(s) seguinte(s) cliente(s) não foram excluído(s) por possuirem serviços atrelados a si: " + clientesNaoExcluidos);
+
+    public void deleteListByIds(List<Integer> ids) {
+        logger.info("Deleting clients by ids: {}", ids);
+        if (ids == null || ids.isEmpty()) return;
+
+        List<Client> clients = clientRepository.findAllByIds(ids);
+        if (clients.isEmpty()) {
+            logger.warn("No clients found for deletion");
+            return;
         }
-        
-        return ResponseEntity.ok().build();
+
+        Set<Integer> blockedIds = serviceRepository.findAllClientIdsWithServices(ids);
+
+        if (!blockedIds.isEmpty()) {
+            logger.warn("Clients with active services cannot be deleted: {}", blockedIds);
+            throw new ClientNotValidException(
+                    ErrorFields.CLIENTE,
+                    "Os seguintes clientes não foram excluídos por possuírem serviços atrelados: " + blockedIds
+            );
+        }
+
+        clientRepository.deleteAllByIds(ids);
+        logger.info("Deleted {} clients successfully", ids.size());
     }
 
     public Client getClienteById(Integer id) {
