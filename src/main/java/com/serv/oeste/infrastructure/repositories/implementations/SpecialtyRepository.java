@@ -7,6 +7,7 @@ import com.serv.oeste.infrastructure.repositories.jpa.ISpecialtyJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -17,5 +18,12 @@ public class SpecialtyRepository implements ISpecialtyRepository {
     @Override
     public Optional<Specialty> findById(Integer id) {
         return specialtyJpaRepository.findById(id).map(SpecialtyEntity::toSpecialty);
+    }
+
+    @Override
+    public List<Specialty> findAllById(List<Integer> specialtyIds) {
+        return specialtyJpaRepository.findAllById(specialtyIds).stream()
+                .map(SpecialtyEntity::toSpecialty)
+                .toList();
     }
 }

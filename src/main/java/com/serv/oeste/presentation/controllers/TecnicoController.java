@@ -10,10 +10,12 @@ import com.serv.oeste.application.dtos.requests.TecnicoDisponibilidadeRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.application.services.TechnicianService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -26,31 +28,34 @@ public class TecnicoController implements TecnicoSwagger {
             @RequestBody TecnicoRequestFilter filter,
             @ModelAttribute PageFilterRequest pageFilter
     ){
-        return technicianService.fetchListByFilter(filter, pageFilter);
+        return ResponseEntity.ok(technicianService.fetchListByFilter(filter, pageFilter));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TecnicoWithSpecialityResponse> fetchOneById(@PathVariable Integer id){
-        return technicianService.fetchOneById(id);
+        return ResponseEntity.ok(technicianService.fetchOneById(id));
     }
 
     @PostMapping("/disponibilidade")
     public ResponseEntity<List<TecnicoDisponibilidadeResponse>> fetchListAvailability(@RequestBody TecnicoDisponibilidadeRequest tecnicoDisponibilidadeRequest) {
-        return technicianService.fetchListAvailability(tecnicoDisponibilidadeRequest.especialidadeId());
+        return ResponseEntity.ok(technicianService.fetchListAvailability(tecnicoDisponibilidadeRequest.especialidadeId()));
     }
 
     @PostMapping
-    public ResponseEntity<TecnicoWithSpecialityResponse> create(@RequestBody TecnicoRequest tecnicoRequest){
-        return technicianService.create(tecnicoRequest);
+    public ResponseEntity<TecnicoWithSpecialityResponse> create(@Valid @RequestBody TecnicoRequest tecnicoRequest){
+        TecnicoWithSpecialityResponse tecnico = technicianService.create(tecnicoRequest);
+
+        return ResponseEntity.created(URI.create("/api/tecnico/" + tecnico.id())).body(tecnico);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TecnicoWithSpecialityResponse> update(@PathVariable Integer id, @RequestBody TecnicoRequest tecnicoResponse){
-        return technicianService.update(id, tecnicoResponse);
+        return ResponseEntity.ok(technicianService.update(id, tecnicoResponse));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> disableListByIds(@RequestBody List<Integer> ids){
-        return technicianService.disableListByIds(ids);
+        technicianService.disableListByIds(ids);
+        return ResponseEntity.ok().build();
     }
 }

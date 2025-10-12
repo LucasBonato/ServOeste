@@ -1,7 +1,12 @@
 package com.serv.oeste.domain.entities.technician;
 
 import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.exceptions.ErrorCollector;
+import com.serv.oeste.domain.exceptions.technician.TechnicianAlreadyDisabledException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotValidException;
+
 import java.util.List;
 
 public class Technician {
@@ -15,14 +20,6 @@ public class Technician {
 
     public Technician() {}
 
-    public Technician(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao) {
-        this.nome = nome;
-        this.sobrenome = sobrenome;
-        this.telefoneFixo = telefoneFixo;
-        this.telefoneCelular = telefoneCelular;
-        this.situacao = situacao;
-    }
-
     public Technician(Integer id, String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
         this.id = id;
         this.nome = nome;
@@ -31,6 +28,59 @@ public class Technician {
         this.telefoneCelular = telefoneCelular;
         this.situacao = situacao;
         this.especialidades = especialidades;
+
+        validate();
+    }
+
+    private Technician(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, List<Specialty> especialidades) {
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.telefoneFixo = telefoneFixo;
+        this.telefoneCelular = telefoneCelular;
+        this.especialidades = especialidades;
+
+        validate();
+    }
+
+    public static Technician create(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, List<Specialty> especialidades) {
+        return new Technician(
+                nome,
+                sobrenome,
+                telefoneFixo,
+                telefoneCelular,
+                especialidades
+        );
+    }
+
+    public void update(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.telefoneFixo = telefoneFixo;
+        this.telefoneCelular = telefoneCelular;
+        this.situacao = situacao;
+        this.especialidades = especialidades;
+
+        validate();
+    }
+
+    private void validate() {
+        ErrorCollector errors = new ErrorCollector();
+
+        if (especialidades == null || especialidades.isEmpty()) {
+            errors.add(ErrorFields.CONHECIMENTO, "Técnico precisa possuir no mínimo uma especialidade!");
+        }
+
+        if ((telefoneCelular == null || telefoneCelular.isBlank()) && (telefoneFixo == null || telefoneFixo.isBlank())) {
+            errors.add(ErrorFields.TELEFONES, "O técnico precisa ter no mínimo um telefone cadastrado!");
+        }
+
+        errors.throwIfAny(TechnicianNotValidException::new);
+    }
+
+    public void disable() {
+        if (this.situacao == Situacao.DESATIVADO)
+            throw new TechnicianAlreadyDisabledException();
+        this.situacao = Situacao.DESATIVADO;
     }
 
     public Integer getId() {
@@ -59,23 +109,5 @@ public class Technician {
 
     public List<Specialty> getEspecialidades() {
         return especialidades;
-    }
-
-    public void setEspecialidades(List<Specialty> especialidades) {
-        this.especialidades = especialidades;
-    }
-
-    public void setSituacao(Situacao situacao) {
-        this.situacao = situacao;
-    }
-
-    public void setAll(Integer id, String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
-        this.id = id;
-        this.nome = nome;
-        this.sobrenome = sobrenome;
-        this.telefoneFixo = telefoneFixo;
-        this.telefoneCelular = telefoneCelular;
-        this.situacao = situacao;
-        this.especialidades = especialidades;
     }
 }
