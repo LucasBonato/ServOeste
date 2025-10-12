@@ -59,17 +59,17 @@ public class ServiceService {
         logger.info("INFO - Creating new service and client");
         verificarCamposObrigatoriosServico(servicoRequest);
         logger.info("INFO - Creating new client for service");
-        ResponseEntity<ClienteResponse> response = clientService.create(clienteRequest);
+        ClienteResponse cliente = clientService.create(clienteRequest);
 
-        if (response.getBody() == null) {
+        if (cliente == null) {
             logger.error("ERROR - Could not create client with: {}", clienteRequest);
             throw new ServiceNotValidException(ErrorFields.CLIENTE, "Não foi possível pegar o id do cliente!");
         }
 
-        verificarSelecionamentoDasEntidades(response.getBody().id());
+        verificarSelecionamentoDasEntidades(cliente.id());
         logger.info("DEBUG - Business validation passed for service and client");
 
-        ServicoResponse servicoResponse = criarServico(servicoRequest, response.getBody().id());
+        ServicoResponse servicoResponse = criarServico(servicoRequest, cliente.id());
         logger.info("INFO - Service Created successfully with id={}, clientId={}, technicianId={}", servicoResponse.id(), servicoResponse.idCliente(), servicoResponse.idTecnico());
         
         return ResponseEntity
