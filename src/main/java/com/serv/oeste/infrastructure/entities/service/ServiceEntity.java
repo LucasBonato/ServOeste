@@ -106,7 +106,6 @@ public class ServiceEntity {
         this.tecnico = new TechnicianEntity(service.getTecnico());
     }
 
-
     public Service toService() {
         return new Service(
                 this.id,
@@ -131,5 +130,4 @@ public class ServiceEntity {
                 this.tecnico == null ? null : this.tecnico.toTechnician()
         );
     }
-
 }

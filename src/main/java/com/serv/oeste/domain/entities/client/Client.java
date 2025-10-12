@@ -27,7 +27,7 @@ public class Client {
         validate();
     }
 
-    public Client(String fullName, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
+    private Client(String fullName, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
         this.nome = fullName;
         this.telefoneFixo = telefoneFixo;
         this.telefoneCelular = telefoneCelular;

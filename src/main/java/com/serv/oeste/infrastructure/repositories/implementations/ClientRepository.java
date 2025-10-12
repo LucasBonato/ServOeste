@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -51,12 +52,19 @@ public class ClientRepository implements IClientRepository {
     }
 
     @Override
+    public List<Client> findAllByIds(List<Integer> ids) {
+        return clientJpaRepository.findAllById(ids).stream()
+                .map(ClientEntity::toClient)
+                .toList();
+    }
+
+    @Override
     public Client save(Client client) {
         return clientJpaRepository.save(new ClientEntity(client)).toClient();
     }
 
     @Override
-    public void deleteById(Integer id) {
-        clientJpaRepository.deleteById(id);
+    public void deleteAllByIds(List<Integer> ids) {
+        clientJpaRepository.deleteAllByIdInBatch(ids);
     }
 }
