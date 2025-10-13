@@ -43,7 +43,7 @@ public class ClientEntity {
     }
 
     public Client toClient() {
-        return new Client(
+        return Client.restore(
                 this.id,
                 this.nome,
                 this.telefoneFixo,

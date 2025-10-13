@@ -3,19 +3,27 @@ package com.serv.oeste.domain.entities.client;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.exceptions.client.ClientNotValidException;
+import com.serv.oeste.domain.utils.StringUtils;
+import com.serv.oeste.domain.valueObjects.Phone;
 
 public class Client {
     private Integer id;
     private String nome;
-    private String telefoneFixo;
-    private String telefoneCelular;
+    private Phone telefoneFixo;
+    private Phone telefoneCelular;
     private String endereco;
     private String bairro;
     private String municipio;
 
-    public Client() { }
-
-    public Client(Integer id, String nome, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
+    private Client(
+            Integer id,
+            String nome,
+            Phone telefoneFixo,
+            Phone telefoneCelular,
+            String endereco,
+            String bairro,
+            String municipio
+    ) {
         this.id = id;
         this.nome = nome;
         this.telefoneFixo = telefoneFixo;
@@ -23,11 +31,16 @@ public class Client {
         this.endereco = endereco;
         this.bairro = bairro;
         this.municipio = municipio;
-
-        validate();
     }
 
-    private Client(String fullName, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
+    private Client(
+            String fullName,
+            Phone telefoneFixo,
+            Phone telefoneCelular,
+            String endereco,
+            String bairro,
+            String municipio
+    ) {
         this.nome = fullName;
         this.telefoneFixo = telefoneFixo;
         this.telefoneCelular = telefoneCelular;
@@ -38,23 +51,65 @@ public class Client {
         validate();
     }
 
-    public static Client create(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
-        String fullName = (nome + " " + sobrenome).trim();
+    public static Client restore(
+            Integer id,
+            String nome,
+            String telefoneFixo,
+            String telefoneCelular,
+            String endereco,
+            String bairro,
+            String municipio
+    ) {
+        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
 
         return new Client(
-                fullName,
-                telefoneFixo,
-                telefoneCelular,
+                id,
+                nome,
+                fixo,
+                celular,
                 endereco,
                 bairro,
                 municipio
         );
     }
 
-    public void update(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, String endereco, String bairro, String municipio) {
+    public static Client create(
+            String nome,
+            String sobrenome,
+            String telefoneFixo,
+            String telefoneCelular,
+            String endereco,
+            String bairro,
+            String municipio
+    ) {
+        String fullName = (nome + " " + sobrenome).trim();
+
+        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+
+        return new Client(
+                fullName,
+                fixo,
+                celular,
+                endereco,
+                bairro,
+                municipio
+        );
+    }
+
+    public void update(
+            String nome,
+            String sobrenome,
+            String telefoneFixo,
+            String telefoneCelular,
+            String endereco,
+            String bairro,
+            String municipio
+    ) {
         this.nome = (nome + " " + sobrenome).trim();
-        this.telefoneFixo = telefoneFixo;
-        this.telefoneCelular = telefoneCelular;
+        this.telefoneFixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        this.telefoneCelular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
         this.endereco = endereco;
         this.bairro = bairro;
         this.municipio = municipio;
@@ -65,13 +120,20 @@ public class Client {
     private void validate() {
         ErrorCollector errors = new ErrorCollector();
 
-        if ((telefoneCelular == null || telefoneCelular.isBlank()) && (telefoneFixo == null || telefoneFixo.isBlank())) {
+        if ((telefoneCelular == null || telefoneCelular.isPhoneBlank()) && (telefoneFixo == null || telefoneFixo.isPhoneBlank()))
             errors.add(ErrorFields.TELEFONES, "O cliente precisa ter no mínimo um telefone cadastrado!");
-        }
-
-        if (!endereco.matches(".*\\d+.*")) {
+        if (!endereco.matches(".*\\d+.*"))
             errors.add(ErrorFields.ENDERECO, "É necessário possuir número no Endereço!");
-        }
+        if (StringUtils.isBlank(endereco))
+            errors.add(ErrorFields.ENDERECO, "O endereço é obrigatório");
+        if (StringUtils.isBlank(bairro))
+            errors.add(ErrorFields.BAIRRO, "O bairro é obrigatório");
+        if (StringUtils.isBlank(municipio))
+            errors.add(ErrorFields.MUNICIPIO, "O municipio é obrigatório");
+        if (StringUtils.isBlank(nome))
+            errors.add(ErrorFields.NOMESOBRENOME, "O nome é obrigatório");
+        if (nome.length() < 2)
+            errors.add(ErrorFields.NOMESOBRENOME, "O nome precisa ter no minimo 2 caracteres");
 
         errors.throwIfAny(ClientNotValidException::new);
     }
@@ -85,11 +147,11 @@ public class Client {
     }
 
     public String getTelefoneFixo() {
-        return telefoneFixo;
+        return telefoneFixo.getPhone();
     }
 
     public String getTelefoneCelular() {
-        return telefoneCelular;
+        return telefoneCelular.getPhone();
     }
 
     public String getEndereco() {
