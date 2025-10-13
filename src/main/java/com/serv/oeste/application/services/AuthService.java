@@ -3,18 +3,16 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.AuthTokenPair;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
 import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
-import com.serv.oeste.domain.exceptions.auth.AuthInvalidCredentialsException;
-import com.serv.oeste.domain.exceptions.auth.AuthNotValidException;
-import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
 import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
 import com.serv.oeste.domain.contracts.security.ITokenGenerator;
 import com.serv.oeste.domain.entities.user.RefreshToken;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.enums.Roles;
+import com.serv.oeste.domain.exceptions.auth.AuthInvalidCredentialsException;
+import com.serv.oeste.domain.exceptions.auth.AuthNotValidException;
+import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +29,7 @@ public class AuthService {
     private final ITokenGenerator tokenGenerator;
     private final IRefreshTokenStore refreshTokenStore;
 
-    public ResponseEntity<Void> register(AuthRegisterRequest registerRequest) {
+    public void register(AuthRegisterRequest registerRequest) {
         if (registerRequest.role() == Roles.ADMIN)
             throw new AuthNotValidException("Cadastro inválido, não é possível registrar um usuário ADMIN");
 
@@ -43,10 +41,6 @@ public class AuthService {
             passwordEncoder.encode(registerRequest.password()),
             registerRequest.role()
         ));
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
     }
 
     public AuthTokenPair login(AuthLoginRequest loginRequest) {

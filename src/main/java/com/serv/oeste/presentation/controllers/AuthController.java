@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody AuthRegisterRequest registerRequest) {
-        return authService.register(registerRequest);
+        authService.register(registerRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
     }
 
     @PostMapping("/login")
