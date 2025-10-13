@@ -1,7 +1,7 @@
 package com.serv.oeste.presentation.swagger;
 
-import com.serv.oeste.application.dtos.requests.*;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
+import com.serv.oeste.application.dtos.requests.*;
 import com.serv.oeste.domain.exceptions.DomainException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +16,12 @@ import java.util.List;
 
 @Tag(name = "Serviço")
 public interface ServicoSwagger extends SwaggerConfiguration {
+    @Operation(description = "Forma de trazer o registro de um serviço através de seu id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "[Ok] Serviço devolvido com sucesso.", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "[NotFound] O Serviço informado não foi encontrado.", content = @Content(schema = @Schema(implementation = DomainException.class)))
+    })
+    ResponseEntity<ServicoResponse> fetchOneById(Integer id);
 
     @Operation(description = "Filtro para coletar uma lista de serviços a partir das informações passadas")
     @ApiResponses(value = {

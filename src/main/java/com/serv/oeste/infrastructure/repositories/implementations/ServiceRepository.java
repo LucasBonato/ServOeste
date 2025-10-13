@@ -96,8 +96,8 @@ public class ServiceRepository implements IServiceRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
-        serviceJpaRepository.deleteById(id);
+    public void deleteAllById(List<Integer> ids) {
+        serviceJpaRepository.deleteAllById(ids);
     }
 
     @Override
