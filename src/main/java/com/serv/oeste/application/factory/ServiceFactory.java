@@ -7,14 +7,14 @@ import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.FormaPagamento;
+import com.serv.oeste.domain.enums.HorarioPrevisto;
 import com.serv.oeste.domain.enums.SituacaoServico;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ServiceFactory {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static Service create(
             Integer id,
@@ -23,18 +23,18 @@ public class ServiceFactory {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            String horarioPrevisto,
+            HorarioPrevisto horarioPrevisto,
             Double valor,
             FormaPagamento formaPagamento,
             Double valorPecas,
             Double valorComissao,
-            Date dataPagamentoComissao,
-            Date dataAbertura,
-            Date dataFechamento,
-            Date dataInicioGarantia,
-            Date dataFimGarantia,
-            Date dataAtendimentoPrevisto,
-            Date dataAtendimentoEfetiva,
+            LocalDate dataPagamentoComissao,
+            LocalDate dataAbertura,
+            LocalDate dataFechamento,
+            LocalDate dataInicioGarantia,
+            LocalDate dataFimGarantia,
+            LocalDate dataAtendimentoPrevisto,
+            LocalDate dataAtendimentoEfetiva,
             Client cliente,
             Technician tecnico
     ) {
@@ -63,24 +63,21 @@ public class ServiceFactory {
     }
 
 
-
     public static Service createMinimal(
             String equipamento,
             String marca,
             String filial,
             String descricao,
-            SituacaoServico situacao,
-            String horarioPrevisto,
-            Date dataAtendimento,
+            HorarioPrevisto horarioPrevisto,
+            LocalDate dataAtendimento,
             Client cliente,
             Technician tecnico
     ) {
-        return new Service(
+        return Service.create(
                 equipamento,
                 marca,
                 filial,
                 descricao,
-                situacao,
                 horarioPrevisto,
                 dataAtendimento,
                 cliente,
@@ -88,7 +85,7 @@ public class ServiceFactory {
         );
     }
 
-    public static Service createWithGarantia(Date dataInicioGarantia, Date dataFimGarantia) {
+    public static Service createWithGarantia(LocalDate dataInicioGarantia, LocalDate dataFimGarantia) {
         return create(
                 99,
                 "Monitor",
@@ -96,18 +93,18 @@ public class ServiceFactory {
                 "Osasco",
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 250.0,
                 FormaPagamento.PIX,
                 100.0,
                 25.0,
-                new Date(),
-                new Date(),
-                new Date(),
+                LocalDate.now(),
+                LocalDate.now(),
+                LocalDate.now(),
                 dataInicioGarantia,
                 dataFimGarantia,
-                new Date(),
-                new Date(),
+                LocalDate.now(),
+                LocalDate.now(),
                 ClientFactory.createDefault(),
                 TechnicianFactory.createDefault()
         );
@@ -135,7 +132,7 @@ public class ServiceFactory {
                 "São Paulo",
                 "Problema com teclado",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 FormaPagamento.BOLETO,
                 100.0,
@@ -172,7 +169,6 @@ public class ServiceFactory {
                 "LG",
                 "Osasco",
                 "Tela com dead pixels",
-                SituacaoServico.AGUARDANDO_AGENDAMENTO,
                 null,
                 null,
                 ClientFactory.createDefault(),
@@ -188,8 +184,8 @@ public class ServiceFactory {
                 "Lava Roupa",
                 "Brastemp",
                 "Carapicuíba",
-                "05/07/2023",
-                "TARDE",
+                parseDate("05/07/2023"),
+                HorarioPrevisto.TARDE,
                 "Máquina não está centrifugando corretamente e faz barulho estranho"
         );
     }
@@ -201,8 +197,8 @@ public class ServiceFactory {
                 "Geladeira",
                 "Electrolux",
                 "Barueri",
-                "10/07/2023",
-                "MANHA",
+                parseDate("10/07/2023"),
+                HorarioPrevisto.MANHA,
                 "Não está gelando adequadamente"
         );
     }
@@ -214,8 +210,8 @@ public class ServiceFactory {
                 "TV",
                 "Samsung",
                 "Jandira",
-                "15/07/2023",
-                "TARDE",
+                parseDate("15/07/2023"),
+                HorarioPrevisto.TARDE,
                 "Não liga" // Less than 10 chars
         );
     }
@@ -227,8 +223,8 @@ public class ServiceFactory {
                 "Ar Condicionado",
                 "LG",
                 "Cotia",
-                "20/07/2023",
-                "MANHA",
+                parseDate("20/07/2023"),
+                HorarioPrevisto.MANHA,
                 "Não esfria" // Only 2 words
         );
     }
@@ -253,8 +249,8 @@ public class ServiceFactory {
                 "Microondas",
                 "Panasonic",
                 "Santana de Parnaíba",
-                "25/07/2023",
-                "NOITE", // Invalid value
+                parseDate("25/07/2023"),
+                null, // Invalid value
                 "Não aquece os alimentos uniformemente"
         );
     }
@@ -269,7 +265,7 @@ public class ServiceFactory {
                 "Carlos Silva",
                 "Notebook",
                 "São Paulo",
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 "Dell",
                 "Problema com teclado",
                 FormaPagamento.BOLETO.getFormaPagamento(),
@@ -296,7 +292,7 @@ public class ServiceFactory {
                 "Ana Tecnica",
                 "Smartphone",
                 "Osasco",
-                "MANHA",
+                HorarioPrevisto.MANHA,
                 "Samsung",
                 "Tela trincada",
                 "PIX",
@@ -324,16 +320,16 @@ public class ServiceFactory {
                 "Troca de tela e reparo na placa mãe",
                 SituacaoServico.AGUARDANDO_APROVACAO,
                 FormaPagamento.DINHEIRO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 50.0,
                 100.0,
-                "15/07/2023",
-                "16/07/2023",
-                "16/08/2023",
-                "10/07/2023",
-                "12/07/2023",
-                "14/07/2023"
+                parseDate("15/07/2023"),
+                parseDate("16/07/2023"),
+                parseDate("16/08/2023"),
+                parseDate("10/07/2023"),
+                parseDate("12/07/2023"),
+                parseDate("14/07/2023")
         );
     }
 
@@ -347,16 +343,16 @@ public class ServiceFactory {
                 "short", // descricao too short
                 null, // situacao missing
                 null, // formaPagamento missing
-                "NOITE", // invalid horario
+                null, // invalid horario
                 -100.0, // negative valor
                 -10.0, // negative comissao
                 -50.0, // negative pecas
-                "2023-07-15", // invalid date format
-                "2023-07-16",
-                "2023-08-16",
-                "2023-07-10",
-                "2023-07-12",
-                "2023-07-14"
+                parseDate("2023-07-15"), // invalid date format
+                parseDate("2023-07-16"),
+                parseDate("2023-08-16"),
+                parseDate("2023-07-10"),
+                parseDate("2023-07-12"),
+                parseDate("2023-07-14")
         );
     }
 
@@ -370,16 +366,16 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
                 FormaPagamento.PIX,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 50.0,
                 100.0,
-                "15/07/2023",
-                "16/07/2023",
-                "16/08/2023",
-                "10/07/2023",
-                "12/07/2023",
-                "14/07/2023"
+                parseDate("15/07/2023"),
+                parseDate("16/07/2023"),
+                parseDate("16/08/2023"),
+                parseDate("10/07/2023"),
+                parseDate("12/07/2023"),
+                parseDate("14/07/2023")
         );
     }
 
@@ -393,16 +389,16 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.RESOLVIDO, // Status that requires technician
                 FormaPagamento.DEBITO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 50.0,
                 100.0,
-                "15/07/2023",
-                "16/07/2023",
-                "16/08/2023",
-                "10/07/2023",
-                "12/07/2023",
-                "14/07/2023"
+                parseDate("15/07/2023"),
+                parseDate("16/07/2023"),
+                parseDate("16/08/2023"),
+                parseDate("10/07/2023"),
+                parseDate("12/07/2023"),
+                parseDate("14/07/2023")
         );
     }
 
@@ -488,16 +484,16 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
                 FormaPagamento.CREDITO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 50.0,
                 100.0,
-                "15-07-2023", // invalid format
-                "16-07-2023",
-                "16-08-2023",
-                "10-07-2023",
-                "12-07-2023",
-                "14-07-2023"
+                parseDate("15-07-2023"), // invalid format
+                parseDate("16-07-2023"),
+                parseDate("16-08-2023"),
+                parseDate("10-07-2023"),
+                parseDate("12-07-2023"),
+                parseDate("14-07-2023")
         );
     }
 
@@ -532,7 +528,7 @@ public class ServiceFactory {
                 "São Paulo",
                 "Problema com teclado",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                "TARDE",
+                HorarioPrevisto.TARDE,
                 500.0,
                 FormaPagamento.DEBITO,
                 100.0,
@@ -562,13 +558,13 @@ public class ServiceFactory {
                 request.formaPagamento(),
                 request.valorPecas(),
                 request.valorComissao(),
-                parseDate(request.dataPagamentoComissao()),
+                request.dataPagamentoComissao(),
                 parseDate("15/03/2025"),
-                parseDate(request.dataFechamento()),
-                parseDate(request.dataInicioGarantia()),
-                parseDate(request.dataFimGarantia()),
-                parseDate(request.dataAtendimentoPrevisto()),
-                parseDate(request.dataAtendimentoEfetiva()),
+                request.dataFechamento(),
+                request.dataInicioGarantia(),
+                request.dataFimGarantia(),
+                request.dataAtendimentoPrevisto(),
+                request.dataAtendimentoEfetiva(),
                 client,
                 technician
         );
@@ -577,9 +573,9 @@ public class ServiceFactory {
     public static ServicoResponse createServicoResponse(Service service) {
         Boolean garantia = null;
         if (service.getDataInicioGarantia() != null) {
-            Date today = new Date();
-            garantia = service.getDataInicioGarantia().before(today) &&
-                    service.getDataFimGarantia().after(today);
+            LocalDate today = LocalDate.now();
+            garantia = service.getDataInicioGarantia().isBefore(today) &&
+                    service.getDataFimGarantia().isAfter(today);
         }
 
         return new ServicoResponse(
@@ -609,15 +605,7 @@ public class ServiceFactory {
         );
     }
 
-    // Helper method to parse dates
-    private static Date parseDate(String dateString) {
-        if (dateString == null) {
-            return null;
-        }
-        try {
-            return DATE_FORMAT.parse(dateString);
-        } catch (ParseException e) {
-            throw new RuntimeException("Invalid date format in test factory", e);
-        }
+    private static LocalDate parseDate(String date) {
+        return LocalDate.parse(date, DATE_FORMAT);
     }
 }

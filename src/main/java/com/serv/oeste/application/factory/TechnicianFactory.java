@@ -48,9 +48,14 @@ public class TechnicianFactory {
             String nome,
             String sobrenome,
             String telefoneFixo,
-            String telefoneCelular,
-            Situacao situacao
+            String telefoneCelular
     ) {
-        return new Technician(nome, sobrenome, telefoneFixo, telefoneCelular, situacao);
+        return Technician.create(
+                nome,
+                sobrenome,
+                telefoneFixo,
+                telefoneCelular,
+                List.of()
+        );
     }
 }
