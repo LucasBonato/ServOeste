@@ -11,11 +11,11 @@ import java.util.List;
 
 public record TecnicoRequest(
         @NotBlank(message = "O Nome do técnico não pode ser vazio!")
-        @Size(min = 2, message = "O Nome do técnico precisa ter no mínimo 2 caracteres!")
+        @Size(min = 2, message = "O Nome do técnico precisa ter no mínimo {min} caracteres!")
         String nome,
 
         @NotBlank(message = "Digite Nome e Sobrenome!")
-        @Size(min = 2, message = "O Sobrenome do técnico precisa ter no mínimo 2 caracteres!")
+        @Size(min = 2, message = "O Sobrenome do técnico precisa ter no mínimo {minsd} caracteres!")
         String sobrenome,
 
         @Pattern(regexp = "\\d{10}|", message = "Telefone fixo inválido")
