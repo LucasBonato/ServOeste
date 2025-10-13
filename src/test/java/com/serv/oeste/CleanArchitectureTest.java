@@ -38,7 +38,7 @@ class CleanArchitectureTest {
     static final ArchRule cleanArchitecture_DomainLayer_ShouldNotDependOnSpring = noClasses()
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat()
-            .resideInAnyPackage("org.springframework..")
+            .resideOutsideOfPackages("com.serv.oeste.domain..", "java..")
         ;
 
     @ArchTest
