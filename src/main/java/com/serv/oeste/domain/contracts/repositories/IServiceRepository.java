@@ -13,6 +13,6 @@ public interface IServiceRepository {
     PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter);
     Optional<Service> findById(Integer id);
     Service save(Service service);
-    void deleteById(Integer id);
     Set<Integer> findAllClientIdsWithServices(List<Integer> ids);
+    void deleteAllById(List<Integer> ids);
 }
