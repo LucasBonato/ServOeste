@@ -109,7 +109,7 @@ public class ServiceEntity {
     }
 
     public Service toService() {
-        return new Service(
+        return Service.restore(
                 this.id,
                 this.equipamento,
                 this.marca,

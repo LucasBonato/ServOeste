@@ -8,7 +8,7 @@ import com.serv.oeste.domain.enums.HorarioPrevisto;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.service.ServiceNotValidException;
-import io.micrometer.common.util.StringUtils;
+import com.serv.oeste.domain.utils.StringUtils;
 
 import java.time.LocalDate;
 
@@ -35,30 +35,6 @@ public class Service {
     private Technician tecnico;
 
     private Service(
-            String equipamento,
-            String marca,
-            String filial,
-            String descricao,
-            SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
-            LocalDate dataAtendimento,
-            Client cliente,
-            Technician tecnico
-    ) {
-        this.equipamento = equipamento;
-        this.marca = marca;
-        this.filial = filial;
-        this.descricao = getHistory("", situacao, descricao);
-        this.situacao = situacao;
-        this.horarioPrevisto = horarioPrevisto;
-        this.dataAtendimentoPrevisto = dataAtendimento;
-        this.cliente = cliente;
-        this.tecnico = tecnico;
-
-        validate();
-    }
-
-    public Service(
             Integer id,
             String equipamento,
             String marca,
@@ -102,15 +78,92 @@ public class Service {
         this.tecnico = tecnico;
     }
 
-    public static Service create(String equipamento, String marca, String filial, String descricao, HorarioPrevisto horarioPrevisto, LocalDate dataAtendimento, Client cliente, Technician tecnico) {
-        SituacaoServico situacao = inferSituacao(horarioPrevisto, dataAtendimento, tecnico);
+    private Service(
+            String equipamento,
+            String marca,
+            String filial,
+            String descricao,
+            SituacaoServico situacao,
+            HorarioPrevisto horarioPrevisto,
+            LocalDate dataAtendimento,
+            Client cliente,
+            Technician tecnico
+    ) {
+        this.equipamento = equipamento;
+        this.marca = marca;
+        this.filial = filial;
+        this.descricao = getHistory("", situacao, descricao);
+        this.situacao = situacao;
+        this.horarioPrevisto = horarioPrevisto;
+        this.dataAtendimentoPrevisto = dataAtendimento;
+        this.cliente = cliente;
+        this.tecnico = tecnico;
 
+        validate();
+    }
+
+    public static Service restore(
+            Integer id,
+            String equipamento,
+            String marca,
+            String filial,
+            String descricao,
+            SituacaoServico situacao,
+            HorarioPrevisto horarioPrevisto,
+            Double valor,
+            FormaPagamento formaPagamento,
+            Double valorPecas,
+            Double valorComissao,
+            LocalDate dataPagamentoComissao,
+            LocalDate dataAbertura,
+            LocalDate dataFechamento,
+            LocalDate dataInicioGarantia,
+            LocalDate dataFimGarantia,
+            LocalDate dataAtendimentoPrevisto,
+            LocalDate dataAtendimentoEfetiva,
+            Client cliente,
+            Technician tecnico
+    ) {
         return new Service(
+                id,
                 equipamento,
                 marca,
                 filial,
                 descricao,
                 situacao,
+                horarioPrevisto,
+                valor,
+                formaPagamento,
+                valorPecas,
+                valorComissao,
+                dataPagamentoComissao,
+                dataAbertura,
+                dataFechamento,
+                dataInicioGarantia,
+                dataFimGarantia,
+                dataAtendimentoPrevisto,
+                dataAtendimentoEfetiva,
+                cliente,
+                tecnico
+        );
+    }
+
+    public static Service create(
+            String equipamento,
+            String marca,
+            String filial,
+            String descricao,
+            HorarioPrevisto horarioPrevisto,
+            LocalDate dataAtendimento,
+            Client cliente,
+            Technician tecnico
+    ) {
+        return new Service(
+                equipamento,
+                marca,
+                filial,
+                descricao,
+                inferSituacao(horarioPrevisto, dataAtendimento, tecnico),
                 horarioPrevisto,
                 dataAtendimento,
                 cliente,

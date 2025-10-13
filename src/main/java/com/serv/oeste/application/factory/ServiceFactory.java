@@ -38,7 +38,7 @@ public class ServiceFactory {
             Client cliente,
             Technician tecnico
     ) {
-        return new Service(
+        return Service.restore(
                 id,
                 equipamento,
                 marca,
@@ -521,7 +521,7 @@ public class ServiceFactory {
     }
 
     public static Service createValidServiceWithId(Integer id) {
-        return new Service(
+        return Service.restore(
                 id,
                 "Notebook",
                 "Dell",
@@ -546,7 +546,7 @@ public class ServiceFactory {
     }
 
     public static Service createUpdatedService(Integer id, ServicoUpdateRequest request, Client client, Technician technician) {
-        return new Service(
+        return Service.restore(
                 id,
                 request.equipamento(),
                 request.marca(),

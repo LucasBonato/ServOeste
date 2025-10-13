@@ -6,6 +6,7 @@ import com.serv.oeste.domain.enums.Situacao;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.technician.TechnicianAlreadyDisabledException;
 import com.serv.oeste.domain.exceptions.technician.TechnicianNotValidException;
+import com.serv.oeste.domain.valueObjects.Phone;
 
 import java.util.List;
 
@@ -13,14 +14,20 @@ public class Technician {
     private Integer id;
     private String nome;
     private String sobrenome;
-    private String telefoneFixo;
-    private String telefoneCelular;
+    private Phone telefoneFixo;
+    private Phone telefoneCelular;
     private Situacao situacao = Situacao.ATIVO;
     private List<Specialty> especialidades;
 
-    public Technician() {}
-
-    public Technician(Integer id, String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
+    private Technician(
+            Integer id,
+            String nome,
+            String sobrenome,
+            Phone telefoneFixo,
+            Phone telefoneCelular,
+            Situacao situacao,
+            List<Specialty> especialidades
+    ) {
         this.id = id;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -28,11 +35,15 @@ public class Technician {
         this.telefoneCelular = telefoneCelular;
         this.situacao = situacao;
         this.especialidades = especialidades;
-
-        validate();
     }
 
-    private Technician(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, List<Specialty> especialidades) {
+    private Technician(
+            String nome,
+            String sobrenome,
+            Phone telefoneFixo,
+            Phone telefoneCelular,
+            List<Specialty> especialidades
+    ) {
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.telefoneFixo = telefoneFixo;
@@ -42,21 +53,60 @@ public class Technician {
         validate();
     }
 
-    public static Technician create(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, List<Specialty> especialidades) {
+    public static Technician restore(
+            Integer id,
+            String nome,
+            String sobrenome,
+            String telefoneFixo,
+            String telefoneCelular,
+            Situacao situacao,
+            List<Specialty> especialidades
+    ) {
+        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+
         return new Technician(
+                id,
                 nome,
                 sobrenome,
-                telefoneFixo,
-                telefoneCelular,
+                fixo,
+                celular,
+                situacao,
                 especialidades
         );
     }
 
-    public void update(String nome, String sobrenome, String telefoneFixo, String telefoneCelular, Situacao situacao, List<Specialty> especialidades) {
+    public static Technician create(
+            String nome,
+            String sobrenome,
+            String telefoneFixo,
+            String telefoneCelular,
+            List<Specialty> especialidades
+    ) {
+        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+
+        return new Technician(
+                nome,
+                sobrenome,
+                fixo,
+                celular,
+                especialidades
+        );
+    }
+
+    public void update(
+            String nome,
+            String sobrenome,
+            String telefoneFixo,
+            String telefoneCelular,
+            Situacao situacao,
+            List<Specialty> especialidades
+    ) {
         this.nome = nome;
         this.sobrenome = sobrenome;
-        this.telefoneFixo = telefoneFixo;
-        this.telefoneCelular = telefoneCelular;
+        this.telefoneFixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
+        this.telefoneCelular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
         this.situacao = situacao;
         this.especialidades = especialidades;
 
@@ -70,7 +120,7 @@ public class Technician {
             errors.add(ErrorFields.CONHECIMENTO, "Técnico precisa possuir no mínimo uma especialidade!");
         }
 
-        if ((telefoneCelular == null || telefoneCelular.isBlank()) && (telefoneFixo == null || telefoneFixo.isBlank())) {
+        if ((telefoneCelular == null || telefoneCelular.isPhoneBlank()) && (telefoneFixo == null || telefoneFixo.isPhoneBlank())) {
             errors.add(ErrorFields.TELEFONES, "O técnico precisa ter no mínimo um telefone cadastrado!");
         }
 
@@ -96,11 +146,11 @@ public class Technician {
     }
 
     public String getTelefoneFixo() {
-        return telefoneFixo;
+        return telefoneFixo.getPhone();
     }
 
     public String getTelefoneCelular() {
-        return telefoneCelular;
+        return telefoneCelular.getPhone();
     }
 
     public Situacao getSituacao() {

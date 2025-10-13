@@ -63,7 +63,7 @@ public class TechnicianEntity {
                 .map(SpecialtyEntity::toSpecialty)
                 .toList();
 
-        return new Technician(
+        return Technician.restore(
                 this.id,
                 this.nome,
                 this.sobrenome,

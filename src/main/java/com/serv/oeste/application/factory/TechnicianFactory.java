@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TechnicianFactory {
     public static Technician createDefault() {
-        return new Technician(
+        return Technician.restore(
                 1,
                 "Carlos",
                 "Silva",
@@ -21,7 +21,7 @@ public class TechnicianFactory {
     }
 
     public static Technician createWithSpecialties(List<Specialty> specialties) {
-        return new Technician(
+        return Technician.restore(
                 2,
                 "Fernanda",
                 "Lima",
@@ -41,7 +41,7 @@ public class TechnicianFactory {
             Situacao situacao,
             List<Specialty> especialidades
     ) {
-        return new Technician(id, nome, sobrenome, telefoneFixo, telefoneCelular, situacao, especialidades);
+        return Technician.restore(id, nome, sobrenome, telefoneFixo, telefoneCelular, situacao, especialidades);
     }
 
     public static Technician createMinimal(
