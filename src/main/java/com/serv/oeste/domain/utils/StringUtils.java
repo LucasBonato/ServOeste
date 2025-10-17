@@ -7,6 +7,10 @@ public class StringUtils {
         return str == null || str.trim().isEmpty();
     }
 
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
+
     public static String onlyDigits(String str) {
         return str == null ? null : str.replaceAll("\\D", "");
     }

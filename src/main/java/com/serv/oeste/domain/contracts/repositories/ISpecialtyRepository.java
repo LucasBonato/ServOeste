@@ -1,6 +1,6 @@
 package com.serv.oeste.domain.contracts.repositories;
 
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 
 import java.util.List;
 import java.util.Optional;

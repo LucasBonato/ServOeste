@@ -92,7 +92,7 @@ public class Service {
         this.equipamento = equipamento;
         this.marca = marca;
         this.filial = filial;
-        this.descricao = getHistory("", situacao, descricao);
+        this.descricao = descricao;
         this.situacao = situacao;
         this.horarioPrevisto = horarioPrevisto;
         this.dataAtendimentoPrevisto = dataAtendimento;
@@ -100,6 +100,8 @@ public class Service {
         this.tecnico = tecnico;
 
         validate();
+
+        this.descricao = getHistory("", situacao, descricao);
     }
 
     public static Service restore(
@@ -235,9 +237,9 @@ public class Service {
             errors.add(ErrorFields.MARCA, "Marca é obrigatória");
         if (StringUtils.isBlank(descricao))
             errors.add(ErrorFields.DESCRICAO, "Descrição é obrigatória");
-        if (descricao.length() < 10)
+        if (descricao != null && descricao.length() < 10)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
-        if (descricao.split(" ").length < 3)
+        if (descricao != null && descricao.split(" ").length < 3)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         if (StringUtils.isBlank(filial))
             errors.add(ErrorFields.FILIAL, "A filial é obrigatória");
