@@ -1,11 +1,11 @@
 package com.serv.oeste.domain.contracts;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface TechnicianAvailabilityProjection {
     Integer getId();
     String getNome();
-    Date getData();
+    LocalDate getData();
     Integer getDia();
     String getPeriodo();
     Integer getQuantidade();

@@ -1,17 +1,21 @@
 package com.serv.oeste.domain.entities.technician;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Availability {
-    private Date data;
+    private LocalDate data;
     private Integer numeroDiaSemana;
     private String nomeDiaSemana;
     private String periodo;
     private Integer quantidadeServicos;
 
-    public Availability() {}
-
-    public Availability(Date data, Integer numeroDiaSemana, String nomeDiaSemana, String periodo, Integer quantidadeServicos) {
+    public Availability(
+            LocalDate data,
+            Integer numeroDiaSemana,
+            String nomeDiaSemana,
+            String periodo,
+            Integer quantidadeServicos
+    ) {
         this.data = data;
         this.numeroDiaSemana = numeroDiaSemana;
         this.nomeDiaSemana = nomeDiaSemana;
@@ -19,11 +23,11 @@ public class Availability {
         this.quantidadeServicos = quantidadeServicos;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
