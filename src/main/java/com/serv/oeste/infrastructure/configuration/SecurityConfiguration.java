@@ -1,6 +1,7 @@
 package com.serv.oeste.infrastructure.configuration;
 
 import com.serv.oeste.domain.enums.Roles;
+import com.serv.oeste.infrastructure.middleware.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

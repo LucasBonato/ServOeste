@@ -1,7 +1,7 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
 import com.serv.oeste.domain.contracts.repositories.ISpecialtyRepository;
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.infrastructure.entities.technician.SpecialtyEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.ISpecialtyJpaRepository;
 import lombok.RequiredArgsConstructor;
