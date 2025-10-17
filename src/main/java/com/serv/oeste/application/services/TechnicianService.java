@@ -8,10 +8,10 @@ import com.serv.oeste.application.dtos.requests.TecnicoRequest;
 import com.serv.oeste.application.dtos.requests.TecnicoRequestFilter;
 import com.serv.oeste.domain.contracts.repositories.ISpecialtyRepository;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.entities.technician.Availability;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
+import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.domain.exceptions.technician.SpecialtyNotFoundException;
 import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
@@ -59,14 +59,14 @@ public class TechnicianService {
         List<TechnicianAvailability> tecnicosRaw = technicianRepository.getTechnicianAvailabilityBySpecialty(intervaloDeDias, especialidadeId);
 
         List<TecnicoDisponibilidadeResponse> tecnicos = tecnicosRaw.stream()
-                .collect(Collectors.groupingBy(TechnicianAvailability::getId))
+                .collect(Collectors.groupingBy(TechnicianAvailability::id))
                 .entrySet().stream()
                 .map(tecnico -> {
                     List<TechnicianAvailability> rawList = tecnico.getValue();
                     return new TecnicoDisponibilidadeResponse(
                             tecnico.getKey(),
-                            rawList.getFirst().getNome(),
-                            rawList.stream().mapToInt(TechnicianAvailability::getQuantidade).sum(),
+                            rawList.getFirst().nome(),
+                            rawList.stream().mapToInt(TechnicianAvailability::quantidade).sum(),
                             rawList.stream().map(this::getAvailabilityFromRaw).toList()
                     );
                 })
@@ -127,11 +127,11 @@ public class TechnicianService {
 
     private Availability getAvailabilityFromRaw(TechnicianAvailability technicianAvailability) {
         return new Availability(
-                technicianAvailability.getData(),
-                technicianAvailability.getDia(),
-                getDayNameOfTheWeek(DayOfWeek.of(technicianAvailability.getDia())),
-                technicianAvailability.getPeriodo(),
-                technicianAvailability.getQuantidade()
+                technicianAvailability.data(),
+                technicianAvailability.dia(),
+                getDayNameOfTheWeek(DayOfWeek.of(technicianAvailability.dia())),
+                technicianAvailability.periodo(),
+                technicianAvailability.quantidade()
         );
     }
 
@@ -153,7 +153,7 @@ public class TechnicianService {
 
         List<Specialty> specialties = specialtyRepository.findAllById(specialtyIds);
         Set<Integer> foundIds = specialties.stream()
-                .map(Specialty::getId)
+                .map(Specialty::id)
                 .collect(Collectors.toSet());
 
         List<Integer> missing = specialtyIds.stream()

@@ -1,7 +1,7 @@
 package com.serv.oeste.application.services;
 
 import com.serv.oeste.application.dtos.reponses.EnderecoResponse;
-import com.serv.oeste.domain.entities.viacep.ViaCep;
+import com.serv.oeste.application.dtos.reponses.ViaCepResponse;
 import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.exceptions.address.AddressNotValidException;
 import com.serv.oeste.domain.exceptions.external.ExternalNetworkException;
@@ -23,8 +23,8 @@ public class AddressService {
     
     protected EnderecoResponse getViaCepObject(String cep) {
         try {
-            ViaCep viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCep.class, cep);
-            if (viaCep == null || StringUtils.isBlank(viaCep.getLogradouro()))
+            ViaCepResponse viaCep = restTemplate.getForObject("https://viacep.com.br/ws/{cep}/json", ViaCepResponse.class, cep);
+            if (viaCep == null || StringUtils.isBlank(viaCep.logradouro()))
                 return new EnderecoResponse(null, null, null);
             return new EnderecoResponse(viaCep);
         }
