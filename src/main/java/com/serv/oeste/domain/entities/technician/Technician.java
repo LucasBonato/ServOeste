@@ -1,6 +1,7 @@
 package com.serv.oeste.domain.entities.technician;
 
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.utils.StringUtils;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.enums.Situacao;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
@@ -62,8 +63,8 @@ public class Technician {
             Situacao situacao,
             List<Specialty> especialidades
     ) {
-        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
 
         return new Technician(
                 id,
@@ -83,8 +84,8 @@ public class Technician {
             String telefoneCelular,
             List<Specialty> especialidades
     ) {
-        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
 
         return new Technician(
                 nome,
@@ -105,8 +106,8 @@ public class Technician {
     ) {
         this.nome = nome;
         this.sobrenome = sobrenome;
-        this.telefoneFixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        this.telefoneCelular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        this.telefoneFixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        this.telefoneCelular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
         this.situacao = situacao;
         this.especialidades = especialidades;
 
@@ -116,13 +117,20 @@ public class Technician {
     private void validate() {
         ErrorCollector errors = new ErrorCollector();
 
-        if (especialidades == null || especialidades.isEmpty()) {
+        if (especialidades == null || especialidades.isEmpty())
             errors.add(ErrorFields.CONHECIMENTO, "Técnico precisa possuir no mínimo uma especialidade!");
-        }
-
-        if ((telefoneCelular == null || telefoneCelular.isPhoneBlank()) && (telefoneFixo == null || telefoneFixo.isPhoneBlank())) {
+        if ((telefoneCelular == null || telefoneCelular.isPhoneBlank()) && (telefoneFixo == null || telefoneFixo.isPhoneBlank()))
             errors.add(ErrorFields.TELEFONES, "O técnico precisa ter no mínimo um telefone cadastrado!");
-        }
+        if (especialidades.isEmpty())
+            errors.add(ErrorFields.CONHECIMENTO, "O técnico precisa ter pelo menos uma especialidade");
+        if (StringUtils.isBlank(nome))
+            errors.add(ErrorFields.NOMESOBRENOME, "O nome é obrigatório");
+        if (nome != null && nome.length() < 2)
+            errors.add(ErrorFields.NOMESOBRENOME, "O nome precisa ter no minimo 2 caracteres");
+        if (StringUtils.isBlank(sobrenome))
+            errors.add(ErrorFields.NOMESOBRENOME, "O sobrenome é obrigatório");
+        if (sobrenome != null && sobrenome.length() < 2)
+            errors.add(ErrorFields.NOMESOBRENOME, "O sobrenome precisa ter no minimo 2 caracteres");
 
         errors.throwIfAny(TechnicianNotValidException::new);
     }
@@ -146,11 +154,11 @@ public class Technician {
     }
 
     public String getTelefoneFixo() {
-        return telefoneFixo.getPhone();
+        return telefoneFixo != null ? telefoneFixo.getPhone() : null;
     }
 
     public String getTelefoneCelular() {
-        return telefoneCelular.getPhone();
+        return telefoneCelular != null ? telefoneCelular.getPhone() : null;
     }
 
     public Situacao getSituacao() {

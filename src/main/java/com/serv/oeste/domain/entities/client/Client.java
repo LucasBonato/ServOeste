@@ -1,7 +1,7 @@
 package com.serv.oeste.domain.entities.client;
 
-import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.enums.ErrorFields;
+import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.client.ClientNotValidException;
 import com.serv.oeste.domain.utils.StringUtils;
 import com.serv.oeste.domain.valueObjects.Phone;
@@ -34,21 +34,22 @@ public class Client {
     }
 
     private Client(
-            String fullName,
+            String nome,
+            String sobrenome,
             Phone telefoneFixo,
             Phone telefoneCelular,
             String endereco,
             String bairro,
             String municipio
     ) {
-        this.nome = fullName;
+        this.nome = (nome + " " + sobrenome).trim();
         this.telefoneFixo = telefoneFixo;
         this.telefoneCelular = telefoneCelular;
         this.endereco = endereco;
         this.bairro = bairro;
         this.municipio = municipio;
 
-        validate();
+        validate(nome, sobrenome);
     }
 
     public static Client restore(
@@ -60,8 +61,8 @@ public class Client {
             String bairro,
             String municipio
     ) {
-        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
 
         return new Client(
                 id,
@@ -83,13 +84,12 @@ public class Client {
             String bairro,
             String municipio
     ) {
-        String fullName = (nome + " " + sobrenome).trim();
-
-        Phone fixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        Phone celular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
 
         return new Client(
-                fullName,
+                nome,
+                sobrenome,
                 fixo,
                 celular,
                 endereco,
@@ -108,16 +108,16 @@ public class Client {
             String municipio
     ) {
         this.nome = (nome + " " + sobrenome).trim();
-        this.telefoneFixo = telefoneFixo != null ? Phone.of(telefoneFixo) : null;
-        this.telefoneCelular = telefoneCelular != null ? Phone.of(telefoneCelular) : null;
+        this.telefoneFixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
+        this.telefoneCelular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
         this.endereco = endereco;
         this.bairro = bairro;
         this.municipio = municipio;
 
-        validate();
+        validate(nome, sobrenome);
     }
 
-    private void validate() {
+    private void validate(String nome, String sobrenome) {
         ErrorCollector errors = new ErrorCollector();
 
         if ((telefoneCelular == null || telefoneCelular.isPhoneBlank()) && (telefoneFixo == null || telefoneFixo.isPhoneBlank()))
@@ -132,8 +132,12 @@ public class Client {
             errors.add(ErrorFields.MUNICIPIO, "O municipio é obrigatório");
         if (StringUtils.isBlank(nome))
             errors.add(ErrorFields.NOMESOBRENOME, "O nome é obrigatório");
-        if (nome.length() < 2)
+        if (nome != null && nome.length() < 2)
             errors.add(ErrorFields.NOMESOBRENOME, "O nome precisa ter no minimo 2 caracteres");
+        if (StringUtils.isBlank(sobrenome))
+            errors.add(ErrorFields.NOMESOBRENOME, "O sobrenome é obrigatório");
+        if (sobrenome != null && sobrenome.length() < 2)
+            errors.add(ErrorFields.NOMESOBRENOME, "O sobrenome precisa ter no minimo 2 caracteres");
 
         errors.throwIfAny(ClientNotValidException::new);
     }
@@ -147,11 +151,11 @@ public class Client {
     }
 
     public String getTelefoneFixo() {
-        return telefoneFixo.getPhone();
+        return telefoneFixo != null ? telefoneFixo.getPhone() : null;
     }
 
     public String getTelefoneCelular() {
-        return telefoneCelular.getPhone();
+        return telefoneCelular != null ? telefoneCelular.getPhone() : null;
     }
 
     public String getEndereco() {

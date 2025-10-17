@@ -1,9 +1,12 @@
 package com.serv.oeste.domain.exceptions;
 
 import com.serv.oeste.domain.enums.ErrorFields;
+import jakarta.persistence.CollectionTable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DomainException extends RuntimeException{
     private final Map<String, List<String>> fieldErrors;
@@ -27,6 +30,14 @@ public class DomainException extends RuntimeException{
     @Override
     public String getMessage() {
         return fieldErrors.toString();
+    }
+
+    public Set<String> getKeys() {
+        return fieldErrors.keySet();
+    }
+
+    public Collection<List<String>> getMessages() {
+        return fieldErrors.values();
     }
 
     public Map<String, List<String>> getFieldErrors() {
