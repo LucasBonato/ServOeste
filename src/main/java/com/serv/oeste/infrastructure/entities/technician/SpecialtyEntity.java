@@ -1,7 +1,7 @@
 package com.serv.oeste.infrastructure.entities.technician;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +26,8 @@ public class SpecialtyEntity {
     private List<TechnicianEntity> tecnicos;
 
     public SpecialtyEntity(Specialty specialty) {
-        this.id = specialty.getId();
-        this.conhecimento = specialty.getConhecimento();
+        this.id = specialty.id();
+        this.conhecimento = specialty.conhecimento();
     }
 
     public Specialty toSpecialty() {

@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.entities.technician;
 
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Situacao;
 import jakarta.persistence.*;
