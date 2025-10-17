@@ -26,8 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail exceptionHandler(DomainException exception){
         return toProblemDetail(
                 getStatusCode(exception),
-                exception.getFieldErrors(),
-                exception.getMessage()
+                exception.getFieldErrors()
         );
     }
 
@@ -53,8 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ProblemDetail problemDetail = toProblemDetail(
                 exception.getStatusCode(),
-                errors,
-                exception.getMessage()
+                errors
         );
 
         return new ResponseEntity<>(problemDetail, exception.getStatusCode());
@@ -74,11 +72,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return BAD_REQUEST;
     }
 
-    private ProblemDetail toProblemDetail(HttpStatusCode status, Map<String, List<String>> errors, String message) {
+    private ProblemDetail toProblemDetail(HttpStatusCode status, Map<String, List<String>> errors) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("error", errors);
 
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(status, message);
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(status, "A validation error occurred");
         detail.setType(getTypeByStatus(status));
         detail.setProperties(properties);
         return detail;

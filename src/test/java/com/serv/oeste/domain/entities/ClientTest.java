@@ -2,7 +2,6 @@ package com.serv.oeste.domain.entities;
 
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.exceptions.client.ClientNotValidException;
-import com.serv.oeste.domain.exceptions.valueObjects.PhoneNotValidException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -131,7 +130,7 @@ class ClientTest {
 
         @Test
         void create_OnlyInvalidPhones_ShouldThrowException() {
-            assertThrows(PhoneNotValidException.class, () ->
+            assertThrows(ClientNotValidException.class, () ->
                     Client.create("Rafael", "Gomes", "", " ", VALID_ADDRESS, VALID_BAIRRO, VALID_MUNICIPIO)
             );
         }
@@ -167,7 +166,7 @@ class ClientTest {
         @Test
         void create_NameExactlyTwoCharacters_ShouldBeValid() {
             assertDoesNotThrow(() ->
-                    Client.create("Lu", "", VALID_FIXO, VALID_CEL, VALID_ADDRESS, VALID_BAIRRO, VALID_MUNICIPIO)
+                    Client.create("Lu", "Ta", VALID_FIXO, VALID_CEL, VALID_ADDRESS, VALID_BAIRRO, VALID_MUNICIPIO)
             );
         }
 
