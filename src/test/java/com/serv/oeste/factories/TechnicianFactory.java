@@ -1,6 +1,6 @@
-package com.serv.oeste.application.factory;
+package com.serv.oeste.factories;
 
-import com.serv.oeste.domain.entities.specialty.Specialty;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Situacao;
 

@@ -1,4 +1,4 @@
-package com.serv.oeste.infrastructure.configuration;
+package com.serv.oeste.infrastructure.middleware;
 
 import com.serv.oeste.application.services.UserDetailsService;
 import com.serv.oeste.domain.contracts.security.ITokenVerifier;

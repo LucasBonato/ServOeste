@@ -1,4 +1,4 @@
-package com.serv.oeste.application.factory;
+package com.serv.oeste.factories;
 
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.requests.ClienteRequest;
