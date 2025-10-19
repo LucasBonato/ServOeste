@@ -5,6 +5,7 @@ import com.serv.oeste.application.dtos.reponses.AuthAccessTokenResponse;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
 import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
 import com.serv.oeste.application.services.AuthService;
+import com.serv.oeste.presentation.swagger.AuthSwagger;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ import java.time.Duration;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthSwagger {
     @Value("${security.jwt.refresh-time}")
     private long refreshTokenValidTime;
     private final AuthService authService;
@@ -46,8 +47,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         String accessToken = authService.refresh(refreshToken);
-
-//        setRefreshCookie(response, tokens.rawRefreshToken());
 
         return ResponseEntity.ok(new AuthAccessTokenResponse(accessToken));
     }

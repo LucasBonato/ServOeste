@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DomainException extends RuntimeException{
+public class DomainException extends RuntimeException {
     private final Map<String, List<String>> fieldErrors;
 
     public DomainException(ErrorFields field, List<String> messages) {
