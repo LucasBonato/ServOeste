@@ -1,6 +1,6 @@
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
     <br>
-    <img src="https://servoeste.com.br/wp-content/uploads/2023/11/Logo.png" alt="">
+    <img src="https://servoeste.com.br/image/serveoeste.png" alt="">
     <hr/>
     <p>
       <img loading="lazy" src="http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge" alt=""/>
