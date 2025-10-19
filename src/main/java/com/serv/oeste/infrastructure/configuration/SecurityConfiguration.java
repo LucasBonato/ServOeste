@@ -26,7 +26,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +40,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorization -> authorization
+                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/refresh").permitAll()
                         .requestMatchers("/auth/register").hasRole(Roles.ADMIN.getRole())
                         .anyRequest().authenticated()
