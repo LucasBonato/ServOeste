@@ -216,12 +216,23 @@ public class Service {
     }
 
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
-        return history + String.format(
+        String formattedSituation = situacao.getSituacao().toUpperCase();
+
+        if (history.isBlank() && isServiceOpening(situacao)) {
+            formattedSituation = "ABERTURA: " + formattedSituation;
+        }
+
+        String newEntry = String.format(
                 "[%TD] - %s - %s%n",
                 LocalDate.now(),
-                ((situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) || situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO)) ? "ABERTURA: " : "") + situacao.getSituacao().toUpperCase(),
+                formattedSituation,
                 descricao
         );
+
+        if (!history.isBlank()) {
+            return history + newEntry;
+        }
+        return newEntry;
     }
 
     private void validate() {
@@ -261,6 +272,10 @@ public class Service {
 
     private static boolean isTechnicianNeeded(SituacaoServico situacao) {
         return !situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO);
+    }
+
+    private static boolean isServiceOpening(SituacaoServico situacao) {
+        return situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) || situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO);
     }
 
     public Integer getId() {
