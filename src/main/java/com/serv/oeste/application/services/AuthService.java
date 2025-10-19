@@ -6,25 +6,21 @@ import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
 import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
 import com.serv.oeste.domain.contracts.security.ITokenGenerator;
-import com.serv.oeste.domain.entities.user.RefreshToken;
+import com.serv.oeste.infrastructure.security.RefreshToken;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.enums.Roles;
 import com.serv.oeste.domain.exceptions.auth.AuthInvalidCredentialsException;
 import com.serv.oeste.domain.exceptions.auth.AuthNotValidException;
 import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
+import com.serv.oeste.infrastructure.security.IssuedRefreshToken;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final IUserRepository userRepository;
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final ITokenGenerator tokenGenerator;
     private final IRefreshTokenStore refreshTokenStore;
@@ -44,44 +40,34 @@ public class AuthService {
     }
 
     public AuthTokenPair login(AuthLoginRequest loginRequest) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.username());
+        User user = userRepository.findByUsername(loginRequest.username())
+                .orElseThrow(AuthInvalidCredentialsException::new);
 
-        if (!passwordEncoder.matches(loginRequest.password(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPasswordHash())) {
             throw new AuthInvalidCredentialsException();
         }
 
-        User user = new User(
-            userDetails.getUsername(),
-            userDetails.getPassword(),
-            Roles.valueOf(authorityToRole(userDetails.getAuthorities()))
-        );
+        String accessToken = tokenGenerator.generateAccessToken(user);
+        IssuedRefreshToken issuedRefreshToken = refreshTokenStore.issue(user);
+        return new AuthTokenPair(accessToken, issuedRefreshToken.rawToken());
+    }
+
+    public String refresh(String rawRefreshToken) {
+        RefreshToken oldRefreshToken = refreshTokenStore.findValid(rawRefreshToken).orElseThrow(AuthRefreshTokenRevokedException::new);
+//        refreshTokenStore.revoke(rawRefreshToken);
+
+        User user = userRepository.findByUsername(oldRefreshToken.getUsername())
+                .orElseThrow(AuthInvalidCredentialsException::new);
 
         String accessToken = tokenGenerator.generateAccessToken(user);
-        RefreshToken refreshToken = refreshTokenStore.issue(user);
 
-        return new AuthTokenPair(accessToken, refreshToken.getTokenHash());
+//        IssuedRefreshToken newRefreshToken = refreshTokenStore.issue(user);
+
+        return accessToken;
     }
 
-    public String refresh(String refreshTokenHash) {
-        RefreshToken refreshToken = refreshTokenStore.findValid(refreshTokenHash).orElseThrow(AuthRefreshTokenRevokedException::new);
-        UserDetails user = userDetailsService.loadUserByUsername(refreshToken.getUsername());
-        return tokenGenerator.generateAccessToken(new User(
-            user.getUsername(),
-            null,
-            Roles.valueOf(authorityToRole(user.getAuthorities()))
-        ));
-    }
-
-    public void logout(String refreshToken) {
-        refreshTokenStore.revoke(refreshToken);
-    }
-
-    private static String authorityToRole(Collection<? extends GrantedAuthority> auths) {
-        return auths.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith("ROLE_"))
-                .map(authority -> authority.substring("ROLE_".length()))
-                .findFirst()
-                .orElse(Roles.TECHNICIAN.getRole());
+    public void logout(String rawRefreshToken) {
+        refreshTokenStore.findValid(rawRefreshToken)
+                        .ifPresent(refreshToken -> refreshTokenStore.revoke(rawRefreshToken));
     }
 }

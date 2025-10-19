@@ -4,6 +4,7 @@ import com.serv.oeste.infrastructure.entities.user.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +24,5 @@ public interface IRefreshTokenJpaRepository extends JpaRepository<RefreshTokenEn
             AND r.revokedAt IS NULL
             AND r.expiresAt > :now
     """)
-    int revokeAllActiveForUser(Instant now, String tokenHash);
+    void revokeAllActiveForUser(@Param("tokenHash") String tokenHash, @Param("now") Instant now);
 }
