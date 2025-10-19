@@ -54,16 +54,11 @@ public class AuthService {
 
     public String refresh(String rawRefreshToken) {
         RefreshToken oldRefreshToken = refreshTokenStore.findValid(rawRefreshToken).orElseThrow(AuthRefreshTokenRevokedException::new);
-//        refreshTokenStore.revoke(rawRefreshToken);
 
         User user = userRepository.findByUsername(oldRefreshToken.getUsername())
                 .orElseThrow(AuthInvalidCredentialsException::new);
 
-        String accessToken = tokenGenerator.generateAccessToken(user);
-
-//        IssuedRefreshToken newRefreshToken = refreshTokenStore.issue(user);
-
-        return accessToken;
+        return tokenGenerator.generateAccessToken(user);
     }
 
     public void logout(String rawRefreshToken) {
