@@ -2,7 +2,6 @@ package com.serv.oeste.presentation.swagger;
 
 import com.serv.oeste.application.dtos.reponses.AuthAccessTokenResponse;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
-import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -16,20 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 @Tag(name = "Auth", description = "Endpoints responsáveis pela autenticação e autorização de usuários.")
 public interface AuthSwagger extends SwaggerConfiguration {
-
-    /**
-     * Registra um novo usuário com base nas credenciais informadas.
-     *
-     * @param registerRequest Objeto contendo nome de usuário, senha e role.
-     * @return Status 201 Created sem conteúdo no corpo.
-     */
-    @Operation(description = "Método para registrar um novo usuário.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "[Created] Usuário registrado com sucesso.", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "[BadRequest] Dados inválidos ou já existentes.", content = @Content(schema = @Schema(implementation = DummyResponse.class)))
-    })
-    ResponseEntity<Void> register(AuthRegisterRequest registerRequest);
-
     /**
      * Realiza o login de um usuário e devolve o access token.
      *

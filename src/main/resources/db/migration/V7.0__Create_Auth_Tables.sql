@@ -1,5 +1,5 @@
 CREATE TABLE usuario (
-    id BINARY(16) PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(100) UNIQUE,
     password_hash VARCHAR(255),
     role enum('ADMIN', 'EMPLOYEE', 'TECHNICIAN') DEFAULT 'EMPLOYEE'
