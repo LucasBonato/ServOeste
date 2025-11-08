@@ -5,12 +5,14 @@ import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IServiceRepository {
-    boolean existsByClienteId(Integer clienteId);
     PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter);
     Optional<Service> findById(Integer id);
     Service save(Service service);
-    void deleteById(Integer id);
+    Set<Integer> findAllClientIdsWithServices(List<Integer> ids);
+    void deleteAllById(List<Integer> ids);
 }

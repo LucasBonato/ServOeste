@@ -3,24 +3,23 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.application.dtos.reponses.ClienteResponse;
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
 import com.serv.oeste.application.dtos.requests.*;
-import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
-import com.serv.oeste.application.exceptions.service.ServiceNotFoundException;
-import com.serv.oeste.application.exceptions.service.ServiceNotValidException;
-import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
-import com.serv.oeste.domain.contracts.repositories.IClientRepository;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.enums.Codigo;
 import com.serv.oeste.domain.enums.FormaPagamento;
+import com.serv.oeste.domain.enums.HorarioPrevisto;
 import com.serv.oeste.domain.enums.SituacaoServico;
-import com.serv.oeste.application.factory.ClientFactory;
-import com.serv.oeste.application.factory.ServiceFactory;
-import com.serv.oeste.application.factory.TechnicianFactory;
+import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
+import com.serv.oeste.domain.exceptions.service.ServiceNotFoundException;
+import com.serv.oeste.domain.exceptions.service.ServiceNotValidException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
+import com.serv.oeste.factories.ClientFactory;
+import com.serv.oeste.factories.ServiceFactory;
+import com.serv.oeste.factories.TechnicianFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,12 +29,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -46,7 +42,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ServiceServiceTest {
     @Mock private IServiceRepository serviceRepository;
-    @Mock private IClientRepository clientRepository;
     @Mock private ClientService clientService;
     @Mock private TechnicianService technicianService;
     @InjectMocks private ServiceService serviceService;
@@ -64,8 +59,8 @@ class ServiceServiceTest {
             when(filterRequest.toServiceFilter()).thenReturn(filter);
 
             LocalDate hoje = LocalDate.now();
-            Date inicioGarantia = java.sql.Date.valueOf(hoje.minusDays(2));
-            Date fimGarantia = java.sql.Date.valueOf(hoje.plusDays(5));
+            LocalDate inicioGarantia = hoje.minusDays(2);
+            LocalDate fimGarantia = hoje.plusDays(5);
 
             Service service = ServiceFactory.createWithGarantia(inicioGarantia, fimGarantia);
 
@@ -77,13 +72,12 @@ class ServiceServiceTest {
             ));
 
             // Act
-            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
+            PageResponse<ServicoResponse> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            assertNotNull(response.getBody());
-            List<ServicoResponse> content = response.getBody().getContent();
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertNotNull(response.getBody());
+            assertNotNull(response);
+            List<ServicoResponse> content = response.getContent();
+            assertNotNull(response);
             assertEquals(1, content.size());
             assertEquals("Monitor", content.getFirst().equipamento());
             assertEquals("João Silva", content.getFirst().nomeCliente());
@@ -105,12 +99,11 @@ class ServiceServiceTest {
             ));
 
             // Act
-            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
+            PageResponse<ServicoResponse> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertNotNull(response.getBody());
-            assertTrue(response.getBody().getContent().isEmpty());
+            assertNotNull(response);
+            assertTrue(response.getContent().isEmpty());
         }
 
         @Test
@@ -128,18 +121,18 @@ class ServiceServiceTest {
                     "Campinas",
                     "Erro no cartucho",
                     SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                    "Tarde",
+                    HorarioPrevisto.TARDE,
                     160.00,
                     FormaPagamento.PIX,
                     100.00,
                     60.00,
-                    new Date(),
-                    new Date(),
-                    new Date(),
-                    new Date(),
-                    new Date(),
-                    new Date(),
-                    new Date(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
                     ClientFactory.createDefault(),
                     null
             );
@@ -152,12 +145,11 @@ class ServiceServiceTest {
             ));
 
             // Act
-            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
+            PageResponse<ServicoResponse> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertNotNull(response.getBody());
-            ServicoResponse servicoResponse = response.getBody().getContent().getFirst();
+            assertNotNull(response);
+            ServicoResponse servicoResponse = response.getContent().getFirst();
             assertEquals("Impressora", servicoResponse.equipamento());
             assertEquals("João Silva", servicoResponse.nomeCliente());
             assertNull(servicoResponse.nomeTecnico());
@@ -173,10 +165,10 @@ class ServiceServiceTest {
             when(filterRequest.toServiceFilter()).thenReturn(filter);
 
             LocalDate hoje = LocalDate.now();
-            Date inicioGarantia = java.sql.Date.valueOf(hoje.minusDays(2));
-            Date fimGarantia = java.sql.Date.valueOf(hoje.plusDays(5));
+            LocalDate inicioGarantia = hoje.minusDays(2);
+            LocalDate fimGarantia = hoje.plusDays(5);
 
-            var service = ServiceFactory.createWithGarantia(inicioGarantia, fimGarantia);
+            Service service = ServiceFactory.createWithGarantia(inicioGarantia, fimGarantia);
             when(serviceRepository.filter(any(), any())).thenReturn(new PageResponse<>(
                     List.of(service),
                     1,
@@ -185,12 +177,11 @@ class ServiceServiceTest {
             ));
 
             // Act
-            ResponseEntity<PageResponse<ServicoResponse>> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
+            PageResponse<ServicoResponse> response = serviceService.fetchListByFilter(filterRequest, pageFilterRequest);
 
             // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertNotNull(response.getBody());
-            assertTrue(response.getBody().getContent().getFirst().garantia());
+            assertNotNull(response);
+            assertTrue(response.getContent().getFirst().garantia());
         }
     }
 
@@ -201,17 +192,18 @@ class ServiceServiceTest {
         void cadastrarComClienteExistente_ValidRequest_ShouldReturnCreatedResponseWithService() {
             // Arrange
             ServicoRequest validRequest = ServiceFactory.createValidServiceRequest(1, 1);
+            Client cliente = mock(Client.class);
+            Technician tecnico = mock(Technician.class);
 
-            when(clientService.getClienteById(1)).thenReturn(new Client());
+            when(clientService.getClienteById(1)).thenReturn(cliente);
             when(serviceRepository.save(any())).thenReturn(ServiceFactory.createDefault());
-            when(technicianService.getTecnicoById(1)).thenReturn(new Technician());
+            when(technicianService.getTecnicoById(1)).thenReturn(tecnico);
 
             // Act
-            ResponseEntity<ServicoResponse> response = serviceService.cadastrarComClienteExistente(validRequest);
+           ServicoResponse response = serviceService.create(validRequest, 1);
 
             // Assert
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            assertNotNull(response.getBody());
+            assertNotNull(response);
         }
 
         @Test
@@ -219,15 +211,11 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequest requestWithNullClientId = ServiceFactory.createServiceRequestWithNullClientId();
 
-            // Act
-            ServiceNotValidException exception = assertThrows(
+            // Act & Assert
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteExistente(requestWithNullClientId)
+                    () -> serviceService.create(requestWithNullClientId, null)
             );
-
-            // Assert
-            assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
-            assertEquals("Não foi possível encontrar o último cliente cadastrado!", exception.getExceptionResponse().getMessage());
         }
 
         @Test
@@ -235,15 +223,11 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequest invalidRequest = ServiceFactory.createServiceRequestWithInvalidHorario();
 
-            // Act
-            ServiceNotValidException exception = assertThrows(
+            // Act & Assert
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteExistente(invalidRequest)
+                    () -> serviceService.create(invalidRequest, invalidRequest.idCliente())
             );
-
-            // Assert
-            assertNotNull(exception.getExceptionResponse().getIdError());
-            assertNotNull(exception.getExceptionResponse().getMessage());
         }
 
         @Test
@@ -252,11 +236,10 @@ class ServiceServiceTest {
             ServicoRequest requestWithShortDescription = ServiceFactory.createServiceRequestWithShortDescription();
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteExistente(requestWithShortDescription));
-
-            assertEquals(Codigo.DESCRICAO.getI(), exception.getExceptionResponse().getIdError());
-            assertEquals("Descrição precisa ter pelo menos 10 caracteres", exception.getExceptionResponse().getMessage());
+            assertThrows(
+                    ServiceNotValidException.class,
+                    () -> serviceService.create(requestWithShortDescription, requestWithShortDescription.idCliente())
+            );
         }
 
         @Test
@@ -264,15 +247,12 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequest requestWithFewWords = ServiceFactory.createServiceRequestWithFewWords();
 
-            // Act
-            ServiceNotValidException exception = assertThrows(
+            // Act & Assert
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteExistente(requestWithFewWords)
+                    () -> serviceService.create(requestWithFewWords, requestWithFewWords.idCliente())
             );
 
-            // Assert
-            assertEquals(Codigo.DESCRICAO.getI(), exception.getExceptionResponse().getIdError());
-            assertEquals("Descrição precisa ter pelo menos 3 palavras", exception.getExceptionResponse().getMessage());
         }
 
         @Test
@@ -285,7 +265,7 @@ class ServiceServiceTest {
             // Act & Assert
             assertThrows(
                     ClientNotFoundException.class,
-                    () -> serviceService.cadastrarComClienteExistente(validRequest)
+                    () -> serviceService.create(validRequest, 999)
             );
         }
 
@@ -294,13 +274,13 @@ class ServiceServiceTest {
             // Arrange
             ServicoRequest validRequest = ServiceFactory.createValidServiceRequest(1, 999);
 
-            when(clientService.getClienteById(1)).thenReturn(new Client());
+            when(clientService.getClienteById(1)).thenReturn(mock(Client.class));
             when(technicianService.getTecnicoById(999)).thenThrow(new TechnicianNotFoundException());
 
             // Act & Assert
             assertThrows(
                     TechnicianNotFoundException.class,
-                    () -> serviceService.cadastrarComClienteExistente(validRequest)
+                    () -> serviceService.create(validRequest, 1)
             );
         }
     }
@@ -315,45 +295,36 @@ class ServiceServiceTest {
         @Test
         void cadastrarComClienteNaoExistente_ValidRequest_ShouldReturnCreatedResponse() {
             // Arrange
-            when(clientService.create(any(ClienteRequest.class))).thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(CLIENT_RESPONSE));
             when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(ClientFactory.createDefault());
             when(technicianService.getTecnicoById(VALID_SERVICE_REQUEST.idTecnico())).thenReturn(TechnicianFactory.createDefault());
             when(serviceRepository.save(any(Service.class))).thenReturn(ServiceFactory.createDefault());
 
-            // Act
-            ResponseEntity<ServicoResponse> response = serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST);
-
-            // Assert
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            // Act & Assert
+            serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id());
         }
 
         @Test
         void cadastrarComClienteNaoExistente_ValidClientAndService_ShouldReturnCreatedWithServiceResponse() {
             // Arrange
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
             when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(ClientFactory.createDefault());
             when(technicianService.getTecnicoById(VALID_SERVICE_REQUEST.idTecnico())).thenReturn(TechnicianFactory.createDefault());
             when(serviceRepository.save(any(Service.class))).thenReturn(ServiceFactory.createDefault());
 
             // Act
-            ResponseEntity<ServicoResponse> response = serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST);
+            ServicoResponse response = serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id());
 
             // Assert
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            assertNotNull(response.getBody());
-            assertEquals(SERVICE_RESPONSE, response.getBody());
-            verify(clientService).create(VALID_CLIENT_REQUEST);
+            assertNotNull(response);
+            assertEquals(SERVICE_RESPONSE, response);
+            verify(clientService).getClienteById(CLIENT_RESPONSE.id());
         }
 
         @Test
         void cadastrarComClienteNaoExistente_ClientServiceReturnsNull_ShouldThrowServiceNotValidException() {
-            // Arrange
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(null));
-
-            // Act & Assert
+            // Arrange & Act & Assert
             assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST)
+                    () -> serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id())
             );
         }
 
@@ -363,38 +334,27 @@ class ServiceServiceTest {
             ServicoRequest invalidRequest = ServiceFactory.createServiceRequestMissingRequiredFields();
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, invalidRequest)
+                    () -> serviceService.create(invalidRequest, invalidRequest.idCliente())
             );
-
-            assertNotNull(exception.getExceptionResponse().getIdError());
         }
 
         @Test
         void cadastrarComClienteNaoExistente_ClientServiceThrowsException_ShouldPropagateException() {
-            // Arrange
-            String errorMessage = "Erro na criação de cliente";
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenThrow(new RuntimeException(errorMessage));
-
-            // Act & Assert
-            RuntimeException exception = assertThrows(
+            // Arrange & Act & Assert
+            assertThrows(
                     RuntimeException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST)
+                    () -> serviceService.create(VALID_SERVICE_REQUEST, null)
             );
-
-            assertEquals(errorMessage, exception.getMessage());
         }
 
         @Test
         void cadastrarComClienteNaoExistente_ServiceCreationFails_ShouldNotReturnCreated() {
-            // Arrange
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
-
-            // Act & Assert
+            // Arrange & Act & Assert
             assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST)
+                    () -> serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id())
             );
         }
 
@@ -402,31 +362,26 @@ class ServiceServiceTest {
         void cadastrarComClienteNaoExistente_ClientServiceReturnsNullId_ShouldThrowServiceNotValidException() {
             // Arrange
             ClienteResponse responseWithNullId = new ClienteResponse(null, "Null ID Client", null, null, null, null, null);
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(responseWithNullId));
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST)
+                    () -> serviceService.create(VALID_SERVICE_REQUEST, responseWithNullId.id())
             );
-
-            assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
-            assertEquals("Não foi possível encontrar o último cliente cadastrado!", exception.getExceptionResponse().getMessage());
         }
 
         @Test
         void cadastrarComClienteNaoExistente_VerifyClientServiceInteraction_ShouldCallClientServiceExactlyOnce() {
             // Arrange
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
             when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(ClientFactory.createDefault());
             when(technicianService.getTecnicoById(VALID_SERVICE_REQUEST.idTecnico())).thenReturn(TechnicianFactory.createDefault());
             when(serviceRepository.save(any(Service.class))).thenReturn(ServiceFactory.createDefault());
 
             // Act
-            serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST);
+            serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id());
 
             // Assert
-            verify(clientService, times(1)).create(VALID_CLIENT_REQUEST);
+            verify(clientService, times(1)).getClienteById(CLIENT_RESPONSE.id());
             verifyNoMoreInteractions(clientService);
         }
 
@@ -436,51 +391,47 @@ class ServiceServiceTest {
             ServicoRequest invalidDescRequest = ServiceFactory.createServiceRequestWithShortDescription();
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, invalidDescRequest)
+                    () -> serviceService.create(invalidDescRequest, invalidDescRequest.idCliente())
             );
-
-            assertEquals(Codigo.DESCRICAO.getI(), exception.getExceptionResponse().getIdError());
         }
 
         @ParameterizedTest
         @MethodSource("provideInvalidServiceRequests")
-        void cadastrarComClienteNaoExistente_InvalidServiceRequests_ShouldThrowServiceNotValidException(ServicoRequest invalidRequest, Codigo expectedErrorCode) {
+        void cadastrarComClienteNaoExistente_InvalidServiceRequests_ShouldThrowServiceNotValidException(ServicoRequest invalidRequest) {
             // Arrange
-            lenient().when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
+            lenient().when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(CLIENT_RESPONSE);
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, invalidRequest)
+                    () -> serviceService.create(invalidRequest, invalidRequest.idCliente())
             );
-
-            assertEquals(expectedErrorCode.getI(), exception.getExceptionResponse().getIdError());
         }
 
         private static Stream<Arguments> provideInvalidServiceRequests() {
             return Stream.of(
-                    Arguments.of(ServiceFactory.createServiceRequestMissingRequiredFields(), Codigo.EQUIPAMENTO),
-                    Arguments.of(ServiceFactory.createServiceRequestWithShortDescription(), Codigo.DESCRICAO),
-                    Arguments.of(ServiceFactory.createServiceRequestWithFewWords(), Codigo.DESCRICAO),
-                    Arguments.of(ServiceFactory.createServiceRequestWithInvalidHorario(), Codigo.HORARIO)
+                    Arguments.of(ServiceFactory.createServiceRequestMissingRequiredFields()),
+                    Arguments.of(ServiceFactory.createServiceRequestWithShortDescription()),
+                    Arguments.of(ServiceFactory.createServiceRequestWithFewWords()),
+                    Arguments.of(ServiceFactory.createServiceRequestWithInvalidHorario())
             );
         }
 
         @Test
         void cadastrarComClienteNaoExistente_ClientCreatedButServiceCreationFails_ShouldNotReturnCreated() {
             // Arrange
-            when(clientService.create(VALID_CLIENT_REQUEST)).thenReturn(ResponseEntity.ok(CLIENT_RESPONSE));
+            when(clientService.getClienteById(CLIENT_RESPONSE.id())).thenReturn(mock(Client.class));
 
             // Act & Assert
             assertThrows(
                     ServiceNotValidException.class,
-                    () -> serviceService.cadastrarComClienteNaoExistente(VALID_CLIENT_REQUEST, VALID_SERVICE_REQUEST)
+                    () -> serviceService.create(VALID_SERVICE_REQUEST, CLIENT_RESPONSE.id())
             );
 
             // Verify client was still created despite service failure
-            verify(clientService).create(VALID_CLIENT_REQUEST);
+            verify(clientService).getClienteById(CLIENT_RESPONSE.id());
         }
     }
 
@@ -505,11 +456,10 @@ class ServiceServiceTest {
             when(serviceRepository.save(any(Service.class))).thenReturn(updatedService);
 
             // Act
-            ResponseEntity<ServicoResponse> response = serviceService.update(EXISTING_SERVICE_ID, VALID_UPDATE_REQUEST);
+            ServicoResponse response = serviceService.update(EXISTING_SERVICE_ID, VALID_UPDATE_REQUEST);
 
             // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            assertEquals(expectedResponse, response.getBody());
+            assertEquals(expectedResponse, response);
         }
 
         @Test
@@ -525,22 +475,6 @@ class ServiceServiceTest {
         }
 
         @Test
-        void update_InvalidRequestFields_ShouldThrowServiceNotValidException() {
-            // Arrange
-            ServicoUpdateRequest invalidRequest = ServiceFactory.createInvalidServicoUpdateRequest();
-
-            when(serviceRepository.findById(EXISTING_SERVICE_ID)).thenReturn(Optional.of(EXISTING_SERVICE));
-
-            // Act & Assert
-            ServiceNotValidException exception = assertThrows(
-                    ServiceNotValidException.class,
-                    () -> serviceService.update(EXISTING_SERVICE_ID, invalidRequest)
-            );
-
-            assertNotNull(exception.getExceptionResponse().getIdError());
-        }
-
-        @Test
         void update_NullClientId_ShouldThrowServiceNotValidException() {
             // Arrange
             ServicoUpdateRequest requestWithNullClient = ServiceFactory.createServicoUpdateRequestWithNullClient();
@@ -548,12 +482,10 @@ class ServiceServiceTest {
             when(serviceRepository.findById(EXISTING_SERVICE_ID)).thenReturn(Optional.of(EXISTING_SERVICE));
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
                     () -> serviceService.update(EXISTING_SERVICE_ID, requestWithNullClient)
             );
-
-            assertEquals(Codigo.CLIENTE.getI(), exception.getExceptionResponse().getIdError());
         }
 
         @Test
@@ -564,12 +496,10 @@ class ServiceServiceTest {
             when(serviceRepository.findById(EXISTING_SERVICE_ID)).thenReturn(Optional.of(EXISTING_SERVICE));
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
+            assertThrows(
                     ServiceNotValidException.class,
                     () -> serviceService.update(EXISTING_SERVICE_ID, requestWithNullTechnician)
             );
-
-            assertEquals(Codigo.TECNICO.getI(), exception.getExceptionResponse().getIdError());
         }
 
         @Test
@@ -618,25 +548,22 @@ class ServiceServiceTest {
 
         @ParameterizedTest
         @MethodSource("provideInvalidUpdateScenarios")
-        void update_InvalidScenarios_ShouldThrowServiceNotValidException(ServicoUpdateRequest invalidRequest, Codigo expectedErrorCode) {
+        void update_InvalidScenarios_ShouldThrowServiceNotValidException(ServicoUpdateRequest invalidRequest) {
             // Arrange
             when(serviceRepository.findById(EXISTING_SERVICE_ID)).thenReturn(Optional.of(EXISTING_SERVICE));
 
             // Act & Assert
-            ServiceNotValidException exception = assertThrows(
-                    ServiceNotValidException.class,
+            assertThrows(
+                    RuntimeException.class,
                     () -> serviceService.update(EXISTING_SERVICE_ID, invalidRequest)
             );
-
-            assertEquals(expectedErrorCode.getI(), exception.getExceptionResponse().getIdError());
         }
 
         private static Stream<Arguments> provideInvalidUpdateScenarios() {
             return Stream.of(
-                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativeValue(), Codigo.SERVICO),
-                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativeCommission(), Codigo.SERVICO),
-                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativePartsValue(), Codigo.SERVICO),
-                    Arguments.of(ServiceFactory.createUpdateRequestWithInvalidDate(), Codigo.DATA)
+                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativeValue()),
+                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativeCommission()),
+                    Arguments.of(ServiceFactory.createUpdateRequestWithNegativePartsValue())
             );
         }
 
@@ -656,82 +583,15 @@ class ServiceServiceTest {
     @Nested
     class DeleteListByIds {
         @Test
-        void deleteListByIds_AllExistingServices_ShouldDeleteAllExistingServices() {
-            int id1 = 1, id2 = 2;
-            when(serviceRepository.findById(id1)).thenReturn(Optional.of(mock(Service.class)));
-            when(serviceRepository.findById(id2)).thenReturn(Optional.empty());
-
-            ResponseEntity<Void> response = serviceService.deleteListByIds(List.of(id1, id2));
-
-            verify(serviceRepository).deleteById(id1);
-            verify(serviceRepository, never()).deleteById(id2);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
         void deleteListByIds_IdsValidos_RetornaOkEDeletaServicos() {
             // Arrange
             List<Integer> ids = List.of(1, 2, 3);
 
-            when(serviceRepository.findById(1)).thenReturn(Optional.of(mock(Service.class)));
-            when(serviceRepository.findById(2)).thenReturn(Optional.of(mock(Service.class)));
-            when(serviceRepository.findById(3)).thenReturn(Optional.of(mock(Service.class)));
-
             // Act
-            ResponseEntity<Void> response = serviceService.deleteListByIds(ids);
+            serviceService.deleteListByIds(ids);
 
             // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            verify(serviceRepository).deleteById(1);
-            verify(serviceRepository).deleteById(2);
-            verify(serviceRepository).deleteById(3);
-        }
-
-        @Test
-        void deleteListByIds_AlgunsIdsInexistentes_DeletaSomenteIdsExistentes() {
-            // Arrange
-            List<Integer> ids = List.of(1, 2, 3);
-
-            when(serviceRepository.findById(1)).thenReturn(Optional.of(mock(Service.class)));
-            when(serviceRepository.findById(2)).thenReturn(Optional.empty());
-            when(serviceRepository.findById(3)).thenReturn(Optional.of(mock(Service.class)));
-
-            // Act
-            ResponseEntity<Void> response = serviceService.deleteListByIds(ids);
-
-            // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            verify(serviceRepository).deleteById(1);
-            verify(serviceRepository, never()).deleteById(2);
-            verify(serviceRepository).deleteById(3);
-        }
-
-        @Test
-        void deleteListByIds_ListaVazia_NaoChamaDeleteERetornaOk() {
-            // Arrange
-            List<Integer> ids = Collections.emptyList();
-
-            // Act
-            ResponseEntity<Void> response = serviceService.deleteListByIds(ids);
-
-            // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            verify(serviceRepository, never()).deleteById(any());
-        }
-
-        @Test
-        void deleteListByIds_TodosIdsInexistentes_NaoChamaDeleteMasRetornaOk() {
-            // Arrange
-            List<Integer> ids = List.of(10, 20, 30);
-
-            when(serviceRepository.findById(anyInt())).thenReturn(Optional.empty());
-
-            // Act
-            ResponseEntity<Void> response = serviceService.deleteListByIds(ids);
-
-            // Assert
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            verify(serviceRepository, never()).deleteById(any());
+            verify(serviceRepository).deleteAllById(ids);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.serv.oeste.infrastructure.entities.service;
 
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.enums.FormaPagamento;
+import com.serv.oeste.domain.enums.HorarioPrevisto;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
@@ -10,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CurrentTimestamp;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Servico")
@@ -38,7 +39,8 @@ public class ServiceEntity {
     private SituacaoServico situacao;
 
     @Column(name = "Horario_Previsto")
-    private String horarioPrevisto;
+    @Enumerated(EnumType.STRING)
+    private HorarioPrevisto horarioPrevisto;
 
     @Column(name = "Valor")
     private Double valor;
@@ -54,26 +56,26 @@ public class ServiceEntity {
     private Double valorComissao;
 
     @Column(name = "Data_Pagamento_Comissao")
-    private Date dataPagamentoComissao;
+    private LocalDate dataPagamentoComissao;
 
     @CurrentTimestamp
     @Column(name = "Data_Abertura", nullable = false)
-    private Date dataAbertura;
+    private LocalDate dataAbertura;
 
     @Column(name = "Data_Fechamento")
-    private Date dataFechamento;
+    private LocalDate dataFechamento;
 
     @Column(name = "Data_Inicio_Garantia")
-    private Date dataInicioGarantia;
+    private LocalDate dataInicioGarantia;
 
     @Column(name = "Data_Fim_Garantia")
-    private Date dataFimGarantia;
+    private LocalDate dataFimGarantia;
 
     @Column(name = "Data_Atendimento_Previsto")
-    private Date dataAtendimentoPrevisto;
+    private LocalDate dataAtendimentoPrevisto;
 
     @Column(name = "Data_Atendimento_Efetiva")
-    private Date dataAtendimentoEfetiva;
+    private LocalDate dataAtendimentoEfetiva;
 
     @ManyToOne
     @JoinColumn(name = "Id_Cliente")
@@ -106,9 +108,8 @@ public class ServiceEntity {
         this.tecnico = new TechnicianEntity(service.getTecnico());
     }
 
-
     public Service toService() {
-        return new Service(
+        return Service.restore(
                 this.id,
                 this.equipamento,
                 this.marca,
@@ -131,5 +132,4 @@ public class ServiceEntity {
                 this.tecnico == null ? null : this.tecnico.toTechnician()
         );
     }
-
 }

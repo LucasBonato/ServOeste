@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.entities.user;
 
-import com.serv.oeste.domain.entities.user.RefreshToken;
+import com.serv.oeste.infrastructure.security.RefreshToken;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,7 +41,7 @@ public class RefreshTokenEntity {
 
     @CreationTimestamp
     @Column(name = "Created_At")
-    private Instant createAt;
+    private Instant createdAt;
 
 
     public RefreshTokenEntity(RefreshToken refreshToken) {
