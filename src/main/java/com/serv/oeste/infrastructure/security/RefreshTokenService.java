@@ -1,73 +1,40 @@
 package com.serv.oeste.infrastructure.security;
 
-import com.serv.oeste.application.exceptions.auth.AuthRefreshTokenRevokedException;
 import com.serv.oeste.domain.contracts.repositories.IRefreshTokenRepository;
 import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
-import com.serv.oeste.domain.entities.user.RefreshToken;
 import com.serv.oeste.domain.entities.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.util.Base64;
-import java.util.HexFormat;
+import java.time.Duration;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class RefreshTokenService implements IRefreshTokenStore {
-    private final IRefreshTokenRepository refreshTokenRepository;
-
     @Value("${security.jwt.refresh-time}")
     private long refreshTokenValidTime;
 
-    private final SecureRandom random = new SecureRandom();
+    private final IRefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public RefreshToken issue(User user) {
-        byte[] bytes = new byte[32];
-        random.nextBytes(bytes);
-
-        String raw = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-
-        String tokenHash = sha256Hex(raw);
-
-        RefreshToken refreshToken = new RefreshToken(
-            user.getUsername(),
-            tokenHash,
-            Instant.now().plusMillis(refreshTokenValidTime),
-            null
-        );
-
-        return refreshTokenRepository.save(refreshToken);
+    public IssuedRefreshToken issue(User user) {
+        RawAndRefreshToken pair = RefreshToken.createFor(user, Duration.ofMillis(refreshTokenValidTime));
+        RefreshToken savedRefreshToken = refreshTokenRepository.save(pair.refreshToken());
+        return new IssuedRefreshToken(pair.raw(), savedRefreshToken);
     }
 
     @Override
-    public Optional<RefreshToken> findValid(String tokenHash) {
+    public Optional<RefreshToken> findValid(String rawRefreshToken) {
+        String tokenHash = HashUtils.sha256Hex(rawRefreshToken);
         return refreshTokenRepository.findByTokenHash(tokenHash)
-                .filter(refreshToken -> refreshToken.getRevokedAt() == null)
-                .filter(refreshToken -> refreshToken.getExpiresAt().isAfter(Instant.now()));
+                .filter(refreshToken -> !refreshToken.isRevoked() && !refreshToken.isExpired());
     }
 
     @Override
-    public void revoke(String token) {
-        String tokenHash = sha256Hex(token);
-
-        refreshTokenRepository.revoke(new RefreshToken(null, tokenHash, null, null));
-    }
-
-    private static String sha256Hex(String rawString) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            return HexFormat.of().formatHex(messageDigest.digest(rawString.getBytes(StandardCharsets.UTF_8)));
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new AuthRefreshTokenRevokedException();
-        }
+    public void revoke(String rawToken) {
+        String tokenHash = HashUtils.sha256Hex(rawToken);
+        refreshTokenRepository.revokeByTokenHash(tokenHash);
     }
 }

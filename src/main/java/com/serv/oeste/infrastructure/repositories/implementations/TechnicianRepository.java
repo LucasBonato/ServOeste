@@ -3,7 +3,7 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
+import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
@@ -31,6 +31,13 @@ public class TechnicianRepository implements ITechnicianRepository {
     @Override
     public Optional<Technician> findById(Integer id) {
         return technicianJpaRepository.findById(id).map(TechnicianEntity::toTechnician);
+    }
+
+    @Override
+    public List<Technician> findAllById(List<Integer> ids) {
+        return technicianJpaRepository.findAllById(ids).stream()
+                .map(TechnicianEntity::toTechnician)
+                .toList();
     }
 
     @Override
