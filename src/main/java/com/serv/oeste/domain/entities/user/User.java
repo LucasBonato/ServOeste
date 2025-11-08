@@ -3,6 +3,7 @@ package com.serv.oeste.domain.entities.user;
 import com.serv.oeste.domain.enums.Roles;
 
 public class User {
+    private Integer id;
     private final String username;
     private final String passwordHash;
     private final Roles role;
@@ -11,6 +12,21 @@ public class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
+    }
+
+    private User(Integer id, String username, String passwordHash, Roles role) {
+        this.id = id;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
+
+    public static User restore(Integer id, String username, String passwordHash, Roles role) {
+        return new User (id, username, passwordHash, role);
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getUsername() {

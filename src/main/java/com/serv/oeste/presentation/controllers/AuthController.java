@@ -3,7 +3,6 @@ package com.serv.oeste.presentation.controllers;
 import com.serv.oeste.application.dtos.AuthTokenPair;
 import com.serv.oeste.application.dtos.reponses.AuthAccessTokenResponse;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
-import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
 import com.serv.oeste.application.services.AuthService;
 import com.serv.oeste.presentation.swagger.AuthSwagger;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,15 +23,6 @@ public class AuthController implements AuthSwagger {
     @Value("${security.jwt.refresh-time}")
     private long refreshTokenValidTime;
     private final AuthService authService;
-
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody AuthRegisterRequest registerRequest) {
-        authService.register(registerRequest);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
-    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthAccessTokenResponse> login(@RequestBody AuthLoginRequest loginRequest, HttpServletResponse response) {
