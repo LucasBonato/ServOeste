@@ -18,12 +18,12 @@
 flowchart TD
     1[Aguardando agendamento] --> 2[Aguardando atendimento]
     2 -->|Problema identificado| 3[Aguardando orçamento]
-    2 -->|Sem defeito| 3.1[Sem defeito (fim)]
-    2 -->|Cancelado| 3.2[Cancelado (fim)]
+    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
+    2 -->|Cancelado| 3.2["Cancelado (fim)"]
     
     3 --> 4[Aguardando aprovação do cliente]
-    4 -->|Não aprovado| 5.1[Não aprovado pelo cliente (fim)]
-    4 -->|Compra| 5.2[Compra (fim)]
+    4 -->|Não aprovado| 5.1["Não aprovado pelo cliente (fim)"]
+    4 -->|Compra| 5.2["Compra (fim)"]
     4 -->|Aprovado| 5.3[Orçamento aprovado]
     
     5.3 --> 6[Aguardando cliente retirar]
@@ -31,9 +31,9 @@ flowchart TD
     6 -->|Garantia| 7.2[Garantia]
     
     7.2 -->|Cortesia| 8[Cortesia]
-    7.2 -->|Resolvido| 9[Resolvido (fim)]
-    8 --> 9[Resolvido (fim)]
-    7.1 --> 9[Resolvido (fim)]
+    7.2 -->|Resolvido| 9["Resolvido (fim)"]
+    8 --> 9["Resolvido (fim)"]
+    7.1 --> 9["Resolvido (fim)"]
 ```
 
 ---
