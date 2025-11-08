@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorization -> authorization
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/refresh").permitAll()
-                        .requestMatchers("/auth/register").hasRole(Roles.ADMIN.getRole())
+                        .requestMatchers("/auth/register", "/user/**").hasRole(Roles.ADMIN.getRole())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
