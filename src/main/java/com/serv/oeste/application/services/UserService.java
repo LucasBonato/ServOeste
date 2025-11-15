@@ -1,8 +1,11 @@
 package com.serv.oeste.application.services;
 
+import com.serv.oeste.application.dtos.reponses.ClienteResponse;
+import com.serv.oeste.application.dtos.requests.ClienteRequest;
 import com.serv.oeste.application.dtos.requests.UserRegisterRequest;
 import com.serv.oeste.application.dtos.requests.UserUpdateRequest;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
+import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.enums.Roles;
 import com.serv.oeste.domain.exceptions.user.UserAlreadyInUseException;
@@ -40,12 +43,25 @@ public class UserService {
 
     public void update(UserUpdateRequest updateUserRequest) {
         if (updateUserRequest.role() == Roles.ADMIN)
-            throw new UserNotValidException("Cadastro inválido, não é possível registrar um usuário ADMIN");
+            throw new UserNotValidException("Atualização inválida, não é possível atualizar um usuário ADMIN");
 
-        if (userRepository.findByUsername(updateUserRequest.username()).isPresent())
-            throw new UserAlreadyInUseException();
+        userRepository.findByUsername(updateUserRequest.username())
+                .ifPresent(user -> {
+                    if (!user.getId().equals(updateUserRequest.id())) {
+                        throw new UserAlreadyInUseException();
+                    }
+                });
 
-        userRepository.save(updateUserRequest.toDomain());
+        User existingUser = userRepository.findById(updateUserRequest.id())
+                .orElseThrow(UserNotFoundException::new);
+
+        existingUser.update(
+                updateUserRequest.username(),
+                passwordEncoder.encode(updateUserRequest.password()),
+                updateUserRequest.role()
+        );
+
+        userRepository.save(existingUser);
     }
 
     public void delete(String username) {
