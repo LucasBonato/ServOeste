@@ -6,10 +6,12 @@ import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.infrastructure.entities.user.UserEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.IUserJpaRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -21,7 +23,9 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public PageResponse<User> findAll(PageFilter pageFilter) {
-        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+        Sort sort = Sort.by(Sort.Direction.ASC, "username");
+
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<User> usersPaged = userJpaRepository.findAll(pageable).map(UserEntity::toUser);
 
@@ -34,6 +38,12 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
+    public Optional<User> findById(Integer id) {
+        return userJpaRepository.findById(id).map(UserEntity::toUser);
+    }
+
+
+    @Override
     public Optional<User> findByUsername(String username) {
         return userJpaRepository.findByUsername(username).map(UserEntity::toUser);
     }
@@ -44,6 +54,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
+    @Transactional
     public void delete(String username) {
         userJpaRepository.deleteByUsername(username);
     }
