@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface IUserRepository {
     PageResponse<User> findAll(PageFilter pageFilter);
+    Optional<User> findById(Integer id);
     Optional<User> findByUsername(String username);
     User save(User user);
     void delete(String username);
