@@ -1,11 +1,9 @@
 package com.serv.oeste.application.services;
 
-import com.serv.oeste.application.dtos.reponses.ClienteResponse;
-import com.serv.oeste.application.dtos.requests.ClienteRequest;
+import com.serv.oeste.application.dtos.reponses.UserResponse;
 import com.serv.oeste.application.dtos.requests.UserRegisterRequest;
 import com.serv.oeste.application.dtos.requests.UserUpdateRequest;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
-import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.enums.Roles;
 import com.serv.oeste.domain.exceptions.user.UserAlreadyInUseException;
@@ -23,8 +21,8 @@ public class UserService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public PageResponse<User> findAll(PageFilter pageFilter) {
-        return userRepository.findAll(pageFilter);
+    public PageResponse<UserResponse> findAll(PageFilter pageFilter) {
+        return userRepository.findAll(pageFilter).map(UserResponse::new);
     }
 
     public void register(UserRegisterRequest registerRequest) {
