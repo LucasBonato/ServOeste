@@ -1,10 +1,10 @@
 package com.serv.oeste.presentation.controllers;
 
+import com.serv.oeste.application.dtos.reponses.UserResponse;
 import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.dtos.requests.UserRegisterRequest;
 import com.serv.oeste.application.dtos.requests.UserUpdateRequest;
 import com.serv.oeste.application.services.UserService;
-import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PageResponse<User>> findAll(@ModelAttribute PageFilterRequest pageFilter) {
+    public ResponseEntity<PageResponse<UserResponse>> findAll(@ModelAttribute PageFilterRequest pageFilter) {
         return ResponseEntity.ok(userService.findAll(pageFilter.toPageFilter()));
     }
 
