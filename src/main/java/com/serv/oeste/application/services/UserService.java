@@ -45,15 +45,15 @@ public class UserService {
         if (updateUserRequest.role() == Roles.ADMIN)
             throw new UserNotValidException("Atualização inválida, não é possível atualizar um usuário ADMIN");
 
-        userRepository.findByUsername(updateUserRequest.username())
-                .ifPresent(user -> {
-                    if (!user.getId().equals(updateUserRequest.id())) {
-                        throw new UserAlreadyInUseException();
-                    }
-                });
-
         User existingUser = userRepository.findById(updateUserRequest.id())
                 .orElseThrow(UserNotFoundException::new);
+
+        if (!existingUser.getUsername().equals(updateUserRequest.username())) {
+            userRepository.findByUsername(updateUserRequest.username())
+                    .ifPresent(user -> {
+                        throw new UserAlreadyInUseException();
+                    });
+        }
 
         existingUser.update(
                 updateUserRequest.username(),
