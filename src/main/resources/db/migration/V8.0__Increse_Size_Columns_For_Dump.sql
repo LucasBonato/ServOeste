@@ -1,0 +1,2 @@
+ALTER TABLE cliente MODIFY nome VARCHAR(100);
+ALTER TABLE servico DROP CHECK servico_chk_1;
