@@ -362,7 +362,9 @@ public class Service {
         Boolean garatia = null;
         if (dataInicioGarantia != null) {
             LocalDate dataHoje = LocalDate.now();
-            garatia = (dataInicioGarantia.isBefore(dataHoje) && dataFimGarantia.isAfter(dataHoje));
+            garatia = dataFimGarantia != null
+                    ? (dataInicioGarantia.isBefore(dataHoje) && dataFimGarantia.isAfter(dataHoje))
+                    : (dataInicioGarantia.isBefore(dataHoje) && dataInicioGarantia.plusMonths(3).isAfter(dataHoje));
         }
         return garatia;
     }
