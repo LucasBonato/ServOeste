@@ -53,6 +53,11 @@ security:
     secret: ${JWT_TOKEN_SECRET}
     valid-time: ${JWT_TOKEN_EXPIRATION_TIME}
     refresh-time: ${REFRESH_TOKEN_EXPIRATION_TIME}
+
+app:
+  admin:
+    username: ${APP_ADMIN_USERNAME}
+    password: ${APP_ADMIN_PASSWORD}
 #logging:
 #  level:
 #    org:
