@@ -1,7 +1,5 @@
 package com.serv.oeste.infrastructure.security;
 
-import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,7 +12,7 @@ public class HashUtils {
             return HexFormat.of().formatHex(messageDigest.digest(rawString.getBytes(StandardCharsets.UTF_8)));
         }
         catch (NoSuchAlgorithmException e) {
-            throw new AuthRefreshTokenRevokedException();
+            throw new IllegalStateException("SHA-256 not available", e);
         }
     }
 }
