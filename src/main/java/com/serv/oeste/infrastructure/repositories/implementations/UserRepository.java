@@ -27,7 +27,7 @@ public class UserRepository implements IUserRepository {
 
         Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
-        Page<User> usersPaged = userJpaRepository.findAll(pageable).map(UserEntity::toUser);
+        Page<User> usersPaged = userJpaRepository.findAll(pageable).map(UserEntity::toDomain);
 
         return new PageResponse<>(
                 usersPaged.getContent(),
@@ -39,18 +39,18 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public Optional<User> findById(Integer id) {
-        return userJpaRepository.findById(id).map(UserEntity::toUser);
+        return userJpaRepository.findById(id).map(UserEntity::toDomain);
     }
 
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userJpaRepository.findByUsername(username).map(UserEntity::toUser);
+        return userJpaRepository.findByUsername(username).map(UserEntity::toDomain);
     }
 
     @Override
     public User save(User user) {
-        return userJpaRepository.save(new UserEntity(user)).toUser();
+        return userJpaRepository.save(new UserEntity(user)).toDomain();
     }
 
     @Override

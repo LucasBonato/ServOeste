@@ -34,7 +34,7 @@ public class UserEntity {
         this.role = user.getRole();
     }
 
-    public User toUser() {
+    public User toDomain() {
         return User.restore(
             id,
             username,

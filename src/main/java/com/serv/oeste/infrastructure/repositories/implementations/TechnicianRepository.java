@@ -31,19 +31,19 @@ public class TechnicianRepository implements ITechnicianRepository {
 
     @Override
     public Optional<Technician> findById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toTechnician);
+        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain);
     }
 
     @Override
     public List<Technician> findAllById(List<Integer> ids) {
         return technicianJpaRepository.findAllById(ids).stream()
-                .map(TechnicianEntity::toTechnician)
+                .map(TechnicianEntity::toDomain)
                 .toList();
     }
 
     @Override
     public Technician save(Technician technician) {
-        return technicianJpaRepository.save(new TechnicianEntity(technician)).toTechnician();
+        return technicianJpaRepository.save(new TechnicianEntity(technician)).toDomain();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class TechnicianRepository implements ITechnicianRepository {
         Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Technician> techniciansPaged = technicianJpaRepository.findAll(specification, pageable)
-                .map(TechnicianEntity::toTechnician);
+                .map(TechnicianEntity::toDomain);
 
         return new PageResponse<>(
                 techniciansPaged.getContent(),
