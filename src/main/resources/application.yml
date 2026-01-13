@@ -29,12 +29,8 @@ spring:
     open-in-view: false
   flyway:
     enabled: true
-    url: 'jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:servOeste}'
-    user: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-    ignore-unsupported-database: true
-    baseline-version: '0'
     baseline-on-migrate: true
+    baseline-version: 0
   main:
     allow-bean-definition-overriding: true
   mvc:
@@ -58,6 +54,7 @@ app:
   admin:
     username: ${APP_ADMIN_USERNAME}
     password: ${APP_ADMIN_PASSWORD}
+
 #logging:
 #  level:
 #    org:
