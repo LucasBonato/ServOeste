@@ -1,7 +1,6 @@
 package com.serv.oeste.domain.exceptions;
 
 import com.serv.oeste.domain.enums.ErrorFields;
-import jakarta.persistence.CollectionTable;
 
 import java.util.Collection;
 import java.util.List;
