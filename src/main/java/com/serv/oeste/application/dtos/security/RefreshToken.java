@@ -1,10 +1,6 @@
-package com.serv.oeste.infrastructure.security;
+package com.serv.oeste.application.dtos.security;
 
-import com.serv.oeste.domain.entities.user.User;
-
-import java.time.Duration;
 import java.time.Instant;
-import java.util.UUID;
 
 public class RefreshToken {
     private final String username;
@@ -45,18 +41,5 @@ public class RefreshToken {
 
     public Instant getRevokedAt() {
         return revokedAt;
-    }
-
-    public static RawAndRefreshToken createFor(User user, Duration validFor) {
-        String raw = UUID.randomUUID().toString();
-        String tokenHash = HashUtils.sha256Hex(raw);
-        Instant expiry = Instant.now().plus(validFor);
-        RefreshToken refreshToken = new RefreshToken(
-                user.getUsername(),
-                tokenHash,
-                expiry,
-                null
-        );
-        return new RawAndRefreshToken(raw, refreshToken);
     }
 }
