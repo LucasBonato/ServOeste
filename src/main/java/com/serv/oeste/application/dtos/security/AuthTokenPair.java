@@ -1,3 +1,3 @@
-package com.serv.oeste.application.dtos;
+package com.serv.oeste.application.dtos.security;
 
 public record AuthTokenPair(String accessToken, String rawRefreshToken) { }

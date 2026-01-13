@@ -1,4 +1,4 @@
-package com.serv.oeste.domain.contracts.security;
+package com.serv.oeste.application.contracts.security;
 
 import com.serv.oeste.domain.entities.user.User;
 

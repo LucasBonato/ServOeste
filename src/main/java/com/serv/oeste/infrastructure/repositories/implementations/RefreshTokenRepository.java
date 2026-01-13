@@ -1,7 +1,7 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.domain.contracts.repositories.IRefreshTokenRepository;
-import com.serv.oeste.infrastructure.security.RefreshToken;
+import com.serv.oeste.application.contracts.repositories.IRefreshTokenRepository;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import com.serv.oeste.infrastructure.entities.user.RefreshTokenEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.IRefreshTokenJpaRepository;
 import lombok.RequiredArgsConstructor;
