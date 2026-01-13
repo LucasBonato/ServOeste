@@ -47,7 +47,7 @@ public class TechnicianService {
         logger.debug("DEBUG - Fetching technicians with filter: {}", filtroRequest);
         PageResponse<TecnicoResponse> tecnicos = technicianRepository.filter(filtroRequest.toTechnicianFilter(), pageFilterRequest.toPageFilter())
                 .map(TecnicoResponse::new);
-        logger.info("INFO - Found {} technicians with filter: {}", tecnicos.getPage().getTotalElements(), filtroRequest);
+        logger.info("INFO - Found {} technicians with filter: {}", tecnicos.getPage().totalElements(), filtroRequest);
 
         return tecnicos;
     }

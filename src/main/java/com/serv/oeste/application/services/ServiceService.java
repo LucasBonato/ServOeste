@@ -48,7 +48,7 @@ public class ServiceService {
         PageResponse<ServicoResponse> servicos = serviceRepository
                 .filter(servicoRequestFilter.toServiceFilter(), pageFilter.toPageFilter())
                 .map(ServicoResponse::new);
-        logger.info("INFO - Found {} services with filter: {}", servicos.getPage().getTotalPages(), servicoRequestFilter);
+        logger.info("INFO - Found {} services with filter: {}", servicos.getPage().totalPages(), servicoRequestFilter);
         return servicos;
     }
 

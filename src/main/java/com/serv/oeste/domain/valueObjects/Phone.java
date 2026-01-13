@@ -4,10 +4,10 @@ import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.valueObjects.PhoneNotValidException;
 
-public class Phone {
-    private final String value;
-
-    private Phone(String value) {
+public record Phone(
+        String value
+) {
+    public Phone(String value) {
         this.value = sanitize(value);
         validate();
     }

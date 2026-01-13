@@ -44,7 +44,7 @@ public class ClientService {
                     pageFilterRequest.toPageFilter()
                 )
                 .map(ClienteResponse::new);
-        logger.info("INFO - Found {} clients with filter: {}", clientsResponse.getPage().getTotalPages(), filtroRequest);
+        logger.info("INFO - Found {} clients with filter: {}", clientsResponse.getPage().totalPages(), filtroRequest);
 
         return clientsResponse;
     }
