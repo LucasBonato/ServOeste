@@ -108,7 +108,7 @@ public class ServiceEntity {
         this.tecnico = new TechnicianEntity(service.getTecnico());
     }
 
-    public Service toService() {
+    public Service toDomain() {
         return Service.restore(
                 this.id,
                 this.equipamento,
@@ -128,8 +128,8 @@ public class ServiceEntity {
                 this.dataFimGarantia,
                 this.dataAtendimentoPrevisto,
                 this.dataAtendimentoEfetiva,
-                this.cliente.toClient(),
-                this.tecnico == null ? null : this.tecnico.toTechnician()
+                this.cliente.toDomain(),
+                this.tecnico == null ? null : this.tecnico.toDomain()
         );
     }
 }

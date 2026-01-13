@@ -51,7 +51,7 @@ public class RefreshTokenEntity {
         this.revokedAt = refreshToken.getRevokedAt();
     }
 
-    public RefreshToken toRefreshToken() {
+    public RefreshToken toDomain() {
         return new RefreshToken(
             username,
             tokenHash,

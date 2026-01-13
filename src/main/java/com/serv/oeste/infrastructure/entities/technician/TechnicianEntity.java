@@ -58,9 +58,9 @@ public class TechnicianEntity {
                 .toList();
     }
 
-    public Technician toTechnician() {
+    public Technician toDomain() {
         List<Specialty> specialties = especialidades.stream()
-                .map(SpecialtyEntity::toSpecialty)
+                .map(SpecialtyEntity::toDomain)
                 .toList();
 
         return Technician.restore(

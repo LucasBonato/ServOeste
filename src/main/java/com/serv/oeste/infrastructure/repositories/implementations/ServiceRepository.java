@@ -75,7 +75,7 @@ public class ServiceRepository implements IServiceRepository {
         Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Service> servicesPaged = serviceJpaRepository.findAll(specification, pageable)
-                .map(ServiceEntity::toService);
+                .map(ServiceEntity::toDomain);
 
         return new PageResponse<>(
                 servicesPaged.getContent(),
@@ -87,12 +87,12 @@ public class ServiceRepository implements IServiceRepository {
 
     @Override
     public Optional<Service> findById(Integer id) {
-        return serviceJpaRepository.findById(id).map(ServiceEntity::toService);
+        return serviceJpaRepository.findById(id).map(ServiceEntity::toDomain);
     }
 
     @Override
     public Service save(Service service) {
-        return serviceJpaRepository.save(new ServiceEntity(service)).toService();
+        return serviceJpaRepository.save(new ServiceEntity(service)).toDomain();
     }
 
     @Override
@@ -106,10 +106,10 @@ public class ServiceRepository implements IServiceRepository {
     }
 
     private Client getClientById(Integer id) {
-        return clientJpaRepository.findById(id).map(ClientEntity::toClient).orElseThrow(ClientNotFoundException::new);
+        return clientJpaRepository.findById(id).map(ClientEntity::toDomain).orElseThrow(ClientNotFoundException::new);
     }
 
     private Technician getTechnicianById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toTechnician).orElseThrow(TechnicianNotFoundException::new);
+        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain).orElseThrow(TechnicianNotFoundException::new);
     }
 }

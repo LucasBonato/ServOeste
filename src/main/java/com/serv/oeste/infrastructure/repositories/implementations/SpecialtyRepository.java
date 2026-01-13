@@ -17,13 +17,13 @@ public class SpecialtyRepository implements ISpecialtyRepository {
 
     @Override
     public Optional<Specialty> findById(Integer id) {
-        return specialtyJpaRepository.findById(id).map(SpecialtyEntity::toSpecialty);
+        return specialtyJpaRepository.findById(id).map(SpecialtyEntity::toDomain);
     }
 
     @Override
     public List<Specialty> findAllById(List<Integer> specialtyIds) {
         return specialtyJpaRepository.findAllById(specialtyIds).stream()
-                .map(SpecialtyEntity::toSpecialty)
+                .map(SpecialtyEntity::toDomain)
                 .toList();
     }
 }

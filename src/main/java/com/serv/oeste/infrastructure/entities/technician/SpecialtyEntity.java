@@ -30,7 +30,7 @@ public class SpecialtyEntity {
         this.conhecimento = specialty.conhecimento();
     }
 
-    public Specialty toSpecialty() {
+    public Specialty toDomain() {
         return new Specialty(
                 this.id,
                 this.conhecimento

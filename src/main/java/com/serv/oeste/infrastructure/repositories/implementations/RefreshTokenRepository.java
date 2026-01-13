@@ -18,7 +18,7 @@ public class RefreshTokenRepository implements IRefreshTokenRepository {
 
     @Override
     public RefreshToken save(RefreshToken refreshToken) {
-        return refreshTokenJpaRepository.save(new RefreshTokenEntity(refreshToken)).toRefreshToken();
+        return refreshTokenJpaRepository.save(new RefreshTokenEntity(refreshToken)).toDomain();
     }
 
     @Override
@@ -29,6 +29,6 @@ public class RefreshTokenRepository implements IRefreshTokenRepository {
 
     @Override
     public Optional<RefreshToken> findByTokenHash(String tokenHash) {
-        return refreshTokenJpaRepository.findByTokenHash(tokenHash).map(RefreshTokenEntity::toRefreshToken);
+        return refreshTokenJpaRepository.findByTokenHash(tokenHash).map(RefreshTokenEntity::toDomain);
     }
 }

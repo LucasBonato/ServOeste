@@ -42,7 +42,7 @@ public class ClientEntity {
         this.municipio = client.getMunicipio();
     }
 
-    public Client toClient() {
+    public Client toDomain() {
         return Client.restore(
                 this.id,
                 this.nome,
