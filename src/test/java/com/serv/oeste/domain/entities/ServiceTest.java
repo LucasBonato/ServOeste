@@ -158,7 +158,7 @@ class ServiceTest {
                     "Brastemp",
                     "Filial 1",
                     newDescricao,
-                    SituacaoServico.RESOLVIDO,
+                    SituacaoServico.SEM_DEFEITO,
                     HorarioPrevisto.TARDE,
                     200.0,
                     FormaPagamento.PIX,
@@ -175,8 +175,8 @@ class ServiceTest {
             );
 
             // Assert
-            assertEquals(SituacaoServico.RESOLVIDO, service.getSituacao());
-            assertTrue(service.getDescricao().contains(SituacaoServico.RESOLVIDO.getSituacao().toUpperCase()));
+            assertEquals(SituacaoServico.SEM_DEFEITO, service.getSituacao());
+            assertTrue(service.getDescricao().contains(SituacaoServico.SEM_DEFEITO.getSituacao().toUpperCase()));
         }
 
         @Test

@@ -318,7 +318,7 @@ public class ServiceFactory {
                 "Dell",
                 "São Paulo",
                 "Troca de tela e reparo na placa mãe",
-                SituacaoServico.AGUARDANDO_APROVACAO,
+                SituacaoServico.AGUARDANDO_ORCAMENTO,
                 FormaPagamento.DINHEIRO,
                 HorarioPrevisto.TARDE,
                 500.0,
