@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.security;
 
-import com.serv.oeste.domain.contracts.security.ITokenGenerator;
+import com.serv.oeste.application.contracts.security.ITokenGenerator;
 import com.serv.oeste.infrastructure.security.contracts.ITokenVerifier;
 import com.serv.oeste.domain.entities.user.User;
 import io.jsonwebtoken.Claims;

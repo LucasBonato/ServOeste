@@ -1,6 +1,6 @@
-package com.serv.oeste.domain.contracts.repositories;
+package com.serv.oeste.application.contracts.repositories;
 
-import com.serv.oeste.infrastructure.security.RefreshToken;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 
 import java.util.Optional;
 

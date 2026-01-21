@@ -1,18 +1,15 @@
 package com.serv.oeste.infrastructure.middleware;
 
 import com.serv.oeste.domain.exceptions.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import com.serv.oeste.domain.exceptions.auth.AuthTokenExpiredException;
+import com.serv.oeste.domain.exceptions.auth.AuthTokenNotValidException;
+import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +19,22 @@ import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(AuthTokenExpiredException.class)
+    public ProblemDetail handleExpiredToken() {
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                "Token expirado"
+        );
+    }
+
+    @ExceptionHandler(AuthTokenNotValidException.class)
+    public ProblemDetail handleInvalidToken() {
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                "Token inválido"
+        );
+    }
+
     @ExceptionHandler(DomainException.class)
     public ProblemDetail exceptionHandler(DomainException exception){
         return toProblemDetail(
