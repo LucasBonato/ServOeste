@@ -106,16 +106,18 @@ It supports:
 
 ## ⚙️ Environment Variables
 
-| Key                             | Description                  |
-|---------------------------------|------------------------------|
-| `MYSQL_USERNAME`                | Username that the mysql uses |
-| `MYSQL_PASSWORD`                | Password that the mysql uses |
-| `DB_HOST`                       | Database host                |
-| `DB_PORT`                       | Database running port        |
-| `DB_NAME`                       | Database name                |
-| `JWT_TOKEN_SECRET`              | Secret key for signing JWTs  |
-| `JWT_TOKEN_EXPIRATION_TIME`     | Access token lifetime in ms  |
-| `REFRESH_TOKEN_EXPIRATION_TIME` | Refresh token lifetime in ms |
+| Key                             | Description                    |
+|---------------------------------|--------------------------------|
+| `MYSQL_USERNAME`                | Username that the mysql uses   |
+| `MYSQL_PASSWORD`                | Password that the mysql uses   |
+| `DB_HOST`                       | Database host                  |
+| `DB_PORT`                       | Database running port          |
+| `DB_NAME`                       | Database name                  |
+| `JWT_TOKEN_SECRET`              | Secret key for signing JWTs    |
+| `JWT_TOKEN_EXPIRATION_TIME`     | Access token lifetime in ms    |
+| `REFRESH_TOKEN_EXPIRATION_TIME` | Refresh token lifetime in ms   |
+| `APP_ADMIN_USERNAME`            | The application admin username |
+| `APP_ADMIN_PASSWORD`            | The application admin password |
 
 ---
 
@@ -150,7 +152,6 @@ You can test:
 
 ## 🧠 Future Improvements
 
-* Add user roles & permissions (e.g., ADMIN, TECHNICIAN, CLIENT)
 * Integrate OpenTelemetry tracing for login and refresh events
 
 ---
