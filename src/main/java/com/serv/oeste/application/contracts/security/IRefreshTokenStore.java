@@ -1,8 +1,8 @@
-package com.serv.oeste.domain.contracts.security;
+package com.serv.oeste.application.contracts.security;
 
-import com.serv.oeste.infrastructure.security.RefreshToken;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import com.serv.oeste.domain.entities.user.User;
-import com.serv.oeste.infrastructure.security.IssuedRefreshToken;
+import com.serv.oeste.application.dtos.security.IssuedRefreshToken;
 
 import java.util.Optional;
 

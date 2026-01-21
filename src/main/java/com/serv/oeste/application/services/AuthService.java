@@ -1,15 +1,15 @@
 package com.serv.oeste.application.services;
 
-import com.serv.oeste.application.dtos.AuthTokenPair;
+import com.serv.oeste.application.dtos.security.AuthTokenPair;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
-import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
-import com.serv.oeste.domain.contracts.security.ITokenGenerator;
+import com.serv.oeste.application.contracts.security.IRefreshTokenStore;
+import com.serv.oeste.application.contracts.security.ITokenGenerator;
 import com.serv.oeste.domain.entities.user.User;
 import com.serv.oeste.domain.exceptions.auth.AuthInvalidCredentialsException;
 import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
-import com.serv.oeste.infrastructure.security.IssuedRefreshToken;
-import com.serv.oeste.infrastructure.security.RefreshToken;
+import com.serv.oeste.application.dtos.security.IssuedRefreshToken;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.serv.oeste.presentation.controllers;
 
-import com.serv.oeste.application.dtos.AuthTokenPair;
+import com.serv.oeste.application.dtos.security.AuthTokenPair;
 import com.serv.oeste.application.dtos.reponses.AuthAccessTokenResponse;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
 import com.serv.oeste.application.services.AuthService;

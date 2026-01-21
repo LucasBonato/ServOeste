@@ -1,6 +1,6 @@
 package com.serv.oeste.infrastructure.entities.user;
 
-import com.serv.oeste.infrastructure.security.RefreshToken;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

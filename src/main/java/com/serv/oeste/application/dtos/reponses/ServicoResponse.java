@@ -3,7 +3,6 @@ package com.serv.oeste.application.dtos.reponses;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.enums.HorarioPrevisto;
 import com.serv.oeste.domain.enums.SituacaoServico;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
