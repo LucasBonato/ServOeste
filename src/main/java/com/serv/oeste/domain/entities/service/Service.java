@@ -99,7 +99,7 @@ public class Service {
         this.cliente = cliente;
         this.tecnico = tecnico;
 
-        validate();
+        validateCreation(situacao);
 
         this.descricao = getHistory("", situacao, descricao);
     }
@@ -197,7 +197,6 @@ public class Service {
         this.marca = marca;
         this.filial = filial;
         this.descricao = getHistory(descricao, situacao, getDescricao());
-        this.situacao = situacao;
         this.horarioPrevisto = horarioPrevisto;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
@@ -212,7 +211,11 @@ public class Service {
         this.cliente = cliente;
         this.tecnico = tecnico;
 
-        validate();
+        ErrorCollector errors = validateTransition(situacao);
+
+        this.situacao = situacao;
+
+        validateCommon(errors);
     }
 
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
@@ -235,9 +238,27 @@ public class Service {
         return newEntry;
     }
 
-    private void validate() {
+    private void validateCreation(SituacaoServico situacao) {
         ErrorCollector errors = new ErrorCollector();
 
+        if (situacao == null)
+            errors.add(ErrorFields.SITUACAO, "Situação inicial é obrigatória");
+        if (situacao != null && !SituacaoServico.isInicial(situacao))
+            errors.add(ErrorFields.SITUACAO, "Situação inicial inválida: " + situacao);
+
+        validateCommon(errors);
+    }
+
+    private ErrorCollector validateTransition(SituacaoServico destino) {
+        ErrorCollector errors = new ErrorCollector();
+
+        if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino))
+            errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
+
+        return errors;
+    }
+
+    private void validateCommon(ErrorCollector errors) {
         if (cliente == null)
             errors.add(ErrorFields.CLIENTE, "Cliente é obrigatório");
         if (tecnico == null && isTechnicianNeeded(situacao))
