@@ -252,7 +252,7 @@ public class Service {
     private ErrorCollector validateTransition(SituacaoServico destino) {
         ErrorCollector errors = new ErrorCollector();
 
-        if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino))
+        if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino) && situacao != destino)
             errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
 
         return errors;
