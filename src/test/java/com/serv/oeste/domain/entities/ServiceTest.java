@@ -222,6 +222,206 @@ class ServiceTest {
         }
 
         @Test
+        void update_SituacaoExigeDataFechamentoAndDataFechamentoIsNull_ShouldThrowServiceNotValidException() {
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "TV",
+                    "Samsung",
+                    "Filial 1",
+                    "TV sem imagem",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "TV",
+                            "Samsung",
+                            "Filial 1",
+                            "Placa trocada",
+                            SituacaoServico.RESOLVIDO,
+                            HorarioPrevisto.TARDE,
+                            300.0,
+                            FormaPagamento.PIX,
+                            50.0,
+                            30.0,
+                            LocalDate.now(),
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now().plusMonths(3),
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
+        void update_SituacaoExigePagamentoComissaoAndDataPagamentoComissaoIsNull_ShouldThrowServiceNotValidException() {
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Fogão",
+                    "Consul",
+                    "Filial 2",
+                    "Não acende nunca",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Fogão",
+                            "Consul",
+                            "Filial 2",
+                            "Sem defeito encontrado",
+                            SituacaoServico.SEM_DEFEITO,
+                            HorarioPrevisto.TARDE,
+                            0.0,
+                            null,
+                            0.0,
+                            20.0,
+                            null,
+                            LocalDate.now(),
+                            null,
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
+        void update_SituacaoExigeFimGarantiaAndDataFimGarantiaIsNull_ShouldThrowServiceNotValidException() {
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 3",
+                    "Troca de bateria",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Notebook",
+                            "Dell",
+                            "Filial 3",
+                            "Troca realizada",
+                            SituacaoServico.GARANTIA,
+                            HorarioPrevisto.TARDE,
+                            200.0,
+                            FormaPagamento.CREDITO,
+                            0.0,
+                            30.0,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
+        void update_SituacaoExigeAtendimentoPrevistoAndDataAtendimentoPrevistoIsNull_ShouldThrowServiceNotValidException() {
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Microondas",
+                    "LG",
+                    "Filial 4",
+                    "Não esquenta nada",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Microondas",
+                            "LG",
+                            "Filial 4",
+                            "Aguardando atendimento",
+                            SituacaoServico.AGUARDANDO_ATENDIMENTO,
+                            HorarioPrevisto.TARDE,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
+        void update_SituacaoExigeAtendimentoEfetivoAndDataAtendimentoEfetivoIsNull_ShouldThrowServiceNotValidException() {
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Ar condicionado",
+                    "Elgin",
+                    "Filial 5",
+                    "Não liga nunca",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Ar condicionado",
+                            "Elgin",
+                            "Filial 5",
+                            "Orçamento aprovado",
+                            SituacaoServico.ORCAMENTO_APROVADO,
+                            HorarioPrevisto.TARDE,
+                            400.0,
+                            FormaPagamento.DEBITO,
+                            100.0,
+                            40.0,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            null,
+                            null,
+                            LocalDate.now(),
+                            null,
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
         void update_RemoveTechnicianWhenNeeded_ShouldThrowServiceNotValidException() {
             // Arrange
             Client client = validClient;

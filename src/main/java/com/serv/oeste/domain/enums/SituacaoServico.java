@@ -3,7 +3,7 @@ package com.serv.oeste.domain.enums;
 import java.util.Set;
 
 public enum SituacaoServico {
-    AGUARDANDO_AGENDAMENTO("Aguardando agendamento", false) {
+    AGUARDANDO_AGENDAMENTO("Aguardando agendamento") {
         public Set<SituacaoServico> proximos() {
             return Set.of(AGUARDANDO_ATENDIMENTO);
         }
@@ -11,7 +11,7 @@ public enum SituacaoServico {
             return Set.of();
         }
     },
-    AGUARDANDO_ATENDIMENTO("Aguardando atendimento", false) {
+    AGUARDANDO_ATENDIMENTO("Aguardando atendimento") {
         public Set<SituacaoServico> proximos() {
             return Set.of(AGUARDANDO_ORCAMENTO, SEM_DEFEITO, CANCELADO);
         }
@@ -19,7 +19,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_AGENDAMENTO);
         }
     },
-    AGUARDANDO_ORCAMENTO("Aguardando orçamento", false) {
+    AGUARDANDO_ORCAMENTO("Aguardando orçamento") {
         public Set<SituacaoServico> proximos() {
             return Set.of(AGUARDANDO_APROVACAO);
         }
@@ -27,7 +27,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_ATENDIMENTO);
         }
     },
-    AGUARDANDO_APROVACAO("Aguardando aprovação do cliente", true) {
+    AGUARDANDO_APROVACAO("Aguardando aprovação do cliente") {
         public Set<SituacaoServico> proximos() {
             return Set.of(NAO_APROVADO, COMPRA, ORCAMENTO_APROVADO);
         }
@@ -35,7 +35,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_ORCAMENTO);
         }
     },
-    ORCAMENTO_APROVADO("Orçamento aprovado", true) {
+    ORCAMENTO_APROVADO("Orçamento aprovado") {
         public Set<SituacaoServico> proximos() {
             return Set.of(AGUARDANDO_CLIENTE_RETIRAR);
         }
@@ -43,7 +43,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_APROVACAO);
         }
     },
-    AGUARDANDO_CLIENTE_RETIRAR("Aguardando cliente retirar", true) {
+    AGUARDANDO_CLIENTE_RETIRAR("Aguardando cliente retirar") {
         public Set<SituacaoServico> proximos() {
             return Set.of(GARANTIA, NAO_RETIRA_3_MESES);
         }
@@ -51,7 +51,7 @@ public enum SituacaoServico {
             return Set.of(ORCAMENTO_APROVADO);
         }
     },
-    GARANTIA("Garantia", true) {
+    GARANTIA("Garantia") {
         public Set<SituacaoServico> proximos() {
             return Set.of(CORTESIA, RESOLVIDO);
         }
@@ -59,7 +59,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_CLIENTE_RETIRAR);
         }
     },
-    NAO_RETIRA_3_MESES("Não retira há 3 meses", true) {
+    NAO_RETIRA_3_MESES("Não retira há 3 meses") {
         public Set<SituacaoServico> proximos() {
             return Set.of(RESOLVIDO);
         }
@@ -67,7 +67,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_CLIENTE_RETIRAR);
         }
     },
-    CANCELADO("Cancelado", false) {
+    CANCELADO("Cancelado") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -75,7 +75,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_ATENDIMENTO);
         }
     },
-    COMPRA("Compra", true) {
+    COMPRA("Compra") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -83,7 +83,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_APROVACAO);
         }
     },
-    CORTESIA("Cortesia", true) {
+    CORTESIA("Cortesia") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -91,7 +91,7 @@ public enum SituacaoServico {
             return Set.of(GARANTIA);
         }
     },
-    NAO_APROVADO("Não aprovado pelo cliente", true) {
+    NAO_APROVADO("Não aprovado pelo cliente") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -99,7 +99,7 @@ public enum SituacaoServico {
             return Set.of(AGUARDANDO_APROVACAO);
         }
     },
-    RESOLVIDO("Resolvido", true) {
+    RESOLVIDO("Resolvido") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -107,7 +107,7 @@ public enum SituacaoServico {
             return Set.of(GARANTIA, CORTESIA, NAO_RETIRA_3_MESES);
         }
     },
-    SEM_DEFEITO("Sem defeito", false) {
+    SEM_DEFEITO("Sem defeito") {
         public Set<SituacaoServico> proximos() {
             return Set.of();
         }
@@ -118,11 +118,9 @@ public enum SituacaoServico {
     ;
 
     private final String situacao;
-    private final boolean exigeFormaPagamento;
 
-    SituacaoServico(String situacao, boolean exigeFormaPagamento) {
+    SituacaoServico(String situacao) {
         this.situacao = situacao;
-        this.exigeFormaPagamento = exigeFormaPagamento;
     }
 
     public abstract Set<SituacaoServico> proximos();
@@ -142,7 +140,76 @@ public enum SituacaoServico {
     }
 
     public boolean exigeFormaPagamento() {
-        return exigeFormaPagamento;
+        return this == AGUARDANDO_APROVACAO
+                || this == ORCAMENTO_APROVADO
+                || this == AGUARDANDO_CLIENTE_RETIRAR
+                || this == GARANTIA
+                || this == NAO_RETIRA_3_MESES
+                || this == COMPRA
+                || this == CORTESIA
+                || this == NAO_APROVADO
+                || this == RESOLVIDO;
+    }
+
+    public boolean exigeValorServico() {
+        return this == AGUARDANDO_APROVACAO
+                || this == NAO_APROVADO
+                || this == COMPRA
+                || this == ORCAMENTO_APROVADO
+                || this == AGUARDANDO_CLIENTE_RETIRAR
+                || this == NAO_RETIRA_3_MESES
+                || this == RESOLVIDO
+                || this == CORTESIA
+                || this == GARANTIA;
+    }
+
+    public boolean exigeDataFechamento() {
+        return this == RESOLVIDO
+                || this == CORTESIA
+                || this == GARANTIA;
+    }
+
+    public boolean exigePagamentoComissao() {
+        return this == SEM_DEFEITO
+                || this == CANCELADO
+                || this == NAO_APROVADO
+                || this == COMPRA
+                || this == RESOLVIDO;
+    }
+
+    public boolean exigeFimGarantia() {
+        return this == RESOLVIDO
+                || this == CORTESIA
+                || this == GARANTIA;
+    }
+
+    public boolean exigeAtendimentoPrevisto() {
+        return this == AGUARDANDO_ATENDIMENTO
+                || this == SEM_DEFEITO
+                || this == AGUARDANDO_ORCAMENTO
+                || this == AGUARDANDO_APROVACAO
+                || this == NAO_APROVADO
+                || this == COMPRA
+                || this == ORCAMENTO_APROVADO
+                || this == AGUARDANDO_CLIENTE_RETIRAR
+                || this == NAO_RETIRA_3_MESES
+                || this == RESOLVIDO
+                || this == CORTESIA
+                || this == GARANTIA;
+    }
+
+    public boolean exigeAtendimentoEfetivo() {
+        return this == SEM_DEFEITO
+                || this == AGUARDANDO_ORCAMENTO
+                || this == AGUARDANDO_APROVACAO
+                || this == NAO_APROVADO
+                || this == COMPRA
+                || this == ORCAMENTO_APROVADO
+                || this == AGUARDANDO_CLIENTE_RETIRAR
+                || this == NAO_RETIRA_3_MESES
+                || this == RESOLVIDO
+                || this == CORTESIA
+                || this == GARANTIA;
     }
 
     public String getSituacao() {

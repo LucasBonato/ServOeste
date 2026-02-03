@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record ServicoUpdateRequest(
-        @NotNull(message = "O técnico é obrigatório")
         Integer idTecnico,
 
         @NotNull(message = "O cliente é obrigatório")
@@ -35,7 +34,7 @@ public record ServicoUpdateRequest(
 
         FormaPagamento formaPagamento,
 
-        @NotBlank(message = "O horário previsto é obrigatório")
+        @NotNull(message = "O horário previsto é obrigatório")
         HorarioPrevisto horarioPrevisto,
 
         @PositiveOrZero(message = "O valor deve ser maior ou igual a zero")

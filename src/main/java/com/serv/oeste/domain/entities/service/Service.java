@@ -254,8 +254,6 @@ public class Service {
 
         if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino))
             errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
-        if (situacao.exigeFormaPagamento() && formaPagamento == null)
-            errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
 
         return errors;
     }
@@ -283,6 +281,18 @@ public class Service {
             errors.add(ErrorFields.SERVICO, "O Valor da Comissão não pode ser negativo.");
         if (valorPecas != null && valorPecas < 0)
             errors.add(ErrorFields.SERVICO, "O Valor das Peças não pode ser negativo.");
+        if (situacao.exigeFormaPagamento() && formaPagamento == null)
+            errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeDataFechamento() && dataFechamento == null)
+            errors.add(ErrorFields.DATA, "Data fechamento é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigePagamentoComissao() && dataPagamentoComissao == null)
+            errors.add(ErrorFields.DATA, "Data Pagamento Comissao é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeFimGarantia() && dataFimGarantia == null)
+            errors.add(ErrorFields.DATA, "Data Fim Garantia é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeAtendimentoPrevisto() && dataAtendimentoPrevisto == null)
+            errors.add(ErrorFields.DATA, "Data Atendimento Previsto é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeAtendimentoEfetivo() && dataAtendimentoEfetiva == null)
+            errors.add(ErrorFields.DATA, "Data Atendimento Efetivo é obrigatória para a situação " + situacao.getSituacao());
 
         errors.throwIfAny(ServiceNotValidException::new);
     }
