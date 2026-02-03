@@ -254,6 +254,8 @@ public class Service {
 
         if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino))
             errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
+        if (situacao.exigeFormaPagamento() && formaPagamento == null)
+            errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
 
         return errors;
     }

@@ -180,6 +180,48 @@ class ServiceTest {
         }
 
         @Test
+        void update_SituacaoExigeFormaPagamentoAndFormaPagamentoIsNull_ShouldThrowServiceNotValidException() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act & Assert
+            assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Notebook",
+                            "Dell",
+                            "Filial 1",
+                            "Troca de placa mãe realizada",
+                            SituacaoServico.RESOLVIDO,
+                            HorarioPrevisto.TARDE,
+                            500.0,
+                            null,
+                            100.0,
+                            50.0,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            LocalDate.now().plusMonths(3),
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+        }
+
+        @Test
         void update_RemoveTechnicianWhenNeeded_ShouldThrowServiceNotValidException() {
             // Arrange
             Client client = validClient;

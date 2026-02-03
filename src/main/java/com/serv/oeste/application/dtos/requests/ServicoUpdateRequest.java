@@ -33,7 +33,6 @@ public record ServicoUpdateRequest(
         @NotNull(message = "A situação do serviço é obrigatória")
         SituacaoServico situacao,
 
-        @NotNull(message = "A forma de pagamento é obrigatória")
         FormaPagamento formaPagamento,
 
         @NotBlank(message = "O horário previsto é obrigatório")
