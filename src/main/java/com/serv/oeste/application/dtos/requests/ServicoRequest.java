@@ -30,7 +30,7 @@ public record ServicoRequest(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
         LocalDate dataAtendimento,
 
-        @NotBlank(message = "O horário previsto é obrigatório")
+        @NotNull(message = "O horário previsto é obrigatório")
         HorarioPrevisto horarioPrevisto,
 
         @Size(max = 500, message = "A descrição pode ter no máximo {max} caracteres")

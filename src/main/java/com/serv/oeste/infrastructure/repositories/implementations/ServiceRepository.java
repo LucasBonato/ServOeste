@@ -41,13 +41,16 @@ public class ServiceRepository implements IServiceRepository {
     public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
         Specification<ServiceEntity> specification = new SpecificationBuilder<ServiceEntity>()
                 .addIfNotNull(filter.servicoId(), ServiceSpecifications::hasServicoId)
-                .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientById(id)))
-                .addIfNotNull(filter.tecnicoId(), id -> ServiceSpecifications.hasTecnico(getTechnicianById(id)))
+                .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientEntityById(id)))
+         //     .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientById(id)))
+         //     .addIfNotNull(filter.tecnicoId(), id -> ServiceSpecifications.hasTecnico(getTechnicianById(id)))
+                .addIfNotNull(filter.tecnicoId(), id -> ServiceSpecifications.hasTecnico(getTechnicianEntityById(id)))
                 .addIfNotNull(filter.situacao(), ServiceSpecifications::hasSituacao)
                 .addIfNotNull(filter.garantia(), ServiceSpecifications::hasGarantia)
                 .addIf(StringUtils::isNotBlank, filter.clienteNome(), ServiceSpecifications::hasNomeCliente)
                 .addIf(StringUtils::isNotBlank, filter.tecnicoNome(), ServiceSpecifications::hasNomeTecnico)
                 .addIf(StringUtils::isNotBlank, filter.equipamento(), ServiceSpecifications::hasEquipamento)
+                .addIf(StringUtils::isNotBlank, filter.marca(), ServiceSpecifications::hasMarca)
                 .addIf(StringUtils::isNotBlank, filter.filial(), ServiceSpecifications::hasFilial)
                 .addIf(StringUtils::isNotBlank, filter.periodo(), ServiceSpecifications::hasHorarioPrevisto)
                 .addDateRange(
@@ -109,7 +112,15 @@ public class ServiceRepository implements IServiceRepository {
         return clientJpaRepository.findById(id).map(ClientEntity::toDomain).orElseThrow(ClientNotFoundException::new);
     }
 
+    private ClientEntity getClientEntityById(Integer id) {
+        return clientJpaRepository.findById(id).orElseThrow(ClientNotFoundException::new);
+    }
+
     private Technician getTechnicianById(Integer id) {
         return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain).orElseThrow(TechnicianNotFoundException::new);
+    }
+
+    private TechnicianEntity getTechnicianEntityById(Integer id) {
+        return technicianJpaRepository.findById(id).orElseThrow(TechnicianNotFoundException::new);
     }
 }
