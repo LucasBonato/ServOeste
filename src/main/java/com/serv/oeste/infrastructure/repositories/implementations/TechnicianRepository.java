@@ -3,7 +3,7 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
+import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -30,19 +31,24 @@ public class TechnicianRepository implements ITechnicianRepository {
 
     @Override
     public Optional<Technician> findById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toTechnician);
+        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain);
+    }
+
+    @Override
+    public List<Technician> findAllById(List<Integer> ids) {
+        return technicianJpaRepository.findAllById(ids).stream()
+                .map(TechnicianEntity::toDomain)
+                .toList();
     }
 
     @Override
     public Technician save(Technician technician) {
-        return technicianJpaRepository.save(new TechnicianEntity(technician)).toTechnician();
+        return technicianJpaRepository.save(new TechnicianEntity(technician)).toDomain();
     }
 
     @Override
-    public List<Technician> saveAll(List<Technician> technicians) {
-        return technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList()).stream()
-                .map(TechnicianEntity::toTechnician)
-                .toList();
+    public void saveAll(List<Technician> technicians) {
+        technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList());
     }
 
     @Override
@@ -62,10 +68,12 @@ public class TechnicianRepository implements ITechnicianRepository {
                 .addIf(StringUtils::isNotBlank, filter.telefone(), TechnicianSpecifications::hasTelefone)
                 .build();
 
-        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Technician> techniciansPaged = technicianJpaRepository.findAll(specification, pageable)
-                .map(TechnicianEntity::toTechnician);
+                .map(TechnicianEntity::toDomain);
 
         return new PageResponse<>(
                 techniciansPaged.getContent(),

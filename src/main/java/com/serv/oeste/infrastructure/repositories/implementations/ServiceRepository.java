@@ -1,7 +1,7 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.application.exceptions.client.ClientNotFoundException;
-import com.serv.oeste.application.exceptions.technician.TechnicianNotFoundException;
+import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
+import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
@@ -26,7 +26,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -34,11 +36,6 @@ public class ServiceRepository implements IServiceRepository {
     private final IServiceJpaRepository serviceJpaRepository;
     private final IClientJpaRepository clientJpaRepository;
     private final ITechnicianJpaRepository technicianJpaRepository;
-
-    @Override
-    public boolean existsByClienteId(Integer clienteId) {
-        return serviceJpaRepository.existsByClienteId(clienteId);
-    }
 
     @Override
     public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
@@ -81,7 +78,7 @@ public class ServiceRepository implements IServiceRepository {
         Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Service> servicesPaged = serviceJpaRepository.findAll(specification, pageable)
-                .map(ServiceEntity::toService);
+                .map(ServiceEntity::toDomain);
 
         return new PageResponse<>(
                 servicesPaged.getContent(),
@@ -93,21 +90,26 @@ public class ServiceRepository implements IServiceRepository {
 
     @Override
     public Optional<Service> findById(Integer id) {
-        return serviceJpaRepository.findById(id).map(ServiceEntity::toService);
+        return serviceJpaRepository.findById(id).map(ServiceEntity::toDomain);
     }
 
     @Override
     public Service save(Service service) {
-        return serviceJpaRepository.save(new ServiceEntity(service)).toService();
+        return serviceJpaRepository.save(new ServiceEntity(service)).toDomain();
     }
 
     @Override
-    public void deleteById(Integer id) {
-        serviceJpaRepository.deleteById(id);
+    public void deleteAllById(List<Integer> ids) {
+        serviceJpaRepository.deleteAllById(ids);
+    }
+
+    @Override
+    public Set<Integer> findAllClientIdsWithServices(List<Integer> clientIds) {
+        return serviceJpaRepository.findDistinctClienteIdsWithServices(clientIds);
     }
 
     private Client getClientById(Integer id) {
-        return clientJpaRepository.findById(id).map(ClientEntity::toClient).orElseThrow(ClientNotFoundException::new);
+        return clientJpaRepository.findById(id).map(ClientEntity::toDomain).orElseThrow(ClientNotFoundException::new);
     }
 
     private ClientEntity getClientEntityById(Integer id) {
@@ -115,7 +117,7 @@ public class ServiceRepository implements IServiceRepository {
     }
 
     private Technician getTechnicianById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toTechnician).orElseThrow(TechnicianNotFoundException::new);
+        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain).orElseThrow(TechnicianNotFoundException::new);
     }
 
     private TechnicianEntity getTechnicianEntityById(Integer id) {

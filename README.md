@@ -1,6 +1,6 @@
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
     <br>
-    <img src="https://servoeste.com.br/wp-content/uploads/2023/11/Logo.png" alt="">
+    <img src="https://servoeste.com.br/image/serveoeste.png" alt="">
     <hr/>
     <p>
       <img loading="lazy" src="http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge" alt=""/>
@@ -14,89 +14,150 @@
 
 <hr/>
 
-- [Como Utilizar](#Como-utilizar-a-API)
-- [Headers](#Headers)
-- [EndPoints](#Endpoints)
-- [Erros](#Erros)
-
-# Como utilizar a API
-
-> _<ins>Ainda não foi feito o Deploy da API</ins>_
-
-### _Url Base_: `http://localhost:8080/api/v1`
-
-### _Url Swagger_: `http://localhost:8080/api/v1/swagger-ui/index.html`
-
-# Headers
-
-|   Headers    | Description                     |
-|:------------:|:--------------------------------|
-| Content-Type | application/json; charset=UTF-8 |
-
----
-
-# Endpoints
-
-| **EndPoints** | **Sub Endpoints** |                        Descrição                        |
-|---------------|-------------------|:-------------------------------------------------------:|
-| /tecnico      | /find<br/>/{id}   | GET, POST, PUT e DELETE do Técnico, junto de filtragem. |
-| /cliente      | /{id}             | GET, POST, PUT e DELETE do Técnico, junto de filtragem. |
-| /endereco     |                   |                  GET a partir do CEP.                   |
+```mermaid
+flowchart TD
+    1[Aguardando agendamento] --> 2[Aguardando atendimento]
+    2 -->|Problema identificado| 3[Aguardando orçamento]
+    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
+    2 -->|Cancelado| 3.2["Cancelado (fim)"]
+    
+    3 --> 4[Aguardando aprovação do cliente]
+    4 -->|Não aprovado| 5.1["Não aprovado pelo cliente (fim)"]
+    4 -->|Compra| 5.2["Compra (fim)"]
+    4 -->|Aprovado| 5.3[Orçamento aprovado]
+    
+    5.3 --> 6[Aguardando cliente retirar]
+    6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
+    6 -->|Garantia| 7.2[Garantia]
+    
+    7.2 -->|Cortesia| 8[Cortesia]
+    7.2 -->|Resolvido| 9["Resolvido (fim)"]
+    8 --> 9["Resolvido (fim)"]
+    7.1 --> 9["Resolvido (fim)"]
+```
 
 ---
 
-# Erros
+## 🚀 Overview
 
-~~~ JSON
-{
-    "id": 0
-    "error": "Alguma mensagem de erro."
-}
-~~~
+This project provides a clean, extensible base for secure user authentication and session handling in modern mobile and web applications.
 
-O que é o Id? Bem, é um identificador para saber sobre qual campo o erro se trata, sendo que os valores são
-"universais" na API, ou seja, se o id for igual a 1 representa que deu algum problema no campo de Email.
-Segue a tabela de valores:
+It supports:
 
-| Id | Campo representado |
-|----|:------------------:|
-| 01 |  Nome e Sobrenome  |
-| 02 |  Telefone Celular  |
-| 03 |   Telefone Fixo    |
-| 04 |     Telefones      |
-| 05 |        Cep         |
-| 06 |      Endereço      |
-| 07 |     Município      |
-| 08 |       Bairro       |
-| 09 |      Cliente       |
-| 10 |      Técnico       |
-| 11 |    Equipamento     |
-| 12 |       Marca        |
-| 13 |     Descrição      |
-| 14 |       Filial       |
-| 15 |      Horário       |
-| 16 |        Data        |
-| 17 |    Conhecimento    |
+- ✅ User **registration** and **login**
+- 🔁 **Access** and **refresh tokens** (JWT)
+- 🍪 Secure, HttpOnly **cookie-based refresh tokens**
+- 🔒 Role-based authorization
+- ⚙️ **Token auto-refresh** on the Flutter client using Dio interceptors
+- 📄 Full **Swagger** API documentation
 
 ---
 
-# Especialidades
+## 🏗️ Architecture
 
-Id das especialidades e o valor que elas representam:
+### **Backend — Spring Boot**
 
-| Id | Conhecimento |
-|----|:------------:|
-| 1  |    Adega     |
-| 2  |  Bebedouro   |
-| 3  | Climatizador |
-| 4  |    Cooler    |
-| 5  |   Frigobar   |
-| 6  |  Geladeira   |
-| 7  |  Lava Louça  |
-| 8  |  Lava Roupa  |
-| 9  |  Microondas  |
-| 10 | Purificador  |
-| 11 |   Secadora   |
-| 12 |    Outros    |
+**Layers:**
+
+| Layer            | Description                                                               |
+|------------------|---------------------------------------------------------------------------|
+| `presentation`   | Defines REST endpoints (e.g., `/auth/login`, `/auth/register`)            |
+| `service`        | Contains business logic for authentication, token validation, and refresh |
+| `domain`         | Holds entities, DTOs, and core domain logic                               |
+| `infrastructure` | Manages JWT generation/validation, persistence, and configuration         |
+| `swagger`        | Contains documentation interfaces using OpenAPI annotations               |
+
+**Tech stack:**
+
+- Spring Boot 3
+- Spring Web
+- Spring Security (custom implementation)
+- JJWT (JSON Web Token library)
+- Lombok
+- OpenAPI/Swagger
 
 ---
+
+## 🔄 Authentication Flow
+
+```text
+   ┌────────────────┐       ┌────────────────┐        ┌───────────────┐
+   │  FrontEnd App  │──────▶│   /auth/login  │───────▶│  AuthService  │
+   └──────┬─────────┘       └────────────────┘        └───────┬───────┘
+          │                         │                         │
+          │<─────── accessToken + refreshToken (cookie) ──────┘
+          │
+   Access token expires
+          │
+          ├───▶ Sends request with expired token
+          │         │
+          │         ├──401 Unauthorized
+          │         │
+          ├──▶ TokenRefreshInterceptor intercepts
+          │         │
+          ├──▶ Calls /auth/refresh using cookie
+          │         │
+          ├──▶ Receives new access token
+          │         │
+          └──▶ Retries the original failed request transparently
+````
+
+---
+
+## ⚙️ Environment Variables
+
+| Key                             | Description                    |
+|---------------------------------|--------------------------------|
+| `MYSQL_USERNAME`                | Username that the mysql uses   |
+| `MYSQL_PASSWORD`                | Password that the mysql uses   |
+| `DB_HOST`                       | Database host                  |
+| `DB_PORT`                       | Database running port          |
+| `DB_NAME`                       | Database name                  |
+| `JWT_TOKEN_SECRET`              | Secret key for signing JWTs    |
+| `JWT_TOKEN_EXPIRATION_TIME`     | Access token lifetime in ms    |
+| `REFRESH_TOKEN_EXPIRATION_TIME` | Refresh token lifetime in ms   |
+| `APP_ADMIN_USERNAME`            | The application admin username |
+| `APP_ADMIN_PASSWORD`            | The application admin password |
+
+---
+
+## 📘 Swagger Documentation
+
+Once the backend is running, visit:
+
+**[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
+
+You can test:
+
+* Register / Login / Refresh / Logout directly from Swagger UI
+* View detailed request/response schemas (powered by `AuthSwagger`)
+
+---
+
+## 🧩 How to Run
+
+### Backend
+
+```bash
+./mvnw spring-boot:run
+```
+
+## 💡 Design Principles
+
+* **DDD-aligned structure:** separates domain logic from technical details
+* **Single-responsibility services:** Auth logic lives in `AuthService`
+* **Extensible token layer:** `ITokenVerifier` and `ITokenGenerator` abstractions allow future switch to different providers (e.g., OAuth2)
+
+---
+
+## 🧠 Future Improvements
+
+* Integrate OpenTelemetry tracing for login and refresh events
+
+---
+
+## 👤 Author
+
+**Lucas Bonato**
+Software Engineer & Flutter Developer
+📧 [lucas.perez.bonato@gmail.com](mailto:lucas.perez.bonato@gmail.com)

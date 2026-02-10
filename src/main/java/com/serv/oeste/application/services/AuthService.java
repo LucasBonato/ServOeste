@@ -1,93 +1,51 @@
 package com.serv.oeste.application.services;
 
-import com.serv.oeste.application.dtos.AuthTokenPair;
+import com.serv.oeste.application.dtos.security.AuthTokenPair;
 import com.serv.oeste.application.dtos.requests.AuthLoginRequest;
-import com.serv.oeste.application.dtos.requests.AuthRegisterRequest;
-import com.serv.oeste.application.exceptions.auth.AuthInvalidCredentialsException;
-import com.serv.oeste.application.exceptions.auth.AuthNotValidException;
-import com.serv.oeste.application.exceptions.auth.AuthRefreshTokenRevokedException;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
-import com.serv.oeste.domain.contracts.security.IRefreshTokenStore;
-import com.serv.oeste.domain.contracts.security.ITokenGenerator;
-import com.serv.oeste.domain.entities.user.RefreshToken;
+import com.serv.oeste.application.contracts.security.IRefreshTokenStore;
+import com.serv.oeste.application.contracts.security.ITokenGenerator;
 import com.serv.oeste.domain.entities.user.User;
-import com.serv.oeste.domain.enums.Roles;
+import com.serv.oeste.domain.exceptions.auth.AuthInvalidCredentialsException;
+import com.serv.oeste.domain.exceptions.auth.AuthRefreshTokenRevokedException;
+import com.serv.oeste.application.dtos.security.IssuedRefreshToken;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final IUserRepository userRepository;
-    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final ITokenGenerator tokenGenerator;
     private final IRefreshTokenStore refreshTokenStore;
 
-    public ResponseEntity<Void> register(AuthRegisterRequest registerRequest) {
-        if (registerRequest.role() == Roles.ADMIN)
-            throw new AuthNotValidException("Cadastro inválido, não é possível registrar um usuário ADMIN");
-
-        if (userRepository.findByUsername(registerRequest.username()).isPresent())
-            throw new AuthNotValidException("Nome de usuário já está em uso");
-
-        userRepository.save(new User(
-            registerRequest.username(),
-            passwordEncoder.encode(registerRequest.password()),
-            registerRequest.role()
-        ));
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .build();
-    }
-
     public AuthTokenPair login(AuthLoginRequest loginRequest) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.username());
+        User user = userRepository.findByUsername(loginRequest.username())
+                .orElseThrow(AuthInvalidCredentialsException::new);
 
-        if (!passwordEncoder.matches(loginRequest.password(), userDetails.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPasswordHash())) {
             throw new AuthInvalidCredentialsException();
         }
 
-        User user = new User(
-            userDetails.getUsername(),
-            userDetails.getPassword(),
-            Roles.valueOf(authorityToRole(userDetails.getAuthorities()))
-        );
-
         String accessToken = tokenGenerator.generateAccessToken(user);
-        RefreshToken refreshToken = refreshTokenStore.issue(user);
-
-        return new AuthTokenPair(accessToken, refreshToken.getTokenHash());
+        IssuedRefreshToken issuedRefreshToken = refreshTokenStore.issue(user);
+        return new AuthTokenPair(accessToken, issuedRefreshToken.rawToken());
     }
 
-    public String refresh(String refreshTokenHash) {
-        RefreshToken refreshToken = refreshTokenStore.findValid(refreshTokenHash).orElseThrow(AuthRefreshTokenRevokedException::new);
-        UserDetails user = userDetailsService.loadUserByUsername(refreshToken.getUsername());
-        return tokenGenerator.generateAccessToken(new User(
-            user.getUsername(),
-            null,
-            Roles.valueOf(authorityToRole(user.getAuthorities()))
-        ));
+    public String refresh(String rawRefreshToken) {
+        RefreshToken oldRefreshToken = refreshTokenStore.findValid(rawRefreshToken).orElseThrow(AuthRefreshTokenRevokedException::new);
+
+        User user = userRepository.findByUsername(oldRefreshToken.getUsername())
+                .orElseThrow(AuthInvalidCredentialsException::new);
+
+        return tokenGenerator.generateAccessToken(user);
     }
 
-    public void logout(String refreshToken) {
-        refreshTokenStore.revoke(refreshToken);
-    }
-
-    private static String authorityToRole(Collection<? extends GrantedAuthority> auths) {
-        return auths.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith("ROLE_"))
-                .map(authority -> authority.substring("ROLE_".length()))
-                .findFirst()
-                .orElse(Roles.TECHNICIAN.getRole());
+    public void logout(String rawRefreshToken) {
+        refreshTokenStore.findValid(rawRefreshToken)
+                        .ifPresent(refreshToken -> refreshTokenStore.revoke(rawRefreshToken));
     }
 }

@@ -11,7 +11,7 @@ public class SpecificationBuilder<T> {
     private Specification<T> specification;
 
     public SpecificationBuilder() {
-        this.specification = Specification.where(null);
+        this.specification = Specification.unrestricted();
     }
 
     /**
