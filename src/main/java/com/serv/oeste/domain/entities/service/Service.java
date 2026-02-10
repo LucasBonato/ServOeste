@@ -196,7 +196,7 @@ public class Service {
         this.equipamento = equipamento;
         this.marca = marca;
         this.filial = filial;
-        this.descricao = getHistory(descricao, situacao, getDescricao());
+        this.descricao = getHistory(getDescricao(), situacao, descricao);
         this.horarioPrevisto = horarioPrevisto;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
@@ -226,7 +226,7 @@ public class Service {
         }
 
         String newEntry = String.format(
-                "[%TD] - %s - %s%n",
+                "[%TD] - %s - %s",
                 LocalDate.now(),
                 formattedSituation,
                 descricao

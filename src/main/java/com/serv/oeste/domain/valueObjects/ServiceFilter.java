@@ -17,6 +17,7 @@ public record ServiceFilter(
         String clienteNome,
         String tecnicoNome,
         String equipamento,
+        String marca,
         String filial,
         String periodo,
         Boolean garantia,
