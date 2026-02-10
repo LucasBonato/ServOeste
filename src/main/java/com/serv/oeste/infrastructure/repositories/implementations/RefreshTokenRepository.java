@@ -1,12 +1,12 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.application.exceptions.auth.AuthNotValidException;
-import com.serv.oeste.domain.contracts.repositories.IRefreshTokenRepository;
-import com.serv.oeste.domain.entities.user.RefreshToken;
+import com.serv.oeste.application.contracts.repositories.IRefreshTokenRepository;
+import com.serv.oeste.application.dtos.security.RefreshToken;
 import com.serv.oeste.infrastructure.entities.user.RefreshTokenEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.IRefreshTokenJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -18,24 +18,17 @@ public class RefreshTokenRepository implements IRefreshTokenRepository {
 
     @Override
     public RefreshToken save(RefreshToken refreshToken) {
-        return refreshTokenJpaRepository.save(new RefreshTokenEntity(refreshToken)).toRefreshToken();
+        return refreshTokenJpaRepository.save(new RefreshTokenEntity(refreshToken)).toDomain();
     }
 
     @Override
-    public void revoke(RefreshToken refreshToken) {
-        if (refreshToken.getTokenHash() == null) {
-            throw new AuthNotValidException("TokenHash is required to revoke the refresh token");
-        }
-
-        int rowsAffected = refreshTokenJpaRepository.revokeAllActiveForUser(Instant.now(), refreshToken.getTokenHash());
-
-        if (rowsAffected == 0) {
-            throw new AuthNotValidException("Could not revoke token");
-        }
+    @Transactional
+    public void revokeByTokenHash(String tokenHash) {
+        refreshTokenJpaRepository.revokeAllActiveForUser(tokenHash, Instant.now());
     }
 
     @Override
     public Optional<RefreshToken> findByTokenHash(String tokenHash) {
-        return refreshTokenJpaRepository.findByTokenHash(tokenHash).map(RefreshTokenEntity::toRefreshToken);
+        return refreshTokenJpaRepository.findByTokenHash(tokenHash).map(RefreshTokenEntity::toDomain);
     }
 }

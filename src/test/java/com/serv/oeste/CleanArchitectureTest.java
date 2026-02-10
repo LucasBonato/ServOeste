@@ -31,7 +31,6 @@ class CleanArchitectureTest {
             .whereLayer(presentationLayer).mayNotBeAccessedByAnyLayer()
             .whereLayer(infrastructureLayer).mayNotBeAccessedByAnyLayer()
             .whereLayer(applicationLayer).mayOnlyBeAccessedByLayers(presentationLayer, infrastructureLayer)
-            //.whereLayer(domainLayer).mayOnlyBeAccessedByLayers(applicationLayer)
             .whereLayer(domainLayer).mayNotAccessAnyLayer()
         ;
 
@@ -39,7 +38,7 @@ class CleanArchitectureTest {
     static final ArchRule cleanArchitecture_DomainLayer_ShouldNotDependOnSpring = noClasses()
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat()
-            .resideInAnyPackage("org.springframework..")
+            .resideOutsideOfPackages("com.serv.oeste.domain..", "java..")
         ;
 
     @ArchTest

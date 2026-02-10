@@ -42,8 +42,8 @@ public class ClientEntity {
         this.municipio = client.getMunicipio();
     }
 
-    public Client toClient() {
-        return new Client(
+    public Client toDomain() {
+        return Client.restore(
                 this.id,
                 this.nome,
                 this.telefoneFixo,

@@ -6,10 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.UUID;
 
 @Data
 @Entity
@@ -18,10 +14,8 @@ import java.util.UUID;
 @Table(name = "usuario", uniqueConstraints = @UniqueConstraint(columnNames = "Username"))
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @JdbcTypeCode(SqlTypes.BINARY)
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "Username", unique = true, length = 100)
     private String username;
@@ -34,13 +28,15 @@ public class UserEntity {
     private Roles role;
 
     public UserEntity(User user) {
+        this.id = user.getId();
         this.username = user.getUsername();
         this.passwordHash = user.getPasswordHash();
         this.role = user.getRole();
     }
 
-    public User toUser() {
-        return new User(
+    public User toDomain() {
+        return User.restore(
+            id,
             username,
             passwordHash,
             role

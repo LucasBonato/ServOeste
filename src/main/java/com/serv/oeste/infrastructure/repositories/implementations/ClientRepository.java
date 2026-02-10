@@ -14,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -32,10 +34,12 @@ public class ClientRepository implements IClientRepository {
                 .addIf(StringUtils::isNotBlank, filter.endereco(), ClientSpecifications::hasEndereco)
                 .build();
 
-        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size());
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+
+        Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Client> clientsPaged = clientJpaRepository.findAll(specification, pageable)
-                .map(ClientEntity::toClient);
+                .map(ClientEntity::toDomain);
 
         return new PageResponse<>(
                 clientsPaged.getContent(),
@@ -47,16 +51,23 @@ public class ClientRepository implements IClientRepository {
 
     @Override
     public Optional<Client> findById(Integer id) {
-        return clientJpaRepository.findById(id).map(ClientEntity::toClient);
+        return clientJpaRepository.findById(id).map(ClientEntity::toDomain);
+    }
+
+    @Override
+    public List<Client> findAllByIds(List<Integer> ids) {
+        return clientJpaRepository.findAllById(ids).stream()
+                .map(ClientEntity::toDomain)
+                .toList();
     }
 
     @Override
     public Client save(Client client) {
-        return clientJpaRepository.save(new ClientEntity(client)).toClient();
+        return clientJpaRepository.save(new ClientEntity(client)).toDomain();
     }
 
     @Override
-    public void deleteById(Integer id) {
-        clientJpaRepository.deleteById(id);
+    public void deleteAllByIds(List<Integer> ids) {
+        clientJpaRepository.deleteAllByIdInBatch(ids);
     }
 }
