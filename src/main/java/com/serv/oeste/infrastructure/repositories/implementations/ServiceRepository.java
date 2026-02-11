@@ -1,17 +1,11 @@
 package com.serv.oeste.infrastructure.repositories.implementations;
 
-import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
-import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
-import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
-import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
-import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
-import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.IClientJpaRepository;
 import com.serv.oeste.infrastructure.repositories.jpa.IServiceJpaRepository;
 import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
@@ -34,17 +28,13 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ServiceRepository implements IServiceRepository {
     private final IServiceJpaRepository serviceJpaRepository;
-    private final IClientJpaRepository clientJpaRepository;
-    private final ITechnicianJpaRepository technicianJpaRepository;
 
     @Override
     public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
         Specification<ServiceEntity> specification = new SpecificationBuilder<ServiceEntity>()
                 .addIfNotNull(filter.servicoId(), ServiceSpecifications::hasServicoId)
-                .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientEntityById(id)))
-         //     .addIfNotNull(filter.clienteId(), id -> ServiceSpecifications.hasCliente(getClientById(id)))
-         //     .addIfNotNull(filter.tecnicoId(), id -> ServiceSpecifications.hasTecnico(getTechnicianById(id)))
-                .addIfNotNull(filter.tecnicoId(), id -> ServiceSpecifications.hasTecnico(getTechnicianEntityById(id)))
+                .addIfNotNull(filter.clienteId(), ServiceSpecifications::hasClienteId)
+                .addIfNotNull(filter.tecnicoId(), ServiceSpecifications::hasTecnicoId)
                 .addIfNotNull(filter.situacao(), ServiceSpecifications::hasSituacao)
                 .addIfNotNull(filter.garantia(), ServiceSpecifications::hasGarantia)
                 .addIf(StringUtils::isNotBlank, filter.clienteNome(), ServiceSpecifications::hasNomeCliente)
@@ -106,21 +96,5 @@ public class ServiceRepository implements IServiceRepository {
     @Override
     public Set<Integer> findAllClientIdsWithServices(List<Integer> clientIds) {
         return serviceJpaRepository.findDistinctClienteIdsWithServices(clientIds);
-    }
-
-    private Client getClientById(Integer id) {
-        return clientJpaRepository.findById(id).map(ClientEntity::toDomain).orElseThrow(ClientNotFoundException::new);
-    }
-
-    private ClientEntity getClientEntityById(Integer id) {
-        return clientJpaRepository.findById(id).orElseThrow(ClientNotFoundException::new);
-    }
-
-    private Technician getTechnicianById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain).orElseThrow(TechnicianNotFoundException::new);
-    }
-
-    private TechnicianEntity getTechnicianEntityById(Integer id) {
-        return technicianJpaRepository.findById(id).orElseThrow(TechnicianNotFoundException::new);
     }
 }

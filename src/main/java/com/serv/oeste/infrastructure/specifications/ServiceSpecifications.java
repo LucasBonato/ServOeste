@@ -1,11 +1,7 @@
 package com.serv.oeste.infrastructure.specifications;
 
-import com.serv.oeste.domain.entities.client.Client;
-import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.SituacaoServico;
-import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
-import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,22 +9,13 @@ import java.time.LocalDate;
 import java.util.Date;
 
 public class ServiceSpecifications {
- //   public static Specification<ServiceEntity> hasCliente(Client cliente) {
- //       return (root, query, cb) -> cb.equal(root.get("cliente"), cliente);
- //   }
 
-    public static Specification<ServiceEntity> hasCliente(ClientEntity cliente) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("cliente"), cliente);
+    public static Specification<ServiceEntity> hasClienteId(Integer id) {
+        return (root, query, cb) -> cb.equal(root.get("cliente").get("id"), id);
     }
 
- //   public static Specification<ServiceEntity> hasTecnico(Technician tecnico) {
- //       return (root, query, cb) -> cb.equal(root.get("tecnico"), tecnico);
- //   }
-
-    public static Specification<ServiceEntity> hasTecnico(TechnicianEntity tecnico) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("tecnico"), tecnico);
+    public static Specification<ServiceEntity> hasTecnicoId(Integer id) {
+        return (root, query, cb) -> cb.equal(root.get("tecnico").get("id"), id);
     }
 
     public static Specification<ServiceEntity> hasNomeCliente(String clienteNome) {
