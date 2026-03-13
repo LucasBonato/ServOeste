@@ -2,16 +2,14 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 
 import com.serv.oeste.domain.contracts.repositories.IServiceRepository;
 import com.serv.oeste.domain.entities.service.Service;
+import com.serv.oeste.domain.utils.StringUtils;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.ServiceFilter;
 import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
-import com.serv.oeste.infrastructure.repositories.jpa.IClientJpaRepository;
 import com.serv.oeste.infrastructure.repositories.jpa.IServiceJpaRepository;
-import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
 import com.serv.oeste.infrastructure.specifications.ServiceSpecifications;
 import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

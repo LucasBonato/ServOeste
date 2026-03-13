@@ -9,7 +9,7 @@ import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.IClientJpaRepository;
 import com.serv.oeste.infrastructure.specifications.ClientSpecifications;
 import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
-import io.micrometer.common.util.StringUtils;
+import com.serv.oeste.domain.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
