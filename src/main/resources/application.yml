@@ -55,6 +55,25 @@ app:
     username: ${APP_ADMIN_USERNAME}
     password: ${APP_ADMIN_PASSWORD}
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_ENDPOINT}/v1/metrics
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_ENDPOINT}/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTEL_ENDPOINT}/v1/logs
+
+
 #logging:
 #  level:
 #    org:

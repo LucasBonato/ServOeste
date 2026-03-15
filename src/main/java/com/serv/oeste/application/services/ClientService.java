@@ -29,38 +29,38 @@ public class ClientService {
 
     @Cacheable("clienteCache")
     public ClienteResponse fetchOneById(Integer id) {
-        logger.debug("DEBUG - Fetching client by ID: {}", id);
+        logger.debug("Fetching client by ID: {}", id);
         Client client = getClienteById(id);
-        logger.info("INFO - Client found: id={}, nome={}", id, client.getNome());
+        logger.info("Client found: id={}, nome={}", id, client.getNome());
 
         return getClienteResponse(client);
     }
     
     @Cacheable("allClientes")
     public PageResponse<ClienteResponse> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
-        logger.debug("DEBUG - Fetching clients with filter: {}", filtroRequest);
+        logger.debug("Fetching clients with filter: {}", filtroRequest);
         PageResponse<ClienteResponse> clientsResponse = clientRepository.filter(
                     filtroRequest.toClientFilter(),
                     pageFilterRequest.toPageFilter()
                 )
                 .map(ClienteResponse::new);
-        logger.info("INFO - Found {} clients with filter: {}", clientsResponse.getPage().totalPages(), filtroRequest);
+        logger.info("Found {} clients with filter: {}", clientsResponse.getPage().totalPages(), filtroRequest);
 
         return clientsResponse;
     }
     
     public ClienteResponse create(ClienteRequest clienteRequest) {
-        logger.info("INFO - Creating new client");
+        logger.info("Creating new client");
 
         Client cliente = clientRepository.save(clienteRequest.toClient());
 
-        logger.info("INFO - Client Created successfully with id={}", cliente.getId());
+        logger.info("Client Created successfully with id={}", cliente.getId());
 
         return getClienteResponse(cliente);
     }
     
     public ClienteResponse update(Integer id, ClienteRequest clienteRequest) {
-        logger.info("INFO - Updating client id={}", id);
+        logger.info("Updating client id={}", id);
 
         Client cliente = getClienteById(id);
         cliente.update(
@@ -74,7 +74,7 @@ public class ClientService {
         );
 
         Client clientUpdated = clientRepository.save(cliente);
-        logger.info("INFO - Client updated id={}", clientUpdated.getId());
+        logger.info("Client updated id={}", clientUpdated.getId());
 
         return getClienteResponse(cliente);
     }
@@ -107,7 +107,7 @@ public class ClientService {
         return clientRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    logger.error("ERROR - Client with id={} not found", id);
+                    logger.error("Client with id={} not found", id);
                     return new ClientNotFoundException();
                 });
     }

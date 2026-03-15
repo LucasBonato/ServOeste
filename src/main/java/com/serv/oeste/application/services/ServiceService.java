@@ -1,5 +1,4 @@
 package com.serv.oeste.application.services;
-
 import com.serv.oeste.application.dtos.reponses.ServicoResponse;
 import com.serv.oeste.application.dtos.requests.PageFilterRequest;
 import com.serv.oeste.application.dtos.requests.ServicoRequest;
@@ -27,14 +26,14 @@ public class ServiceService {
     private final Logger logger = LoggerFactory.getLogger(ServiceService.class);
 
     public ServicoResponse fetchOneById(Integer id) {
-        logger.debug("DEBUG - Fetching service by ID: {}", id);
+        logger.debug("Fetching service by ID: {}", id);
         Service service = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    logger.error("ERROR - Service with id={} not found", id);
+                    logger.error("Service with id={} not found", id);
                     return new ServiceNotFoundException();
                 });
-        logger.info("INFO - Service found: id={}", id);
+        logger.info("Service found: id={}", id);
 
         return new ServicoResponse(service);
     }
@@ -44,16 +43,16 @@ public class ServiceService {
             ServicoRequestFilter servicoRequestFilter,
             PageFilterRequest pageFilter
     ) {
-        logger.debug("DEBUG - Fetching services with filter: {}", servicoRequestFilter);
+        logger.debug("Fetching services with filter: {}", servicoRequestFilter);
         PageResponse<ServicoResponse> servicos = serviceRepository
                 .filter(servicoRequestFilter.toServiceFilter(), pageFilter.toPageFilter())
                 .map(ServicoResponse::new);
-        logger.info("INFO - Found {} services with filter: {}", servicos.getPage().totalPages(), servicoRequestFilter);
+        logger.info("Found {} services with filter: {}", servicos.getPage().totalPages(), servicoRequestFilter);
         return servicos;
     }
 
     public ServicoResponse create(ServicoRequest servicoRequest, Integer clienteId) {
-        logger.info("INFO - Creating service for client id {}", clienteId);
+        logger.info("Creating service for client id {}", clienteId);
         Client cliente = clientService.getClienteById(clienteId);
         Technician tecnico = (servicoRequest.idTecnico() != null)
                 ? technicianService.getTecnicoById(servicoRequest.idTecnico())
@@ -65,15 +64,15 @@ public class ServiceService {
     }
     
     public ServicoResponse update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
-        logger.info("INFO - Updating service with Id: {}", id);
+        logger.info("Updating service with Id: {}", id);
         Service servico = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    logger.error("ERROR - Service with Id {} not found", id);
+                    logger.error("Service with Id {} not found", id);
                     return new ServiceNotFoundException();
                 });
 
-        logger.debug("DEBUG - Fetching related client and technician...");
+        logger.debug("Fetching related client and technician...");
         Client cliente = clientService.getClienteById(servicoUpdateRequest.idCliente());
         Technician tecnico = technicianService.getTecnicoById(servicoUpdateRequest.idTecnico());
 
@@ -100,12 +99,12 @@ public class ServiceService {
         
         Service servicoUpdated = serviceRepository.save(servico);
 
-        logger.info("INFO - Service with Id {} updated successfully", id);
+        logger.info("Service with Id {} updated successfully", id);
         return new ServicoResponse(servicoUpdated);
     }
     
     public void deleteListByIds(List<Integer> ids) {
-        logger.info("INFO - Deleting services with Ids: {}", ids);
+        logger.info("Deleting services with Ids: {}", ids);
         serviceRepository.deleteAllById(ids);
     }
 }
