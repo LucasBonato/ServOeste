@@ -42,7 +42,6 @@ public class ProblemDetailsUtils {
                 case REQUEST_TIMEOUT -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.7";
                 case CONFLICT -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.8";
                 case GONE -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.9";
-                case PAYLOAD_TOO_LARGE -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.11";
                 case UNSUPPORTED_MEDIA_TYPE -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.13";
                 case INTERNAL_SERVER_ERROR -> "https://tools.ietf.org/html/rfc7231#section-6.6.1";
                 case NOT_IMPLEMENTED -> "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.2";

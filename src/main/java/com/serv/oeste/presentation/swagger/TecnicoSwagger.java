@@ -28,7 +28,7 @@ public interface TecnicoSwagger extends SwaggerConfiguration {
     })
     ResponseEntity<PageResponse<TecnicoResponse>> fetchListByFilter(TecnicoRequestFilter filter, PageFilterRequest pageFilter);
 
-    @Operation(description = "Forma de trazer o registro de um técnico atravez de seu id")
+    @Operation(description = "Forma de trazer o registro de um técnico através de seu id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "[Ok] Técnico devolvido com sucesso.", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "[NotFound] O Técnico informado não foi encontrado.", content = @Content(schema = @Schema(implementation = DummyResponse.class)))

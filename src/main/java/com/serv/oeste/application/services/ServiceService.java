@@ -20,20 +20,22 @@ import java.util.List;
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
 public class ServiceService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceService.class);
+
     private final ClientService clientService;
     private final TechnicianService technicianService;
     private final IServiceRepository serviceRepository;
-    private final Logger logger = LoggerFactory.getLogger(ServiceService.class);
 
     public ServicoResponse fetchOneById(Integer id) {
-        logger.debug("Fetching service by ID: {}", id);
+        LOGGER.debug("service.fetch-by-id.started id={}", id);
         Service service = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Service with id={} not found", id);
+                    LOGGER.warn("service.fetch-by-id.not-found id={}", id);
                     return new ServiceNotFoundException();
                 });
-        logger.info("Service found: id={}", id);
+
+        LOGGER.info("service.fetch-by-id.succeeded id={}", id);
 
         return new ServicoResponse(service);
     }
@@ -43,16 +45,27 @@ public class ServiceService {
             ServicoRequestFilter servicoRequestFilter,
             PageFilterRequest pageFilter
     ) {
-        logger.debug("Fetching services with filter: {}", servicoRequestFilter);
+        LOGGER.debug("service.fetch-list.started filter={}", servicoRequestFilter);
         PageResponse<ServicoResponse> servicos = serviceRepository
                 .filter(servicoRequestFilter.toServiceFilter(), pageFilter.toPageFilter())
                 .map(ServicoResponse::new);
-        logger.info("Found {} services with filter: {}", servicos.getPage().totalPages(), servicoRequestFilter);
+
+        LOGGER.debug(
+                "service.fetch-list.completed totalElements={} totalPages={} filter={}",
+                servicos.getPage().totalElements(),
+                servicos.getPage().totalPages(),
+                servicoRequestFilter
+        );
+
         return servicos;
     }
 
     public ServicoResponse create(ServicoRequest servicoRequest, Integer clienteId) {
-        logger.info("Creating service for client id {}", clienteId);
+        LOGGER.info("service.create.started clientId={} technicianId={}",
+                clienteId,
+                servicoRequest.idTecnico()
+        );
+
         Client cliente = clientService.getClienteById(clienteId);
         Technician tecnico = (servicoRequest.idTecnico() != null)
                 ? technicianService.getTecnicoById(servicoRequest.idTecnico())
@@ -60,19 +73,30 @@ public class ServiceService {
 
         Service novoServico = serviceRepository.save(servicoRequest.toDomain(cliente, tecnico));
 
+        LOGGER.info("service.create.completed id={} clientId={} technicianId={}",
+                novoServico.getId(),
+                clienteId,
+                servicoRequest.idTecnico()
+        );
+
         return new ServicoResponse(novoServico);
     }
     
     public ServicoResponse update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
-        logger.info("Updating service with Id: {}", id);
+        LOGGER.info("service.update.started id={}", id);
         Service servico = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Service with Id {} not found", id);
+                    LOGGER.warn("service.update.not-found id={}", id);
                     return new ServiceNotFoundException();
                 });
 
-        logger.debug("Fetching related client and technician...");
+        LOGGER.debug("service.update.fetch-related-entities id={} clientId={} technicianId={}",
+                id,
+                servicoUpdateRequest.idCliente(),
+                servicoUpdateRequest.idTecnico()
+        );
+
         Client cliente = clientService.getClienteById(servicoUpdateRequest.idCliente());
         Technician tecnico = technicianService.getTecnicoById(servicoUpdateRequest.idTecnico());
 
@@ -96,15 +120,20 @@ public class ServiceService {
                 cliente,
                 tecnico
         );
-        
+
         Service servicoUpdated = serviceRepository.save(servico);
 
-        logger.info("Service with Id {} updated successfully", id);
+        LOGGER.info("service.update.completed id={} clientId={} technicianId={}",
+                id,
+                servicoUpdateRequest.idCliente(),
+                servicoUpdateRequest.idTecnico()
+        );
         return new ServicoResponse(servicoUpdated);
     }
-    
+
     public void deleteListByIds(List<Integer> ids) {
-        logger.info("Deleting services with Ids: {}", ids);
+        LOGGER.info("service.delete-list.started ids={}", ids);
         serviceRepository.deleteAllById(ids);
+        LOGGER.info("service.delete-list.completed count={}", ids != null ? ids.size() : 0);
     }
 }
