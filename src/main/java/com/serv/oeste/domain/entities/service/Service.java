@@ -99,7 +99,7 @@ public class Service {
         this.cliente = cliente;
         this.tecnico = tecnico;
 
-        validate();
+        validateCreation(situacao);
 
         this.descricao = getHistory("", situacao, descricao);
     }
@@ -196,8 +196,7 @@ public class Service {
         this.equipamento = equipamento;
         this.marca = marca;
         this.filial = filial;
-        this.descricao = getHistory(descricao, situacao, getDescricao());
-        this.situacao = situacao;
+        this.descricao = getHistory(getDescricao(), situacao, descricao);
         this.horarioPrevisto = horarioPrevisto;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
@@ -212,7 +211,11 @@ public class Service {
         this.cliente = cliente;
         this.tecnico = tecnico;
 
-        validate();
+        ErrorCollector errors = validateTransition(situacao);
+
+        this.situacao = situacao;
+
+        validateCommon(errors);
     }
 
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
@@ -223,7 +226,7 @@ public class Service {
         }
 
         String newEntry = String.format(
-                "[%TD] - %s - %s%n",
+                "[%TD] - %s - %s",
                 LocalDate.now(),
                 formattedSituation,
                 descricao
@@ -235,9 +238,27 @@ public class Service {
         return newEntry;
     }
 
-    private void validate() {
+    private void validateCreation(SituacaoServico situacao) {
         ErrorCollector errors = new ErrorCollector();
 
+        if (situacao == null)
+            errors.add(ErrorFields.SITUACAO, "Situação inicial é obrigatória");
+        if (situacao != null && !SituacaoServico.isInicial(situacao))
+            errors.add(ErrorFields.SITUACAO, "Situação inicial inválida: " + situacao);
+
+        validateCommon(errors);
+    }
+
+    private ErrorCollector validateTransition(SituacaoServico destino) {
+        ErrorCollector errors = new ErrorCollector();
+
+        if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino) && situacao != destino)
+            errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
+
+        return errors;
+    }
+
+    private void validateCommon(ErrorCollector errors) {
         if (cliente == null)
             errors.add(ErrorFields.CLIENTE, "Cliente é obrigatório");
         if (tecnico == null && isTechnicianNeeded(situacao))
@@ -260,6 +281,18 @@ public class Service {
             errors.add(ErrorFields.SERVICO, "O Valor da Comissão não pode ser negativo.");
         if (valorPecas != null && valorPecas < 0)
             errors.add(ErrorFields.SERVICO, "O Valor das Peças não pode ser negativo.");
+        if (situacao.exigeFormaPagamento() && formaPagamento == null)
+            errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeDataFechamento() && dataFechamento == null)
+            errors.add(ErrorFields.DATA, "Data fechamento é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigePagamentoComissao() && dataPagamentoComissao == null)
+            errors.add(ErrorFields.DATA, "Data Pagamento Comissao é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeFimGarantia() && dataFimGarantia == null)
+            errors.add(ErrorFields.DATA, "Data Fim Garantia é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeAtendimentoPrevisto() && dataAtendimentoPrevisto == null)
+            errors.add(ErrorFields.DATA, "Data Atendimento Previsto é obrigatória para a situação " + situacao.getSituacao());
+        if (situacao.exigeAtendimentoEfetivo() && dataAtendimentoEfetiva == null)
+            errors.add(ErrorFields.DATA, "Data Atendimento Efetivo é obrigatória para a situação " + situacao.getSituacao());
 
         errors.throwIfAny(ServiceNotValidException::new);
     }

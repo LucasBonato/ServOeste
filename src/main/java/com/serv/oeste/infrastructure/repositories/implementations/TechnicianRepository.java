@@ -11,7 +11,7 @@ import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
 import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
 import com.serv.oeste.infrastructure.specifications.TechnicianSpecifications;
-import io.micrometer.common.util.StringUtils;
+import com.serv.oeste.domain.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

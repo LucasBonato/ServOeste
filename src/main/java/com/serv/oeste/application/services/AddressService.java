@@ -8,7 +8,7 @@ import com.serv.oeste.domain.exceptions.address.AddressNotValidException;
 import com.serv.oeste.domain.exceptions.external.ExternalNetworkException;
 import com.serv.oeste.domain.exceptions.external.ExternalServerDownException;
 import com.serv.oeste.domain.exceptions.external.RestTemplateException;
-import io.micrometer.common.util.StringUtils;
+import com.serv.oeste.domain.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;

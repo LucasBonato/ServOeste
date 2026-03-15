@@ -1,7 +1,5 @@
 package com.serv.oeste.infrastructure.specifications;
 
-import com.serv.oeste.domain.entities.client.Client;
-import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.infrastructure.entities.service.ServiceEntity;
 import jakarta.persistence.criteria.JoinType;
@@ -11,12 +9,13 @@ import java.time.LocalDate;
 import java.util.Date;
 
 public class ServiceSpecifications {
-    public static Specification<ServiceEntity> hasCliente(Client cliente) {
-        return (root, query, cb) -> cb.equal(root.get("cliente"), cliente);
+
+    public static Specification<ServiceEntity> hasClienteId(Integer id) {
+        return (root, query, cb) -> cb.equal(root.get("cliente").get("id"), id);
     }
 
-    public static Specification<ServiceEntity> hasTecnico(Technician tecnico) {
-        return (root, query, cb) -> cb.equal(root.get("tecnico"), tecnico);
+    public static Specification<ServiceEntity> hasTecnicoId(Integer id) {
+        return (root, query, cb) -> cb.equal(root.get("tecnico").get("id"), id);
     }
 
     public static Specification<ServiceEntity> hasNomeCliente(String clienteNome) {
@@ -68,6 +67,10 @@ public class ServiceSpecifications {
 
     public static Specification<ServiceEntity> hasEquipamento(String equipamento) {
         return (root, query, cb) -> cb.like(root.get("equipamento"), "%" + equipamento + "%");
+    }
+
+    public static Specification<ServiceEntity> hasMarca(String marca) {
+        return (root, query, cb) -> cb.like(root.get("marca"), "%" + marca + "%");
     }
 
     public static Specification<ServiceEntity> isDataAtendimentoEfetivoBetween(Date dataAtendimentoEfetivoAntes, Date dataAtendimentoEfetivoDepois) {
