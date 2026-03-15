@@ -1,6 +1,7 @@
 package com.serv.oeste.application.services;
 
 import com.serv.oeste.domain.entities.user.User;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,7 @@ public record UserPrincipal(
         User user
 ) implements UserDetails {
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public @NullMarked Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(user.getRole().getRoleWithPrefix()));
     }
 
@@ -22,7 +23,7 @@ public record UserPrincipal(
     }
 
     @Override
-    public String getUsername() {
+    public @NullMarked String getUsername() {
         return user.getUsername();
     }
 

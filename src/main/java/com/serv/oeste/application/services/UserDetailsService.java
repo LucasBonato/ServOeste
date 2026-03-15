@@ -3,6 +3,7 @@ package com.serv.oeste.application.services;
 import com.serv.oeste.domain.contracts.repositories.IUserRepository;
 import com.serv.oeste.domain.entities.user.User;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     private final IUserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NullMarked UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new UserPrincipal(user);
     }
