@@ -1,5 +1,7 @@
 package com.serv.oeste.infrastructure.middleware;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 
@@ -14,9 +16,17 @@ public class ProblemDetailsUtils {
     public static ProblemDetail create(HttpStatusCode status, String detailMessage, Object error) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("error", error);
+
+        SpanContext spanContext = Span.current().getSpanContext();
+        if (spanContext.isValid()) {
+            properties.put("traceId", spanContext.getTraceId());
+        }
+
+
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(status, detailMessage);
         detail.setType(getTypeByStatus(status));
         detail.setProperties(properties);
+
         return detail;
     }
 
