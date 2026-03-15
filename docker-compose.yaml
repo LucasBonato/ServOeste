@@ -37,6 +37,17 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+  aspire:
+    container_name: aspire-dashboard
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    environment:
+      - ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+      - Dashboard__ResourceServiceClient__AuthMode=Unsecured
+      - ASPIRE_ALLOW_UNSECURED_TRANSPORT=true
+    ports:
+      - "4317:18889"
+      - "4318:18890"
+      - "18888:18888"
 
 volumes:
   mysql_data:
