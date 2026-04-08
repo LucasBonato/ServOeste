@@ -249,11 +249,23 @@ public class Service {
         validateCommon(errors);
     }
 
+    // private ErrorCollector validateTransition(SituacaoServico destino) {
+    //      ErrorCollector errors = new ErrorCollector();
+    
+    //      if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino) && situacao != destino)
+    //          errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
+    
+    //     return errors;
+    // }
+
     private ErrorCollector validateTransition(SituacaoServico destino) {
         ErrorCollector errors = new ErrorCollector();
 
         if (!situacao.podeAvancarPara(destino) && !situacao.podeRetornarPara(destino) && situacao != destino)
-            errors.add(ErrorFields.SITUACAO, "Transição inválida de situação: " + situacao + " para " + destino);
+            errors.add(ErrorFields.SITUACAO,
+                    String.format("Transição inválida de situação: '%s' para '%s'",
+                            situacao.getSituacao(),
+                            destino.getSituacao()));
 
         return errors;
     }
