@@ -77,7 +77,7 @@ class ServiceServiceTest {
             // Assert
             assertNotNull(response);
             List<ServicoResponse> content = response.getContent();
-            assertNotNull(response);
+            assertNotNull(content);
             assertEquals(1, content.size());
             assertEquals("Monitor", content.getFirst().equipamento());
             assertEquals("João Silva", content.getFirst().nomeCliente());
