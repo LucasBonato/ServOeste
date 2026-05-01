@@ -257,9 +257,11 @@ This will start:
 
 ## 📘 API Documentation & Example Requests
 
-Once the application is running, the Swagger UI is available at:
+Once the application is running, the OpenAPI with Scalar is available at:
 
+- `http://localhost:8080/scalar`
 - `http://localhost:8080/swagger`
+- `http://localhost:8080/docs`
 
 From there you can explore and execute example requests for:
 

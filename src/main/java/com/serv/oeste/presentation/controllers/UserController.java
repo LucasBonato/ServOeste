@@ -6,6 +6,7 @@ import com.serv.oeste.application.dtos.requests.UserRegisterRequest;
 import com.serv.oeste.application.dtos.requests.UserUpdateRequest;
 import com.serv.oeste.application.services.UserService;
 import com.serv.oeste.domain.valueObjects.PageResponse;
+import com.serv.oeste.presentation.swagger.UserSwagger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserSwagger {
     private final UserService userService;
 
     @GetMapping

@@ -41,8 +41,13 @@ spring:
 
 springdoc:
   default-produces-media-type: application/json
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
-    path: /swagger
+    enabled: false
+  scalar-ui:
+    enabled: true
+    path: /scalar
 
 security:
   jwt:

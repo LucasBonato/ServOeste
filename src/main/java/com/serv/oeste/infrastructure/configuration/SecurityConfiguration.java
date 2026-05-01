@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                         grantedAuthoritiesMapper(roleHierarchy())
                 ))
                 .authorizeHttpRequests(authorization -> authorization
-                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger", "/docs", "/scalar", "/scalar/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/refresh").permitAll()
                         .requestMatchers("/auth/register", "/user/**").hasRole(Roles.ADMIN.getRole())
                         .anyRequest().authenticated()
