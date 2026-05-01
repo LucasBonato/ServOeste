@@ -47,8 +47,7 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    @Bean
-    DaoAuthenticationProvider authenticationProvider(
+    private DaoAuthenticationProvider authenticationProvider(
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder,
             GrantedAuthoritiesMapper authoritiesMapper

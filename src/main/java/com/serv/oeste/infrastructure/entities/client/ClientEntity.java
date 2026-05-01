@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "cliente")
 @Data
 @NoArgsConstructor
+@org.springframework.data.relational.core.mapping.Table(name = "cliente")
 public class ClientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

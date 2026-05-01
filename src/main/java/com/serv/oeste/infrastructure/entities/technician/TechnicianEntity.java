@@ -12,9 +12,10 @@ import org.hibernate.annotations.FetchMode;
 import java.util.List;
 
 @Entity
-@Table(name = "Tecnico")
+@Table(name = "tecnico")
 @Data
 @NoArgsConstructor
+@org.springframework.data.relational.core.mapping.Table(name = "tecnico")
 public class TechnicianEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
