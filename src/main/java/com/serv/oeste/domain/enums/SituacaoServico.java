@@ -133,6 +133,7 @@ public enum SituacaoServico {
 
     public boolean exigeDescricao() {
         return this == AGUARDANDO_AGENDAMENTO
+                || this == AGUARDANDO_ATENDIMENTO
                 || this == AGUARDANDO_APROVACAO
                 || this == CANCELADO
                 || this == CORTESIA

@@ -262,6 +262,20 @@ public class Service {
                 )
             );
 
+        if (
+            situacao.equals(SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR) &&
+            destino.equals(SituacaoServico.GARANTIA) &&
+            dataInicioGarantia == null
+        )
+            errors.add(
+                ErrorFields.SITUACAO,
+                String.format(
+                    "Transição inválida de situação: '%s' para '%s' pois garantia precisa estar preenchida",
+                    situacao.getSituacao(),
+                    destino.getSituacao()
+                )
+            );
+
         return errors;
     }
 
