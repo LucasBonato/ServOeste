@@ -276,9 +276,11 @@ public class Service {
             errors.add(ErrorFields.MARCA, "Marca é obrigatória");
         if (StringUtils.isBlank(descricao))
             errors.add(ErrorFields.DESCRICAO, "Descrição é obrigatória");
-        if (descricao != null && descricao.length() < 10)
+        if (situacao.exigeDescricao() && (descricao == null || descricao.isEmpty()))
+            errors.add(ErrorFields.DESCRICAO, "Descrição é obrigatória para a situação informada");
+        if (situacao.exigeDescricao() && descricao != null && descricao.length() < 10)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
-        if (descricao != null && descricao.split(" ").length < 3)
+        if (situacao.exigeDescricao() && descricao != null && descricao.split(" ").length < 3)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
         if (StringUtils.isBlank(filial))
             errors.add(ErrorFields.FILIAL, "A filial é obrigatória");
