@@ -87,7 +87,7 @@ public class TechnicianRepository implements ITechnicianRepository {
         return new TechnicianAvailability(
                 projection.getId(),
                 projection.getNome(),
-                projection.getData().toLocalDate(),
+                projection.getData(),
                 projection.getDia(),
                 projection.getPeriodo(),
                 projection.getQuantidade()
