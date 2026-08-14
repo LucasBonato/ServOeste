@@ -17,11 +17,11 @@ BEGIN
         FROM tecnico t
         INNER JOIN tecnico_especialidade te ON te.id_tecnico = t.id
         WHERE t.situacao = 'ATIVO'
-            AND te.id_especialidade = 1
+            AND te.id_especialidade = especialidade_id
     )
     SELECT
         t.id AS Id,
-        DAYOFWEEK(d.data) AS Dia,
+        WEEKDAY(d.data) + 1 AS Dia,
         d.data AS Data,
         s.horario_previsto AS Periodo,
         CONCAT(t.nome, ' ', t.sobrenome) AS Nome,

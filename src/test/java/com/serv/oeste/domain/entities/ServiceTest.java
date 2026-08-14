@@ -604,4 +604,504 @@ class ServiceTest {
             assertEquals("Geladeira", service.getEquipamento());
         }
     }
+
+    @Nested
+    class UpdateGarantia {
+        @Test
+        void update_GarantiaTransitionWithoutDataInicioGarantia_ShouldThrowServiceNotValidException() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.restore(
+                    1,
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Histórico antigo de retirada pendente",
+                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    LocalDate.now(),
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now(),
+                    null,
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now().minusDays(1),
+                    LocalDate.now().minusDays(1),
+                    client,
+                    technician
+            );
+
+            // Act & Assert
+            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "TV",
+                            "LG",
+                            "Filial 1",
+                            "Aparelho retirado e garantia ativada",
+                            SituacaoServico.GARANTIA,
+                            HorarioPrevisto.TARDE,
+                            500.0,
+                            FormaPagamento.PIX,
+                            100.0,
+                            50.0,
+                            null,
+                            LocalDate.now(),
+                            null,
+                            LocalDate.now().plusMonths(3),
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+
+            // Assert
+            assertTrue(exception.getMessage().contains("garantia precisa estar preenchida"));
+        }
+
+        @Test
+        void update_GarantiaTransitionWithDataInicioGarantia_ShouldUpdateSuccessfully() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.restore(
+                    1,
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Histórico antigo de retirada pendente",
+                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    LocalDate.now(),
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now(),
+                    null,
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now().minusDays(1),
+                    LocalDate.now().minusDays(1),
+                    client,
+                    technician
+            );
+
+            // Act
+            service.update(
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Aparelho retirado e garantia ativada",
+                    SituacaoServico.GARANTIA,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.GARANTIA, service.getSituacao());
+            assertEquals(LocalDate.now(), service.getDataInicioGarantia());
+        }
+
+        @Test
+        void update_ToNaoRetira3MesesWithoutDataInicioGarantia_ShouldNotRequireGarantiaDate() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.restore(
+                    1,
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Histórico antigo de retirada pendente",
+                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    LocalDate.now(),
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now(),
+                    null,
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now().minusDays(1),
+                    LocalDate.now().minusDays(1),
+                    client,
+                    technician
+            );
+
+            // Act
+            service.update(
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Cliente não retirou o aparelho há 3 meses",
+                    SituacaoServico.NAO_RETIRA_3_MESES,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.NAO_RETIRA_3_MESES, service.getSituacao());
+            assertNull(service.getDataInicioGarantia());
+        }
+    }
+
+    @Nested
+    class TransitionFlow {
+        @Test
+        void update_AtendimentoToAprovacao_ShouldBeValidTransition() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act
+            service.update(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Orçamento apresentado ao cliente para aprovação",
+                    SituacaoServico.AGUARDANDO_APROVACAO,
+                    HorarioPrevisto.TARDE,
+                    700.0,
+                    FormaPagamento.CREDITO,
+                    200.0,
+                    70.0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.AGUARDANDO_APROVACAO, service.getSituacao());
+        }
+
+        @Test
+        void update_AprovacaoToOrcamentoAprovado_ShouldBeValidTransition() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            service.update(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Orçamento apresentado ao cliente para aprovação",
+                    SituacaoServico.AGUARDANDO_APROVACAO,
+                    HorarioPrevisto.TARDE,
+                    700.0,
+                    FormaPagamento.CREDITO,
+                    200.0,
+                    70.0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act
+            service.update(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Orçamento aprovado pelo cliente",
+                    SituacaoServico.ORCAMENTO_APROVADO,
+                    HorarioPrevisto.TARDE,
+                    700.0,
+                    FormaPagamento.CREDITO,
+                    200.0,
+                    70.0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.ORCAMENTO_APROVADO, service.getSituacao());
+        }
+
+        @Test
+        void update_AtendimentoToOrcamentoAprovado_ShouldThrowInvalidTransition() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act & Assert
+            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Notebook",
+                            "Dell",
+                            "Filial 1",
+                            "Tentativa de pular as etapas de aprovação",
+                            SituacaoServico.ORCAMENTO_APROVADO,
+                            HorarioPrevisto.TARDE,
+                            700.0,
+                            FormaPagamento.CREDITO,
+                            200.0,
+                            70.0,
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+
+            // Assert
+            assertTrue(exception.getMessage().contains("Transição inválida"));
+        }
+
+        @Test
+        void update_NullSituacao_ShouldThrowServiceNotValidException() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act & Assert
+            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Notebook",
+                            "Dell",
+                            "Filial 1",
+                            "Atualização sem situação informada",
+                            null,
+                            HorarioPrevisto.TARDE,
+                            700.0,
+                            FormaPagamento.CREDITO,
+                            200.0,
+                            70.0,
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+
+            // Assert
+            assertTrue(exception.getMessage().contains("Situação de destino é obrigatória"));
+        }
+    }
+
+    @Nested
+    class DescriptionValidation {
+        @Test
+        void update_ShortDescriptionForSituationRequiringDescription_ShouldThrowServiceNotValidException() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    HorarioPrevisto.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Act & Assert
+            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class, () ->
+                    service.update(
+                            "Notebook",
+                            "Dell",
+                            "Filial 1",
+                            "Curto",
+                            SituacaoServico.AGUARDANDO_APROVACAO,
+                            HorarioPrevisto.TARDE,
+                            700.0,
+                            FormaPagamento.CREDITO,
+                            200.0,
+                            70.0,
+                            null,
+                            null,
+                            null,
+                            null,
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+
+            // Assert
+            assertTrue(exception.getMessage().contains("pelo menos 10 caracteres"));
+        }
+
+        @Test
+        void update_NullDescriptionForSituationNotRequiringDescription_ShouldNotThrow() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.restore(
+                    1,
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    "Histórico antigo de retirada pendente",
+                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    LocalDate.now(),
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now(),
+                    null,
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now().minusDays(1),
+                    LocalDate.now().minusDays(1),
+                    client,
+                    technician
+            );
+
+            // Act
+            service.update(
+                    "TV",
+                    "LG",
+                    "Filial 1",
+                    null,
+                    SituacaoServico.GARANTIA,
+                    HorarioPrevisto.TARDE,
+                    500.0,
+                    FormaPagamento.PIX,
+                    100.0,
+                    50.0,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now().plusMonths(3),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.GARANTIA, service.getSituacao());
+            assertFalse(service.getDescricao().contains("null"));
+        }
+
+        @Test
+        void create_BlankDescription_ShouldThrowServiceNotValidException() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            // Act & Assert
+            ServiceNotValidException exception = assertThrows(ServiceNotValidException.class, () ->
+                    Service.create(
+                            "Geladeira",
+                            "Brastemp",
+                            "Filial 1",
+                            "",
+                            HorarioPrevisto.MANHA,
+                            LocalDate.now(),
+                            client,
+                            technician
+                    )
+            );
+
+            // Assert
+            assertTrue(exception.getMessage().contains("Descrição é obrigatória"));
+        }
+    }
 }
