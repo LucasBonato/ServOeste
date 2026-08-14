@@ -64,6 +64,9 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  observations:
+    annotations:
+      enabled: true
   otlp:
     metrics:
       export:

@@ -127,6 +127,17 @@
 			<artifactId>opentelemetry-logback-appender-1.0</artifactId>
 			<version>2.23.0-alpha</version>
 		</dependency>
+
+		<dependency>
+			<groupId>net.ttddyy.observation</groupId>
+			<artifactId>datasource-micrometer-spring-boot</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

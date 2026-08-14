@@ -1,10 +1,12 @@
 package com.serv.oeste.infrastructure.middleware;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import com.serv.oeste.application.services.UserPrincipal;
 import com.serv.oeste.domain.exceptions.auth.AuthTokenExpiredException;
 import com.serv.oeste.domain.exceptions.auth.AuthTokenNotValidException;
 import com.serv.oeste.infrastructure.security.contracts.ITokenVerifier;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.opentelemetry.api.trace.Span;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -55,6 +57,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    if (userDetails instanceof UserPrincipal principal) {
+                        Span span = Span.current();
+                        span.setAttribute("enduser.id", principal.user().getUsername());
+                        span.setAttribute("user.id", principal.user().getId());
+                    }
                 }
             }
         }
