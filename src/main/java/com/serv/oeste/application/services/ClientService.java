@@ -28,7 +28,6 @@ public class ClientService {
     private final IClientRepository clientRepository;
     private final IServiceRepository serviceRepository;
 
-    @Cacheable("clienteCache")
     public ClienteResponse fetchOneById(Integer id) {
         LOGGER.debug("client.fetch-by-id.started id={}", id);
         Client client = getClienteById(id);
@@ -37,7 +36,6 @@ public class ClientService {
         return getClienteResponse(client);
     }
     
-    @Cacheable("allClientes")
     public PageResponse<ClienteResponse> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
         LOGGER.debug("client.fetch-list.started filter={}", filtroRequest);
         PageResponse<ClienteResponse> clientsResponse = clientRepository.filter(

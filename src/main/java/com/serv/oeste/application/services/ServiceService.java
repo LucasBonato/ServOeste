@@ -40,7 +40,6 @@ public class ServiceService {
         return new ServicoResponse(service);
     }
     
-    @Cacheable("allServicos")
     public PageResponse<ServicoResponse> fetchListByFilter(
             ServicoRequestFilter servicoRequestFilter,
             PageFilterRequest pageFilter
