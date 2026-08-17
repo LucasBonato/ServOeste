@@ -8,4 +8,8 @@ import java.util.Optional;
 public interface ISpecialtyRepository {
     Optional<Specialty> findById(Integer id);
     List<Specialty> findAllById(List<Integer> specialtyIds);
+    Optional<Specialty> findByName(String conhecimento);
+    List<Specialty> findAll(boolean onlyActive);
+    Specialty save(Specialty specialty);
+    long countTechniciansBySpecialtyId(Integer specialtyId);
 }
