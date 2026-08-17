@@ -54,7 +54,7 @@ public class Specialty {
 
         if (StringUtils.isBlank(conhecimento))
             errors.add(ErrorFields.CONHECIMENTO, "A especialidade precisa de um nome");
-        if (conhecimento.length() < 2)
+        if (conhecimento != null && conhecimento.length() < 2)
             errors.add(ErrorFields.CONHECIMENTO, "A especialidade precisa ter no mínimo 2 caracteres");
 
         errors.throwIfAny(SpecialtyNotValidException::new);
