@@ -22,7 +22,7 @@ services:
     container_name: serv-oeste-server
     environment:
       DB_HOST: db
-      DB_PORT: ${DB_PORT}
+      DB_PORT: 3306
       DB_NAME: ${DB_NAME}
       MYSQL_USERNAME: ${MYSQL_USERNAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
