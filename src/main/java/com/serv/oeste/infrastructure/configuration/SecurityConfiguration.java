@@ -5,6 +5,7 @@ import com.serv.oeste.infrastructure.middleware.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -41,6 +42,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger", "/docs", "/scalar", "/scalar/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/refresh").permitAll()
                         .requestMatchers("/auth/register", "/user/**").hasRole(Roles.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.POST, "/especialidades").hasRole(Roles.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.PUT, "/especialidades/**").hasRole(Roles.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.DELETE, "/especialidades/**").hasRole(Roles.ADMIN.getRole())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
