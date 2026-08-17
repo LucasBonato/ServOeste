@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class ServiceRepository implements IServiceRepository {
     private final IServiceJpaRepository serviceJpaRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<Service> filter(ServiceFilter filter, PageFilter pageFilter) {
         Specification<ServiceEntity> specification = new SpecificationBuilder<ServiceEntity>()
                 .addIfNotNull(filter.servicoId(), ServiceSpecifications::hasServicoId)

@@ -1,11 +1,12 @@
 package com.serv.oeste.infrastructure.entities.technician;
 
-import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -38,7 +39,8 @@ public class TechnicianEntity {
     @Column(name = "Situacao", length = 15)
     private Situacao situacao = Situacao.ATIVO;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "Tecnico_Especialidade",
