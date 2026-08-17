@@ -60,14 +60,6 @@ public class Specialty {
         errors.throwIfAny(SpecialtyNotValidException::new);
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getConhecimento() {
-        return conhecimento;
-    }
-
     public boolean isAtivo() {
         return ativo;
     }

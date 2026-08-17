@@ -4,12 +4,14 @@ import com.serv.oeste.domain.valueObjects.Specialty;
 
 public record EspecialidadeResponse(
         Integer id,
-        String conhecimento
+        String conhecimento,
+        boolean ativo
 ) {
     public EspecialidadeResponse(Specialty specialty) {
         this(
                 specialty.id(),
-                specialty.conhecimento()
+                specialty.conhecimento(),
+                specialty.isAtivo()
         );
     }
 }
