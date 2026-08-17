@@ -33,3 +33,6 @@ build/
 ### VS Code ###
 .vscode/
 data/
+
+test-output.log
+servoeste_data_dump__V2.sql
