@@ -75,7 +75,7 @@ class TechnicianServiceTest {
                     specialties
             );
 
-            when(technicianRepository.findById(technicianId)).thenReturn(Optional.of(technician));
+            when(technicianRepository.findByIdWithEspecialidades(technicianId)).thenReturn(Optional.of(technician));
 
             // Act
             TecnicoWithSpecialityResponse response = technicianService.fetchOneById(technicianId);
@@ -103,7 +103,7 @@ class TechnicianServiceTest {
         void fetchOneById_TechnicianDoesNotExists_ShouldThrowTechnicianNotFoundException() {
             // Arrange
             int idToBeFound = 1;
-            when(technicianRepository.findById(idToBeFound)).thenReturn(Optional.empty());
+            when(technicianRepository.findByIdWithEspecialidades(idToBeFound)).thenReturn(Optional.empty());
 
             // Act & Assert
             assertThrows(

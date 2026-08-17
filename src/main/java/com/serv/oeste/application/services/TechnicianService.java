@@ -38,7 +38,12 @@ public class TechnicianService {
 
     public TecnicoWithSpecialityResponse fetchOneById(Integer id) {
         LOGGER.debug("technician.fetch-by-id.started id={}", id);
-        Technician technician = getTecnicoById(id);
+        Technician technician = technicianRepository
+                .findByIdWithEspecialidades(id)
+                .orElseThrow(() -> {
+                    LOGGER.warn("technician.not-found id={}", id);
+                    return new TechnicianNotFoundException();
+                });
         LOGGER.info("technician.fetch-by-id.succeeded id={} nome={}", id, technician.getNome());
 
         return new TecnicoWithSpecialityResponse(technician);

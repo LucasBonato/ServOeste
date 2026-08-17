@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -41,7 +39,6 @@ public class TechnicianEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @BatchSize(size = 50)
-    @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "Tecnico_Especialidade",
             joinColumns = @JoinColumn(name = "Id_Tecnico"),
@@ -74,6 +71,18 @@ public class TechnicianEntity {
                 this.telefoneCelular,
                 this.situacao,
                 specialties
+        );
+    }
+
+    public Technician toDomainSlim() {
+        return Technician.restore(
+                this.id,
+                this.nome,
+                this.sobrenome,
+                this.telefoneFixo,
+                this.telefoneCelular,
+                this.situacao,
+                List.of()
         );
     }
 }

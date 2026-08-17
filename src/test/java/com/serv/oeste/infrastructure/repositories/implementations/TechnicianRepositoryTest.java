@@ -3,6 +3,7 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TechnicianRepositoryTest {
     @Mock private ITechnicianJpaRepository technicianJpaRepository;
+    @Mock private EntityManager entityManager;
 
     private TechnicianAvailabilityProjection mockProjection(
             Integer id,
@@ -40,7 +42,7 @@ class TechnicianRepositoryTest {
     @Test
     void getTechnicianAvailabilityBySpecialty_ProjectionsWithLocalDateData_ShouldMapAllFieldsPreservingLocalDate() {
         // Arrange
-        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository);
+        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository, entityManager);
         LocalDate data = LocalDate.of(2026, 8, 14);
 
         TechnicianAvailabilityProjection joaoProjection = mockProjection(1, "João Silva", data, 5, "MANHÃ", 2);
@@ -78,7 +80,7 @@ class TechnicianRepositoryTest {
     @Test
     void getTechnicianAvailabilityBySpecialty_NoResults_ShouldReturnEmptyList() {
         // Arrange
-        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository);
+        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository, entityManager);
 
         when(technicianJpaRepository.getTechnicianAvailabilityBySpecialty(anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
@@ -94,7 +96,7 @@ class TechnicianRepositoryTest {
     @Test
     void getTechnicianAvailabilityBySpecialty_ProjectionWithNullFields_ShouldMapNullValues() {
         // Arrange
-        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository);
+        TechnicianRepository repository = new TechnicianRepository(technicianJpaRepository, entityManager);
 
         TechnicianAvailabilityProjection projection = mockProjection(
                 1,
