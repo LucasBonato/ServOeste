@@ -3,15 +3,15 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
+import com.serv.oeste.domain.utils.StringUtils;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
+import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
 import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
 import com.serv.oeste.infrastructure.repositories.jpa.ITechnicianJpaRepository;
 import com.serv.oeste.infrastructure.specifications.SpecificationBuilder;
 import com.serv.oeste.infrastructure.specifications.TechnicianSpecifications;
-import com.serv.oeste.domain.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +32,16 @@ public class TechnicianRepository implements ITechnicianRepository {
 
     @Override
     public Optional<Technician> findById(Integer id) {
-        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomain);
+        return technicianJpaRepository.findById(id).map(TechnicianEntity::toDomainSlim);
     }
 
     @Override
+    public Optional<Technician> findByIdWithEspecialidades(Integer id) {
+        return technicianJpaRepository.findWithEspecialidadesById(id).map(TechnicianEntity::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Technician> findAllById(List<Integer> ids) {
         return technicianJpaRepository.findAllById(ids).stream()
                 .map(TechnicianEntity::toDomain)
@@ -73,7 +80,7 @@ public class TechnicianRepository implements ITechnicianRepository {
         Pageable pageable = PageRequest.of(pageFilter.page(), pageFilter.size(), sort);
 
         Page<Technician> techniciansPaged = technicianJpaRepository.findAll(specification, pageable)
-                .map(TechnicianEntity::toDomain);
+                .map(TechnicianEntity::toDomainSlim);
 
         return new PageResponse<>(
                 techniciansPaged.getContent(),

@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,7 +34,7 @@ class SpecialtyServiceTest {
     class FindAll {
         @Test
         void findAll_ShouldReturnAllSpecialtiesOrderedById() {
-            when(specialtyRepository.findAll(false)).thenReturn(List.of(OUTROS, ADEGA));
+            when(specialtyRepository.findAll(false)).thenReturn(Set.of(OUTROS, ADEGA));
 
             List<EspecialidadeResponse> response = specialtyService.findAll();
 
@@ -47,7 +48,7 @@ class SpecialtyServiceTest {
 
         @Test
         void findAll_NoSpecialties_ShouldReturnEmptyList() {
-            when(specialtyRepository.findAll(false)).thenReturn(List.of());
+            when(specialtyRepository.findAll(false)).thenReturn(Set.of());
 
             List<EspecialidadeResponse> response = specialtyService.findAll();
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -22,10 +24,10 @@ public class SpecialtyRepository implements ISpecialtyRepository {
     }
 
     @Override
-    public List<Specialty> findAllById(List<Integer> specialtyIds) {
+    public Set<Specialty> findAllById(List<Integer> specialtyIds) {
         return specialtyJpaRepository.findAllById(specialtyIds).stream()
                 .map(SpecialtyEntity::toDomain)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -35,15 +37,15 @@ public class SpecialtyRepository implements ISpecialtyRepository {
     }
 
     @Override
-    public List<Specialty> findAll(boolean onlyActive) {
+    public Set<Specialty> findAll(boolean onlyActive) {
         if (onlyActive) {
             return specialtyJpaRepository.findAllByAtivoTrueOrderByIdAsc().stream()
                     .map(SpecialtyEntity::toDomain)
-                    .toList();
+                    .collect(Collectors.toSet());
         }
         return specialtyJpaRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(SpecialtyEntity::toDomain)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     @Override
