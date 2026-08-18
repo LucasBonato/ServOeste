@@ -270,7 +270,7 @@
 				WHEN col9 LIKE '%Aguardando atendimento%' THEN 'AGUARDANDO_ATENDIMENTO'
 				WHEN col9 LIKE '%Cancelado%' THEN 'CANCELADO'
 				WHEN col9 LIKE '%Sem defeito%' THEN 'SEM_DEFEITO'
-				WHEN col9 LIKE '%Aguardando orçamento%' THEN 'AGUARDANDO_ORCAMENTO'
+				WHEN col9 LIKE '%Aguardando orçamento%' THEN 'AGUARDANDO_APROVACAO'
 				WHEN col9 LIKE '%Aguardando aprovação%' THEN 'AGUARDANDO_APROVACAO'
 				WHEN col9 LIKE '%Compra%' THEN 'COMPRA'
 				WHEN col9 LIKE '%Não aprovado%' THEN 'NAO_APROVADO'
