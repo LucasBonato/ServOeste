@@ -74,6 +74,7 @@ public class SecurityConfiguration {
                 .role(Roles.EMPLOYEE.getRole()).implies(Roles.TECHNICIAN.getRole())
                 .build();
     }
+
     @Bean
     static GrantedAuthoritiesMapper grantedAuthoritiesMapper(RoleHierarchy hierarchy) {
         return new RoleHierarchyAuthoritiesMapper(hierarchy);
