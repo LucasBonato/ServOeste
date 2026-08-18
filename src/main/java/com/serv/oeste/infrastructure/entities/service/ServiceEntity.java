@@ -130,7 +130,7 @@ public class ServiceEntity {
                 this.dataAtendimentoPrevisto,
                 this.dataAtendimentoEfetiva,
                 this.cliente.toDomain(),
-                this.tecnico == null ? null : this.tecnico.toDomain()
+                this.tecnico == null ? null : this.tecnico.toDomainSlim()
         );
     }
 }
