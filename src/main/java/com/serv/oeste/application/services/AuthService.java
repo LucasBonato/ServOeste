@@ -41,6 +41,11 @@ public class AuthService {
         }
 
         String accessToken = tokenGenerator.generateAccessToken(user);
+
+        LOGGER.info("auth.login.revoke-tokens.started username={}", user.getUsername());
+        refreshTokenStore.revoke(user.getUsername());
+        LOGGER.info("auth.login.revoke-tokens.completed username={}", user.getUsername());
+
         IssuedRefreshToken issuedRefreshToken = refreshTokenStore.issue(user);
 
         LOGGER.info("auth.login.succeeded username={} roles={}", user.getUsername(), user.getRole());
@@ -73,7 +78,7 @@ public class AuthService {
 
         refreshTokenStore.findValid(rawRefreshToken)
                 .ifPresent(refreshToken -> {
-                    refreshTokenStore.revoke(rawRefreshToken);
+                    refreshTokenStore.revoke(refreshToken.getUsername());
                     LOGGER.info("auth.logout.completed username={}", refreshToken.getUsername());
                 });
     }

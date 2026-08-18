@@ -52,8 +52,7 @@ public class RefreshTokenService implements IRefreshTokenStore {
     }
 
     @Override
-    public void revoke(String rawToken) {
-        String tokenHash = HashUtils.sha256Hex(rawToken);
-        refreshTokenRepository.revokeByTokenHash(tokenHash);
+    public void revoke(String username) {
+        refreshTokenRepository.revokeByUsername(username);
     }
 }
