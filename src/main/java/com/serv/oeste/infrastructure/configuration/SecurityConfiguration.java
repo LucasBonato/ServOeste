@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                 ))
                 .authorizeHttpRequests(authorization -> authorization
                         .requestMatchers("/swagger", "/docs", "/scalar", "/scalar/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/auth/login", "/auth/refresh").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh", "/auth/logout").permitAll()
                         .requestMatchers("/auth/register", "/user/**").hasRole(Roles.ADMIN.getRole())
                         .requestMatchers(HttpMethod.POST, "/especialidades").hasRole(Roles.ADMIN.getRole())
                         .requestMatchers(HttpMethod.PUT, "/especialidades/**").hasRole(Roles.ADMIN.getRole())
