@@ -6,16 +6,15 @@ import com.serv.oeste.domain.enums.Situacao;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.BatchSize;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tecnico")
 @Data
 @NoArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "tecnico")
 public class TechnicianEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +38,13 @@ public class TechnicianEntity {
     private Situacao situacao = Situacao.ATIVO;
 
     @ManyToMany
-    @Fetch(FetchMode.JOIN)
+    @BatchSize(size = 20)
     @JoinTable(
             name = "Tecnico_Especialidade",
             joinColumns = @JoinColumn(name = "Id_Tecnico"),
             inverseJoinColumns = @JoinColumn(name = "Id_Especialidade")
     )
-    private List<SpecialtyEntity> especialidades;
+    private Set<SpecialtyEntity> especialidades;
 
     public TechnicianEntity(Technician technician) {
         this.id = technician.getId();
@@ -56,13 +55,25 @@ public class TechnicianEntity {
         this.situacao = technician.getSituacao();
         this.especialidades = technician.getEspecialidades().stream()
                 .map(SpecialtyEntity::new)
-                .toList();
+                .collect(Collectors.toSet());
+    }
+
+    public Technician toDomainSlim() {
+        return Technician.restore(
+                this.id,
+                this.nome,
+                this.sobrenome,
+                this.telefoneFixo,
+                this.telefoneCelular,
+                this.situacao,
+                Set.of()
+        );
     }
 
     public Technician toDomain() {
-        List<Specialty> specialties = especialidades.stream()
+        Set<Specialty> specialties = especialidades.stream()
                 .map(SpecialtyEntity::toDomain)
-                .toList();
+                .collect(Collectors.toSet());
 
         return Technician.restore(
                 this.id,

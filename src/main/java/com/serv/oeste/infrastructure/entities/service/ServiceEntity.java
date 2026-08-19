@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Table(name = "servico")
 @Data
 @NoArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "servico")
 public class ServiceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -130,7 +129,7 @@ public class ServiceEntity {
                 this.dataAtendimentoPrevisto,
                 this.dataAtendimentoEfetiva,
                 this.cliente.toDomain(),
-                this.tecnico == null ? null : this.tecnico.toDomain()
+                this.tecnico == null ? null : this.tecnico.toDomainSlim()
         );
     }
 }

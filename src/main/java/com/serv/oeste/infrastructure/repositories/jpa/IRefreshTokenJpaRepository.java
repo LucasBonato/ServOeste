@@ -20,9 +20,8 @@ public interface IRefreshTokenJpaRepository extends JpaRepository<RefreshTokenEn
     @Transactional
     @Query("""
             UPDATE RefreshTokenEntity r SET r.revokedAt = :now
-            WHERE r.tokenHash = :tokenHash
+            WHERE r.username = :username
             AND r.revokedAt IS NULL
-            AND r.expiresAt > :now
     """)
-    void revokeAllActiveForUser(@Param("tokenHash") String tokenHash, @Param("now") Instant now);
+    void revokeAllActiveForUser(@Param("username") String username, @Param("now") Instant now);
 }

@@ -1,15 +1,14 @@
 package com.serv.oeste.infrastructure.security;
 
 import com.serv.oeste.application.contracts.security.ITokenGenerator;
-import com.serv.oeste.infrastructure.security.contracts.ITokenVerifier;
 import com.serv.oeste.domain.entities.user.User;
+import com.serv.oeste.infrastructure.configuration.dto.JwtClaims;
+import com.serv.oeste.infrastructure.security.contracts.ITokenVerifier;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -43,6 +42,7 @@ public class JwtTokenService implements ITokenGenerator, ITokenVerifier {
 
         return Jwts.builder()
                 .subject(user.getUsername())
+                .claim("userId", user.getId())
                 .claim("role", user.getRole().getRoleWithPrefix())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
@@ -51,39 +51,17 @@ public class JwtTokenService implements ITokenGenerator, ITokenVerifier {
     }
 
     @Override
-    public boolean isValid(String token) {
-        try {
-            Claims claims = parseClaims(token);
-            return claims
-                    .getExpiration()
-                    .toInstant().isAfter(Instant.now());
-        }
-        catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isTokenValidForUser(String token, UserDetails user) {
-        String username = extractUsername(token);
-        return username != null && username.equals(user.getUsername()) && isValid(token);
-    }
-
-    @Override
-    public String extractUsername(String token) {
-        try {
-            return parseClaims(token).getSubject();
-        }
-        catch (JwtException e) {
-            return null;
-        }
-    }
-
-    private Claims parseClaims(String token) {
-        return Jwts.parser()
+    public JwtClaims verify(String token) {
+        Claims claims = Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+
+        return new JwtClaims(
+                claims.getSubject(),
+                claims.get("role", String.class),
+                claims.get("userId", Integer.class)
+        );
     }
 }

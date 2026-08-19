@@ -9,6 +9,8 @@ import com.serv.oeste.domain.exceptions.external.ExternalNetworkException;
 import com.serv.oeste.domain.exceptions.external.ExternalServerDownException;
 import com.serv.oeste.domain.exceptions.external.RestTemplateException;
 import com.serv.oeste.domain.utils.StringUtils;
+import io.micrometer.observation.annotation.Observed;
+import io.micrometer.observation.annotation.ObservationKeyValue;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,8 @@ public class AddressService {
 
     private final ViaCepClient viaCepClient;
 
-    public EnderecoResponse getFields(String cep) {
+    @Observed(name = "address.lookup")
+    public EnderecoResponse getFields(@ObservationKeyValue(key = "cep", value = "{cep}") String cep) {
         LOGGER.debug("address.lookup.started cep={}", cep);
         try {
             ViaCepResponse viaCep = viaCepClient.getCep(cep);

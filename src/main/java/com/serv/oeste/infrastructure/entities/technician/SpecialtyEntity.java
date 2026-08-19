@@ -6,21 +6,30 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "especialidade")
 @Data
 @NoArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "especialidade")
 public class SpecialtyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Integer id;
 
-    @Column(name = "Conhecimento")
+    @Column(name = "Conhecimento", nullable = false, unique = true)
     private String conhecimento;
+
+    @Column(name = "Ativo", nullable = false)
+    private boolean ativo = true;
+
+    @Column(name = "Criado_Em")
+    private LocalDateTime criadoEm;
+
+    @Column(name = "Atualizado_Em")
+    private LocalDateTime atualizadoEm;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "especialidades")
@@ -29,12 +38,26 @@ public class SpecialtyEntity {
     public SpecialtyEntity(Specialty specialty) {
         this.id = specialty.id();
         this.conhecimento = specialty.conhecimento();
+        this.ativo = specialty.isAtivo();
     }
 
     public Specialty toDomain() {
-        return new Specialty(
+        return Specialty.restore(
                 this.id,
-                this.conhecimento
+                this.conhecimento,
+                this.ativo
         );
+    }
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.criadoEm = now;
+        this.atualizadoEm = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
     }
 }

@@ -1,15 +1,15 @@
 package com.serv.oeste.domain.entities.technician;
 
-import com.serv.oeste.domain.utils.StringUtils;
-import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.enums.ErrorFields;
 import com.serv.oeste.domain.enums.Situacao;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.technician.TechnicianAlreadyDisabledException;
 import com.serv.oeste.domain.exceptions.technician.TechnicianNotValidException;
+import com.serv.oeste.domain.utils.StringUtils;
 import com.serv.oeste.domain.valueObjects.Phone;
+import com.serv.oeste.domain.valueObjects.Specialty;
 
-import java.util.List;
+import java.util.Set;
 
 public class Technician {
     private Integer id;
@@ -18,7 +18,7 @@ public class Technician {
     private Phone telefoneFixo;
     private Phone telefoneCelular;
     private Situacao situacao = Situacao.ATIVO;
-    private List<Specialty> especialidades;
+    private Set<Specialty> especialidades;
 
     private Technician(
             Integer id,
@@ -27,7 +27,7 @@ public class Technician {
             Phone telefoneFixo,
             Phone telefoneCelular,
             Situacao situacao,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         this.id = id;
         this.nome = nome;
@@ -43,7 +43,7 @@ public class Technician {
             String sobrenome,
             Phone telefoneFixo,
             Phone telefoneCelular,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -61,7 +61,7 @@ public class Technician {
             String telefoneFixo,
             String telefoneCelular,
             Situacao situacao,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
         Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
@@ -82,7 +82,7 @@ public class Technician {
             String sobrenome,
             String telefoneFixo,
             String telefoneCelular,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         Phone fixo = StringUtils.isNotBlank(telefoneFixo) ? Phone.of(telefoneFixo) : null;
         Phone celular = StringUtils.isNotBlank(telefoneCelular) ? Phone.of(telefoneCelular) : null;
@@ -102,7 +102,7 @@ public class Technician {
             String telefoneFixo,
             String telefoneCelular,
             Situacao situacao,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -165,7 +165,7 @@ public class Technician {
         return situacao;
     }
 
-    public List<Specialty> getEspecialidades() {
+    public Set<Specialty> getEspecialidades() {
         return especialidades;
     }
 }

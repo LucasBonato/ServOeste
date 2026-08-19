@@ -156,10 +156,18 @@ Observability is implemented using **OpenTelemetry** and Spring Boot Actuator / 
     - Traces: `${OTEL_ENDPOINT}/v1/traces`
     - Metrics: `${OTEL_ENDPOINT}/v1/metrics`
     - Logs: `${OTEL_ENDPOINT}/v1/logs`
-  - `TraceResponseFilter` adds `trace-id` and `traceparent` headers to every HTTP response so that frontend or external tools can correlate requests with traces.
+  - **Header contract**
+    - Inbound: W3C `traceparent` (and optional `baggage` with `user.id=<username>`) is accepted from clients (e.g. the Flutter app) so incoming requests join the client's trace.
+    - Outbound: every HTTP response includes `trace-id` and `traceparent` headers (`TraceResponseFilter`) so the client can correlate requests with traces.
+  - **User identity on spans** (`TraceBaggageFilter`, `JwtAuthFilter`)
+    - `baggage` `user.id` is mapped to the `enduser.id` span attribute (value is the JWT `sub`/username).
+    - When the request is authenticated without baggage, `JwtAuthFilter` sets `enduser.id` (username) and `user.id` (numeric DB id) from the authenticated principal.
+  - **Business spans** (`@Observed`, `management.observations.annotations.enabled: true`)
+    - `AddressService.getFields` is observed as `address.lookup` with a `cep` attribute; the ViaCEP call joins the same trace (outbound propagation via the observation-enabled `RestClient.Builder`).
 
 - **Logging**
   - `logback-spring.xml` configures the standard console appender and the OpenTelemetry appender (`OTEL`).
+  - The console pattern renders MDC correlation fields `traceId`, `spanId` and `userId` (populated by `TraceBaggageFilter`); exported OTLP log records carry the active trace context automatically.
   - `OpenTelemetryAppenderConfiguration` installs the Logback appender programmatically with the `OpenTelemetry` SDK instance.
   - Application services (e.g. `ServiceService`, `TechnicianService`, `ClientService`) use **structured logging** with SLF4J placeholders: `logger.info("Service found: id={}", id);`.
 

@@ -1,6 +1,7 @@
 package com.serv.oeste.infrastructure.configuration.clients;
 
 import com.serv.oeste.application.contracts.clients.ViaCepClient;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -11,8 +12,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class ViaCepClientConfiguration {
 
     @Bean
-    RestClient.Builder restClientBuilder() {
-        return RestClient.builder();
+    RestClient.Builder restClientBuilder(ObservationRegistry observationRegistry) {
+        return RestClient.builder().observationRegistry(observationRegistry);
     }
 
     @Bean
