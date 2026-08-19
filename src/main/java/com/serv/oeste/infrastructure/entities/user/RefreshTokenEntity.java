@@ -20,7 +20,6 @@ import java.util.UUID;
 })
 @NoArgsConstructor
 @AllArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "refresh_token")
 public class RefreshTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

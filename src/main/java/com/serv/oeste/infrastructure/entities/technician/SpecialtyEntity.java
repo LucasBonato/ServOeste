@@ -13,7 +13,6 @@ import java.util.List;
 @Table(name = "especialidade")
 @Data
 @NoArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "especialidade")
 public class SpecialtyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

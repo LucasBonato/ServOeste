@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Table(name = "servico")
 @Data
 @NoArgsConstructor
-@org.springframework.data.relational.core.mapping.Table(name = "servico")
 public class ServiceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
