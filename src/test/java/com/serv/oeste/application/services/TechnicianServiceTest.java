@@ -60,7 +60,7 @@ class TechnicianServiceTest {
             // Arrange
             int technicianId = 1;
 
-            List<Specialty> specialties = List.of(
+            Set<Specialty> specialties = Set.of(
                     BEBEDOURO,
                     FRIGOBAR
             );
@@ -75,7 +75,7 @@ class TechnicianServiceTest {
                     specialties
             );
 
-            when(technicianRepository.findById(technicianId)).thenReturn(Optional.of(technician));
+            when(technicianRepository.findByIdWithEspecialidades(technicianId)).thenReturn(Optional.of(technician));
 
             // Act
             TecnicoWithSpecialityResponse response = technicianService.fetchOneById(technicianId);
@@ -103,7 +103,7 @@ class TechnicianServiceTest {
         void fetchOneById_TechnicianDoesNotExists_ShouldThrowTechnicianNotFoundException() {
             // Arrange
             int idToBeFound = 1;
-            when(technicianRepository.findById(idToBeFound)).thenReturn(Optional.empty());
+            when(technicianRepository.findByIdWithEspecialidades(idToBeFound)).thenReturn(Optional.empty());
 
             // Act & Assert
             assertThrows(
@@ -115,8 +115,8 @@ class TechnicianServiceTest {
 
     @Nested
     class FetchListByFilter {
-        final Technician JOAO = Technician.restore(1, "João", "Silva", "1133221145", "11999887766", Situacao.ATIVO, List.of());
-        final Technician MARIA = Technician.restore(2, "Maria", "Souza", "1122334417", "11912345678", Situacao.DESATIVADO, List.of());
+        final Technician JOAO = Technician.restore(1, "João", "Silva", "1133221145", "11999887766", Situacao.ATIVO, Set.of());
+        final Technician MARIA = Technician.restore(2, "Maria", "Souza", "1122334417", "11912345678", Situacao.DESATIVADO, Set.of());
 
         @Test
         void fetchListByFilter_NoFilters_ShouldReturnAllTechnicians() {
@@ -330,10 +330,10 @@ class TechnicianServiceTest {
                     null,
                     "11968949278",
                     Situacao.ATIVO,
-                    List.of(ADEGA, PURIFICADOR)
+                    Set.of(ADEGA, PURIFICADOR)
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
             when(technicianRepository.save(any(Technician.class))).thenReturn(technician);
 
             // Act
@@ -378,10 +378,10 @@ class TechnicianServiceTest {
                     null,
                     "11968949278",
                     Situacao.ATIVO,
-                    List.of(ADEGA, PURIFICADOR)
+                    Set.of(ADEGA, PURIFICADOR)
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
             when(technicianRepository.save(any(Technician.class))).thenReturn(technician);
 
             // Act
@@ -420,7 +420,7 @@ class TechnicianServiceTest {
                     List.of(LAVA_LOUCA.id(), LAVA_ROUPA.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(LAVA_LOUCA.id(), LAVA_ROUPA.id()))).thenReturn(List.of(LAVA_LOUCA, LAVA_ROUPA));
+            when(specialtyRepository.findAllById(List.of(LAVA_LOUCA.id(), LAVA_ROUPA.id()))).thenReturn(Set.of(LAVA_LOUCA, LAVA_ROUPA));
 
             // Act
             assertThrows(
@@ -444,7 +444,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -468,7 +468,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -492,7 +492,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -516,7 +516,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -540,7 +540,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -564,7 +564,7 @@ class TechnicianServiceTest {
                     List.of(ADEGA.id(), PURIFICADOR.id())
             );
 
-            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(List.of(ADEGA, PURIFICADOR));
+            when(specialtyRepository.findAllById(List.of(ADEGA.id(), PURIFICADOR.id()))).thenReturn(Set.of(ADEGA, PURIFICADOR));
 
             // Act
             assertThrows(
@@ -600,10 +600,10 @@ class TechnicianServiceTest {
                     "1187652345",
                     "11968949278",
                     Situacao.DESATIVADO,
-                    new ArrayList<>()
+                    Set.of()
             );
 
-            when(specialtyRepository.findAllById(List.of(MICROONDAS.id(), OUTROS.id()))).thenReturn(List.of(MICROONDAS, OUTROS));
+            when(specialtyRepository.findAllById(List.of(MICROONDAS.id(), OUTROS.id()))).thenReturn(Set.of(MICROONDAS, OUTROS));
             when(technicianRepository.findById(technicianToBeUpdatedId)).thenReturn(Optional.of(technician));
             when(technicianRepository.findById(technicianToBeUpdatedId)).thenReturn(Optional.of(technician));
             when(technicianRepository.save(any(Technician.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -643,7 +643,7 @@ class TechnicianServiceTest {
                     null,
                     "11968949278",
                     Situacao.ATIVO,
-                    List.of(GELADEIRA, COOLER)
+                    Set.of(GELADEIRA, COOLER)
             );
 
             Technician technician2 = Technician.restore(
@@ -653,7 +653,7 @@ class TechnicianServiceTest {
                     "1198762345",
                     null,
                     Situacao.ATIVO,
-                    List.of(SECADORA, CLIMATIZADOR)
+                    Set.of(SECADORA, CLIMATIZADOR)
             );
 
             List<Integer> ids = List.of(1, 2);

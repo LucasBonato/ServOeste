@@ -13,18 +13,10 @@ public enum SituacaoServico {
     },
     AGUARDANDO_ATENDIMENTO("Aguardando atendimento") {
         public Set<SituacaoServico> proximos() {
-            return Set.of(AGUARDANDO_ORCAMENTO, SEM_DEFEITO, CANCELADO);
+            return Set.of(AGUARDANDO_APROVACAO, SEM_DEFEITO, CANCELADO);
         }
         public Set<SituacaoServico> anteriores() {
             return Set.of(AGUARDANDO_AGENDAMENTO);
-        }
-    },
-    AGUARDANDO_ORCAMENTO("Aguardando orçamento") {
-        public Set<SituacaoServico> proximos() {
-            return Set.of(AGUARDANDO_APROVACAO);
-        }
-        public Set<SituacaoServico> anteriores() {
-            return Set.of(AGUARDANDO_ATENDIMENTO);
         }
     },
     AGUARDANDO_APROVACAO("Aguardando aprovação do cliente") {
@@ -32,7 +24,7 @@ public enum SituacaoServico {
             return Set.of(NAO_APROVADO, COMPRA, ORCAMENTO_APROVADO);
         }
         public Set<SituacaoServico> anteriores() {
-            return Set.of(AGUARDANDO_ORCAMENTO);
+            return Set.of(AGUARDANDO_ATENDIMENTO);
         }
     },
     ORCAMENTO_APROVADO("Orçamento aprovado") {
@@ -139,6 +131,17 @@ public enum SituacaoServico {
                 situacao == SituacaoServico.AGUARDANDO_ATENDIMENTO;
     }
 
+    public boolean exigeDescricao() {
+        return this == AGUARDANDO_AGENDAMENTO
+                || this == AGUARDANDO_ATENDIMENTO
+                || this == AGUARDANDO_APROVACAO
+                || this == CANCELADO
+                || this == CORTESIA
+                || this == NAO_APROVADO
+                || this == RESOLVIDO
+                || this == SEM_DEFEITO;
+    }
+
     public boolean exigeFormaPagamento() {
         return this == AGUARDANDO_APROVACAO
                 || this == ORCAMENTO_APROVADO
@@ -186,7 +189,6 @@ public enum SituacaoServico {
     public boolean exigeAtendimentoPrevisto() {
         return this == AGUARDANDO_ATENDIMENTO
                 || this == SEM_DEFEITO
-                || this == AGUARDANDO_ORCAMENTO
                 || this == AGUARDANDO_APROVACAO
                 || this == NAO_APROVADO
                 || this == COMPRA
@@ -200,7 +202,6 @@ public enum SituacaoServico {
 
     public boolean exigeAtendimentoEfetivo() {
         return this == SEM_DEFEITO
-                || this == AGUARDANDO_ORCAMENTO
                 || this == AGUARDANDO_APROVACAO
                 || this == NAO_APROVADO
                 || this == COMPRA

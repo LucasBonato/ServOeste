@@ -7,6 +7,7 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -123,15 +124,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String exceptionType,
             Map<String, List<String>> errors
     ) {
-        SpanContext spanContext = Span.current().getSpanContext();
+        Span span = Span.current();
+        SpanContext spanContext = span.getSpanContext();
         String traceId = spanContext.isValid() ? spanContext.getTraceId() : "N/A";
 
+        String userId = MDC.get("userId");
+        if (userId != null && !userId.isEmpty()) {
+            span.setAttribute("enduser.id", userId);
+        }
+
         LOGGER.warn(
-                "exception.code={} status={} exceptionType={} traceId={} errors={}",
+                "exception.code={} status={} exceptionType={} traceId={} userId={} errors={}",
                 code,
                 status.value(),
                 exceptionType,
                 traceId,
+                userId,
                 errors
         );
     }

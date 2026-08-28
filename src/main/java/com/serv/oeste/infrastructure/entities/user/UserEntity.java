@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "usuario", uniqueConstraints = @UniqueConstraint(columnNames = "Username"))
-@org.springframework.data.relational.core.mapping.Table(name = "usuario")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

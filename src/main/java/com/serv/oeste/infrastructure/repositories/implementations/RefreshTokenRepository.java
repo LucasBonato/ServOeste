@@ -23,8 +23,8 @@ public class RefreshTokenRepository implements IRefreshTokenRepository {
 
     @Override
     @Transactional
-    public void revokeByTokenHash(String tokenHash) {
-        refreshTokenJpaRepository.revokeAllActiveForUser(tokenHash, Instant.now());
+    public void revokeByUsername(String username) {
+        refreshTokenJpaRepository.revokeAllActiveForUser(username, Instant.now());
     }
 
     @Override

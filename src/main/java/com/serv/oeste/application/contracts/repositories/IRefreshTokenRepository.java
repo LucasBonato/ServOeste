@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface IRefreshTokenRepository {
     RefreshToken save(RefreshToken refreshToken);
-    void revokeByTokenHash(String tokenHash);
+    void revokeByUsername(String username);
     Optional<RefreshToken> findByTokenHash(String tokenHash);
 }

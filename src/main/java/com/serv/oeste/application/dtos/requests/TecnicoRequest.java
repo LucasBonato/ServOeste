@@ -1,13 +1,14 @@
 package com.serv.oeste.application.dtos.requests;
 
-import com.serv.oeste.domain.valueObjects.Specialty;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.Situacao;
+import com.serv.oeste.domain.valueObjects.Specialty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.Set;
 
 public record TecnicoRequest(
         @NotBlank(message = "O Nome do técnico não pode ser vazio!")
@@ -28,7 +29,7 @@ public record TecnicoRequest(
 
         List<Integer> especialidades_Ids
 ) {
-    public Technician toTechnician(List<Specialty> especialidades) {
+    public Technician toTechnician(Set<Specialty> especialidades) {
         return Technician.create(
                 this.nome,
                 this.sobrenome,

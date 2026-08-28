@@ -6,6 +6,7 @@ import com.serv.oeste.domain.enums.Situacao;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class TechnicianFactory {
     public static Technician createDefault() {
@@ -16,11 +17,11 @@ public class TechnicianFactory {
                 "1134567890",
                 "11998765432",
                 Situacao.ATIVO,
-                Collections.emptyList()
+                Collections.emptySet()
         );
     }
 
-    public static Technician createWithSpecialties(List<Specialty> specialties) {
+    public static Technician createWithSpecialties(Set<Specialty> specialties) {
         return Technician.restore(
                 2,
                 "Fernanda",
@@ -39,7 +40,7 @@ public class TechnicianFactory {
             String telefoneFixo,
             String telefoneCelular,
             Situacao situacao,
-            List<Specialty> especialidades
+            Set<Specialty> especialidades
     ) {
         return Technician.restore(id, nome, sobrenome, telefoneFixo, telefoneCelular, situacao, especialidades);
     }
@@ -55,7 +56,7 @@ public class TechnicianFactory {
                 sobrenome,
                 telefoneFixo,
                 telefoneCelular,
-                List.of()
+                Set.of()
         );
     }
 }

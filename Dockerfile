@@ -1,19 +1,21 @@
-FROM maven:3.9.5-eclipse-temurin-21 AS build
+FROM maven:3.9.5-eclipse-temurin-21-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
-COPY pom.xml ./
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-RUN mvn clean install
+FROM eclipse-temurin:21-jre-alpine
 
-RUN ls -l /app/target
-
-FROM eclipse-temurin:21-jre
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 WORKDIR /app
 
-COPY --from=build /app/target/Serv-Oeste-0.0.1.jar /app/app.jar
+COPY --from=builder --chown=appuser:appgroup /build/target/*.jar app.jar
 
 EXPOSE 8080
 

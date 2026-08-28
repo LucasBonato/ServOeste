@@ -1,9 +1,7 @@
 package com.serv.oeste.infrastructure.security.contracts;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import com.serv.oeste.infrastructure.configuration.dto.JwtClaims;
 
 public interface ITokenVerifier {
-    boolean isValid(String token);
-    boolean isTokenValidForUser(String token, UserDetails user);
-    String extractUsername(String token);
+    JwtClaims verify(String token);
 }

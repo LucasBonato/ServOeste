@@ -1,0 +1,2 @@
+UPDATE servico s SET s.situacao = 'AGUARDANDO_APROVACAO'
+WHERE situacao = 'AGUARDANDO_ORCAMENTO';
