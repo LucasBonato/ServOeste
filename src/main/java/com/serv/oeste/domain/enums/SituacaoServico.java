@@ -77,7 +77,7 @@ public enum SituacaoServico {
     },
     CORTESIA("Cortesia") {
         public Set<SituacaoServico> proximos() {
-            return Set.of();
+            return Set.of(RESOLVIDO);
         }
         public Set<SituacaoServico> anteriores() {
             return Set.of(GARANTIA);
