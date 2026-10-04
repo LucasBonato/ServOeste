@@ -61,7 +61,6 @@ class SituacaoServicoTest {
                 SituacaoServico.CANCELADO,
                 SituacaoServico.CORTESIA,
                 SituacaoServico.NAO_APROVADO,
-                SituacaoServico.RESOLVIDO,
                 SituacaoServico.SEM_DEFEITO
         );
 

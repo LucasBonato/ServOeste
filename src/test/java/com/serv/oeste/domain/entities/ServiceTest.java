@@ -283,7 +283,7 @@ class ServiceTest {
                             "Consul",
                             "Filial 2",
                             "Sem defeito encontrado",
-                            SituacaoServico.SEM_DEFEITO,
+                            SituacaoServico.RESOLVIDO,
                             HorarioPrevisto.TARDE,
                             0.0,
                             null,
