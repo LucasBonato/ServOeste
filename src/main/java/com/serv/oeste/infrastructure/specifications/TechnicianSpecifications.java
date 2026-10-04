@@ -25,7 +25,7 @@ public class TechnicianSpecifications {
     }
 
     public static Specification<TechnicianEntity> hasEquipamento(String equipamento) {
-        return (root, query, cb) -> cb.equal(root.join("especialidades").get("conhecimento"), equipamento);
+        return (root, query, cb) -> cb.like(root.join("especialidades").get("conhecimento"), equipamento);
     }
 
     public static Specification<TechnicianEntity> hasTelefone(String telefone) {

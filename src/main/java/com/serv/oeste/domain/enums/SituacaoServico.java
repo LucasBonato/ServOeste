@@ -138,13 +138,11 @@ public enum SituacaoServico {
                 || this == CANCELADO
                 || this == CORTESIA
                 || this == NAO_APROVADO
-                || this == RESOLVIDO
                 || this == SEM_DEFEITO;
     }
 
     public boolean exigeFormaPagamento() {
-        return this == AGUARDANDO_APROVACAO
-                || this == ORCAMENTO_APROVADO
+        return this == ORCAMENTO_APROVADO
                 || this == AGUARDANDO_CLIENTE_RETIRAR
                 || this == GARANTIA
                 || this == NAO_RETIRA_3_MESES
@@ -173,8 +171,7 @@ public enum SituacaoServico {
     }
 
     public boolean exigePagamentoComissao() {
-        return this == SEM_DEFEITO
-                || this == CANCELADO
+        return this == CANCELADO
                 || this == NAO_APROVADO
                 || this == COMPRA
                 || this == RESOLVIDO;
