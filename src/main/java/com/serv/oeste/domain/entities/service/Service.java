@@ -2,10 +2,7 @@ package com.serv.oeste.domain.entities.service;
 
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.enums.ErrorFields;
-import com.serv.oeste.domain.enums.FormaPagamento;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
-import com.serv.oeste.domain.enums.SituacaoServico;
+import com.serv.oeste.domain.enums.*;
 import com.serv.oeste.domain.exceptions.ErrorCollector;
 import com.serv.oeste.domain.exceptions.service.ServiceNotValidException;
 import com.serv.oeste.domain.utils.StringUtils;
@@ -19,7 +16,7 @@ public class Service {
     private String filial;
     private String descricao;
     private SituacaoServico situacao;
-    private HorarioPrevisto horarioPrevisto;
+    private Periodo periodo;
     private Double valor;
     private FormaPagamento formaPagamento;
     private Double valorPecas;
@@ -41,7 +38,7 @@ public class Service {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             Double valor,
             FormaPagamento formaPagamento,
             Double valorPecas,
@@ -62,7 +59,7 @@ public class Service {
         this.filial = filial;
         this.descricao = descricao;
         this.situacao = situacao;
-        this.horarioPrevisto = horarioPrevisto;
+        this.periodo = periodo;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
         this.valorPecas = valorPecas;
@@ -84,7 +81,7 @@ public class Service {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             LocalDate dataAtendimento,
             Client cliente,
             Technician tecnico
@@ -94,7 +91,7 @@ public class Service {
         this.filial = filial;
         this.descricao = descricao;
         this.situacao = situacao;
-        this.horarioPrevisto = horarioPrevisto;
+        this.periodo = periodo;
         this.dataAtendimentoPrevisto = dataAtendimento;
         this.cliente = cliente;
         this.tecnico = tecnico;
@@ -111,7 +108,7 @@ public class Service {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             Double valor,
             FormaPagamento formaPagamento,
             Double valorPecas,
@@ -133,7 +130,7 @@ public class Service {
                 filial,
                 descricao,
                 situacao,
-                horarioPrevisto,
+                periodo,
                 valor,
                 formaPagamento,
                 valorPecas,
@@ -155,7 +152,7 @@ public class Service {
             String marca,
             String filial,
             String descricao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             LocalDate dataAtendimento,
             Client cliente,
             Technician tecnico
@@ -165,8 +162,8 @@ public class Service {
                 marca,
                 filial,
                 descricao,
-                inferSituacao(horarioPrevisto, dataAtendimento, tecnico),
-                horarioPrevisto,
+                inferSituacao(periodo, dataAtendimento, tecnico),
+                periodo,
                 dataAtendimento,
                 cliente,
                 tecnico
@@ -179,7 +176,7 @@ public class Service {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             Double valor,
             FormaPagamento formaPagamento,
             Double valorPecas,
@@ -199,7 +196,7 @@ public class Service {
         this.marca = marca;
         this.filial = filial;
         this.descricao = descricao;
-        this.horarioPrevisto = horarioPrevisto;
+        this.periodo = periodo;
         this.valor = valor;
         this.formaPagamento = formaPagamento;
         this.valorPecas = valorPecas;
@@ -227,7 +224,7 @@ public class Service {
     private static String getHistory(String history, SituacaoServico situacao, String descricao) {
         String formattedSituation = situacao.getSituacao().toUpperCase();
 
-        if (history.isBlank() && isServiceOpening(situacao)) {
+        if (history.isBlank() && situacao.isInicial()) {
             formattedSituation = "ABERTURA: " + formattedSituation;
         }
 
@@ -249,7 +246,7 @@ public class Service {
 
         if (situacao == null)
             errors.add(ErrorFields.SITUACAO, "Situação inicial é obrigatória");
-        if (situacao != null && !SituacaoServico.isInicial(situacao))
+        if (situacao != null && !situacao.isInicial())
             errors.add(ErrorFields.SITUACAO, "Situação inicial inválida: " + situacao);
 
         validateCommon(errors);
@@ -274,9 +271,8 @@ public class Service {
             );
 
         if (
-            situacao.equals(SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR) &&
             destino.equals(SituacaoServico.GARANTIA) &&
-            dataInicioGarantia == null
+            (dataInicioGarantia == null || dataFimGarantia == null)
         )
             errors.add(
                 ErrorFields.SITUACAO,
@@ -293,54 +289,72 @@ public class Service {
     private void validateCommon(ErrorCollector errors) {
         if (cliente == null)
             errors.add(ErrorFields.CLIENTE, "Cliente é obrigatório");
-        if (tecnico == null && isTechnicianNeeded(situacao))
-            errors.add(ErrorFields.TECNICO, "Técnico é obrigatório para atendimento");
-        if (StringUtils.isBlank(equipamento))
+
+        if (situacao.exigeTecnico() && tecnico == null)
+            errors.add(ErrorFields.TECNICO, "Técnico é obrigatório para situação: " + situacao.getSituacao());
+
+        if (situacao.exigeEquipamento() && StringUtils.isBlank(equipamento))
             errors.add(ErrorFields.EQUIPAMENTO, "Equipamento é obrigatório");
-        if (StringUtils.isBlank(marca))
+
+        if (situacao.exigeMarca() && StringUtils.isBlank(marca))
             errors.add(ErrorFields.MARCA, "Marca é obrigatória");
+
         if (situacao.exigeDescricao() && StringUtils.isBlank(descricao))
             errors.add(ErrorFields.DESCRICAO, "Descrição é obrigatória para a situação informada");
         if (situacao.exigeDescricao() && descricao != null && descricao.length() < 10)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 10 caracteres");
         if (situacao.exigeDescricao() && descricao != null && descricao.split(" ").length < 3)
             errors.add(ErrorFields.DESCRICAO, "Descrição precisa ter pelo menos 3 palavras");
-        if (StringUtils.isBlank(filial))
+
+        if (situacao.exigeFilial() && StringUtils.isBlank(filial))
             errors.add(ErrorFields.FILIAL, "A filial é obrigatória");
+
+        if (situacao.exigePeriodo() && periodo == null)
+            errors.add(ErrorFields.PERIODO, "O período é obrigatório");
+
+        if (situacao.exigeValorServico() && valor == null)
+            errors.add(ErrorFields.SERVICO, "O Valor é obrigatório.");
         if (valor != null && valor < 0)
             errors.add(ErrorFields.SERVICO, "O Valor não pode ser negativo.");
+
+        if (situacao.exigeValorComissao() && valorComissao == null)
+            errors.add(ErrorFields.SERVICO, "O Valor da Comissão é obrigatório.");
         if (valorComissao != null && valorComissao < 0)
             errors.add(ErrorFields.SERVICO, "O Valor da Comissão não pode ser negativo.");
+
+        if (situacao.exigeValorPecas() && valorPecas == null)
+            errors.add(ErrorFields.SERVICO, "O Valor das Peças é obrigatório.");
         if (valorPecas != null && valorPecas < 0)
             errors.add(ErrorFields.SERVICO, "O Valor das Peças não pode ser negativo.");
+
         if (situacao.exigeFormaPagamento() && formaPagamento == null)
             errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
+
         if (situacao.exigeDataFechamento() && dataFechamento == null)
             errors.add(ErrorFields.DATA, "Data fechamento é obrigatória para a situação " + situacao.getSituacao());
-        if (situacao.exigePagamentoComissao() && dataPagamentoComissao == null)
+
+        if (situacao.exigeDataPagamentoComissao() && dataPagamentoComissao == null)
             errors.add(ErrorFields.DATA, "Data Pagamento Comissao é obrigatória para a situação " + situacao.getSituacao());
-        if (situacao.exigeFimGarantia() && dataFimGarantia == null)
+
+        if (situacao.exigeDataInicioGarantia() && dataInicioGarantia == null)
+            errors.add(ErrorFields.DATA, "Data Inicio Garantia é obrigatória para a situação " + situacao.getSituacao());
+
+        if (situacao.exigeDataFimGarantia() && dataFimGarantia == null)
             errors.add(ErrorFields.DATA, "Data Fim Garantia é obrigatória para a situação " + situacao.getSituacao());
-        if (situacao.exigeAtendimentoPrevisto() && dataAtendimentoPrevisto == null)
+
+        if (situacao.exigeDataAtendimentoPrevisto() && dataAtendimentoPrevisto == null)
             errors.add(ErrorFields.DATA, "Data Atendimento Previsto é obrigatória para a situação " + situacao.getSituacao());
-        if (situacao.exigeAtendimentoEfetivo() && dataAtendimentoEfetiva == null)
+
+        if (situacao.exigeDataAtendimentoEfetivo() && dataAtendimentoEfetiva == null)
             errors.add(ErrorFields.DATA, "Data Atendimento Efetivo é obrigatória para a situação " + situacao.getSituacao());
 
         errors.throwIfAny(ServiceNotValidException::new);
     }
 
-    private static SituacaoServico inferSituacao(HorarioPrevisto horarioPrevisto, LocalDate dataAtendimento, Technician tecnico) {
-        if (horarioPrevisto == null || (dataAtendimento == null && tecnico == null))
+    private static SituacaoServico inferSituacao(Periodo periodo, LocalDate dataAtendimento, Technician tecnico) {
+        if (periodo == null || (dataAtendimento == null && tecnico == null))
             return SituacaoServico.AGUARDANDO_AGENDAMENTO;
         return SituacaoServico.AGUARDANDO_ATENDIMENTO;
-    }
-
-    private static boolean isTechnicianNeeded(SituacaoServico situacao) {
-        return !situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO) && !situacao.equals(SituacaoServico.CANCELADO);
-    }
-
-    private static boolean isServiceOpening(SituacaoServico situacao) {
-        return situacao.equals(SituacaoServico.AGUARDANDO_ATENDIMENTO) || situacao.equals(SituacaoServico.AGUARDANDO_AGENDAMENTO);
     }
 
     public Integer getId() {
@@ -367,8 +381,8 @@ public class Service {
         return situacao;
     }
 
-    public HorarioPrevisto getHorarioPrevisto() {
-        return horarioPrevisto;
+    public Periodo getPeriodo() {
+        return periodo;
     }
 
     public Double getValor() {

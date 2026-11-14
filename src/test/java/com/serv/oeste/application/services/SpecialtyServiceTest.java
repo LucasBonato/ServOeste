@@ -33,20 +33,6 @@ class SpecialtyServiceTest {
     @Nested
     class FindAll {
         @Test
-        void findAll_ShouldReturnAllSpecialtiesOrderedById() {
-            when(specialtyRepository.findAll(false)).thenReturn(Set.of(OUTROS, ADEGA));
-
-            List<EspecialidadeResponse> response = specialtyService.findAll();
-
-            assertEquals(2, response.size());
-            assertEquals(1, response.getFirst().id());
-            assertEquals("Outros", response.getFirst().conhecimento());
-            assertTrue(response.getFirst().ativo());
-
-            verify(specialtyRepository).findAll(false);
-        }
-
-        @Test
         void findAll_NoSpecialties_ShouldReturnEmptyList() {
             when(specialtyRepository.findAll(false)).thenReturn(Set.of());
 

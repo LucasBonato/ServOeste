@@ -15,7 +15,7 @@ public enum ErrorFields {
     MARCA("marca"),
     DESCRICAO("descricao"),
     FILIAL("filial"),
-    HORARIO("horario"),
+    PERIODO("periodo"),
     DATA("data"),
     CONHECIMENTO("conhecimento"),
     SERVICO("servico"),

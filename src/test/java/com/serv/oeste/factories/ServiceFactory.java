@@ -7,7 +7,7 @@ import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.FormaPagamento;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class ServiceFactory {
             String filial,
             String descricao,
             SituacaoServico situacao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             Double valor,
             FormaPagamento formaPagamento,
             Double valorPecas,
@@ -45,7 +45,7 @@ public class ServiceFactory {
                 filial,
                 descricao,
                 situacao,
-                horarioPrevisto,
+                periodo,
                 valor,
                 formaPagamento,
                 valorPecas,
@@ -68,7 +68,7 @@ public class ServiceFactory {
             String marca,
             String filial,
             String descricao,
-            HorarioPrevisto horarioPrevisto,
+            Periodo periodo,
             LocalDate dataAtendimento,
             Client cliente,
             Technician tecnico
@@ -78,7 +78,7 @@ public class ServiceFactory {
                 marca,
                 filial,
                 descricao,
-                horarioPrevisto,
+                periodo,
                 dataAtendimento,
                 cliente,
                 tecnico
@@ -93,7 +93,7 @@ public class ServiceFactory {
                 "Osasco",
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 250.0,
                 FormaPagamento.PIX,
                 100.0,
@@ -132,7 +132,7 @@ public class ServiceFactory {
                 "São Paulo",
                 "Problema com teclado",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 FormaPagamento.BOLETO,
                 100.0,
@@ -185,7 +185,7 @@ public class ServiceFactory {
                 "Brastemp",
                 "Carapicuíba",
                 parseDate("05/07/2023"),
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 "Máquina não está centrifugando corretamente e faz barulho estranho"
         );
     }
@@ -198,7 +198,7 @@ public class ServiceFactory {
                 "Electrolux",
                 "Barueri",
                 parseDate("10/07/2023"),
-                HorarioPrevisto.MANHA,
+                Periodo.MANHA,
                 "Não está gelando adequadamente"
         );
     }
@@ -211,7 +211,7 @@ public class ServiceFactory {
                 "Samsung",
                 "Jandira",
                 parseDate("15/07/2023"),
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 "Não liga" // Less than 10 chars
         );
     }
@@ -224,7 +224,7 @@ public class ServiceFactory {
                 "LG",
                 "Cotia",
                 parseDate("20/07/2023"),
-                HorarioPrevisto.MANHA,
+                Periodo.MANHA,
                 "Não esfria" // Only 2 words
         );
     }
@@ -265,7 +265,7 @@ public class ServiceFactory {
                 "Carlos Silva",
                 "Notebook",
                 "São Paulo",
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 "Dell",
                 "Problema com teclado",
                 FormaPagamento.BOLETO.getFormaPagamento(),
@@ -292,7 +292,7 @@ public class ServiceFactory {
                 "Ana Tecnica",
                 "Smartphone",
                 "Osasco",
-                HorarioPrevisto.MANHA,
+                Periodo.MANHA,
                 "Samsung",
                 "Tela trincada",
                 "PIX",
@@ -320,7 +320,7 @@ public class ServiceFactory {
                 "Troca de tela e reparo na placa mãe",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
                 FormaPagamento.DINHEIRO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 50.0,
                 100.0,
@@ -366,7 +366,7 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
                 FormaPagamento.PIX,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 50.0,
                 100.0,
@@ -389,7 +389,7 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.RESOLVIDO, // Status that requires technician
                 FormaPagamento.DEBITO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 50.0,
                 100.0,
@@ -413,7 +413,7 @@ public class ServiceFactory {
                 valid.descricao(),
                 valid.situacao(),
                 valid.formaPagamento(),
-                valid.horarioPrevisto(),
+                valid.periodo(),
                 -100.0, // negative value
                 valid.valorComissao(),
                 valid.valorPecas(),
@@ -437,7 +437,7 @@ public class ServiceFactory {
                 valid.descricao(),
                 valid.situacao(),
                 valid.formaPagamento(),
-                valid.horarioPrevisto(),
+                valid.periodo(),
                 valid.valor(),
                 -50.0, // negative commission
                 valid.valorPecas(),
@@ -461,7 +461,7 @@ public class ServiceFactory {
                 valid.descricao(),
                 valid.situacao(),
                 valid.formaPagamento(),
-                valid.horarioPrevisto(),
+                valid.periodo(),
                 valid.valor(),
                 valid.valorComissao(),
                 -75.0, // negative parts value
@@ -484,7 +484,7 @@ public class ServiceFactory {
                 "Troca de tela",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
                 FormaPagamento.CREDITO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 50.0,
                 100.0,
@@ -528,7 +528,7 @@ public class ServiceFactory {
                 "São Paulo",
                 "Problema com teclado",
                 SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                HorarioPrevisto.TARDE,
+                Periodo.TARDE,
                 500.0,
                 FormaPagamento.DEBITO,
                 100.0,
@@ -553,7 +553,7 @@ public class ServiceFactory {
                 request.filial(),
                 request.descricao(),
                 request.situacao(),
-                request.horarioPrevisto(),
+                request.periodo(),
                 request.valor(),
                 request.formaPagamento(),
                 request.valorPecas(),
@@ -587,7 +587,7 @@ public class ServiceFactory {
                         service.getTecnico().getNome() + " " + service.getTecnico().getSobrenome() : null,
                 service.getEquipamento(),
                 service.getFilial(),
-                service.getHorarioPrevisto(),
+                service.getPeriodo(),
                 service.getMarca(),
                 service.getDescricao(),
                 service.getFormaPagamento() != null ? service.getFormaPagamento().getFormaPagamento() : null,

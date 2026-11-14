@@ -33,7 +33,7 @@ class ServiceTest {
                     "Brastemp",
                     "Filial 1",
                     "Geladeira não está gelando direito",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     dataAtendimento,
                     client,
                     technician
@@ -60,7 +60,7 @@ class ServiceTest {
                             "Samsung",
                             "Filial 1",
                             "Televisão não liga mais",
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             LocalDate.now(),
                             null,
                             technician
@@ -100,7 +100,7 @@ class ServiceTest {
                             "Brastemp",
                             "Filial 1",
                             "Pequeno",
-                            HorarioPrevisto.MANHA,
+                            Periodo.MANHA,
                             LocalDate.now(),
                             client,
                             technician
@@ -121,7 +121,7 @@ class ServiceTest {
                             "Consul",
                             "Filial 1",
                             "Falha ignição",
-                            HorarioPrevisto.MANHA,
+                            Periodo.MANHA,
                             LocalDate.now(),
                             client,
                             technician
@@ -143,7 +143,7 @@ class ServiceTest {
                     "Brastemp",
                     "Filial 1",
                     "Geladeira parou de funcionar",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -159,7 +159,7 @@ class ServiceTest {
                     "Filial 1",
                     newDescricao,
                     SituacaoServico.SEM_DEFEITO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     200.0,
                     FormaPagamento.PIX,
                     50.0,
@@ -190,7 +190,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -204,7 +204,7 @@ class ServiceTest {
                             "Filial 1",
                             "Troca de placa mãe realizada",
                             SituacaoServico.RESOLVIDO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             500.0,
                             null,
                             100.0,
@@ -231,7 +231,7 @@ class ServiceTest {
                     "Samsung",
                     "Filial 1",
                     "TV sem imagem",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -244,7 +244,7 @@ class ServiceTest {
                             "Filial 1",
                             "Placa trocada",
                             SituacaoServico.RESOLVIDO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             300.0,
                             FormaPagamento.PIX,
                             50.0,
@@ -271,7 +271,7 @@ class ServiceTest {
                     "Consul",
                     "Filial 2",
                     "Não acende nunca",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -284,7 +284,7 @@ class ServiceTest {
                             "Filial 2",
                             "Sem defeito encontrado",
                             SituacaoServico.RESOLVIDO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             0.0,
                             null,
                             0.0,
@@ -311,7 +311,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 3",
                     "Troca de bateria",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -324,7 +324,7 @@ class ServiceTest {
                             "Filial 3",
                             "Troca realizada",
                             SituacaoServico.GARANTIA,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             200.0,
                             FormaPagamento.CREDITO,
                             0.0,
@@ -351,7 +351,7 @@ class ServiceTest {
                     "LG",
                     "Filial 4",
                     "Não esquenta nada",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -364,7 +364,7 @@ class ServiceTest {
                             "Filial 4",
                             "Aguardando atendimento",
                             SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             null,
                             null,
                             null,
@@ -391,7 +391,7 @@ class ServiceTest {
                     "Elgin",
                     "Filial 5",
                     "Não liga nunca",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -404,7 +404,7 @@ class ServiceTest {
                             "Filial 5",
                             "Orçamento aprovado",
                             SituacaoServico.ORCAMENTO_APROVADO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             400.0,
                             FormaPagamento.DEBITO,
                             100.0,
@@ -431,7 +431,7 @@ class ServiceTest {
                     "Electrolux",
                     "Filial 2",
                     "Problema de aquecimento no magnetron",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     validTechnician
@@ -445,7 +445,7 @@ class ServiceTest {
                             "Filial 2",
                             "Tentativa de atualizar sem técnico",
                             SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             null,
                             null,
                             null,
@@ -477,7 +477,7 @@ class ServiceTest {
                     "Filial 1",
                     "Troca de painel principal",
                     SituacaoServico.RESOLVIDO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     200.0,
                     FormaPagamento.PIX,
                     30.0,
@@ -512,7 +512,7 @@ class ServiceTest {
                     "Filial 1",
                     "Troca de painel principal",
                     SituacaoServico.RESOLVIDO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     200.0,
                     FormaPagamento.PIX,
                     30.0,
@@ -546,7 +546,7 @@ class ServiceTest {
                     "Filial 1",
                     "Troca de painel principal",
                     SituacaoServico.RESOLVIDO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     200.0,
                     FormaPagamento.PIX,
                     30.0,
@@ -582,7 +582,7 @@ class ServiceTest {
                     "Filial 1",
                     "Histórico antigo de descrição",
                     SituacaoServico.RESOLVIDO,
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     100.0,
                     FormaPagamento.PIX,
                     10.0,
@@ -619,8 +619,8 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Histórico antigo de retirada pendente",
-                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.ORCAMENTO_APROVADO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
@@ -644,7 +644,7 @@ class ServiceTest {
                             "Filial 1",
                             "Aparelho retirado e garantia ativada",
                             SituacaoServico.GARANTIA,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             500.0,
                             FormaPagamento.PIX,
                             100.0,
@@ -676,8 +676,8 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Histórico antigo de retirada pendente",
-                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.ORCAMENTO_APROVADO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
@@ -699,13 +699,13 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Aparelho retirado e garantia ativada",
-                    SituacaoServico.GARANTIA,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.RESOLVIDO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
                     50.0,
-                    null,
+                    LocalDate.now(),
                     LocalDate.now(),
                     LocalDate.now(),
                     LocalDate.now().plusMonths(3),
@@ -716,12 +716,12 @@ class ServiceTest {
             );
 
             // Assert
-            assertEquals(SituacaoServico.GARANTIA, service.getSituacao());
+            assertEquals(SituacaoServico.RESOLVIDO, service.getSituacao());
             assertEquals(LocalDate.now(), service.getDataInicioGarantia());
         }
 
         @Test
-        void update_ToNaoRetira3MesesWithoutDataInicioGarantia_ShouldNotRequireGarantiaDate() {
+        void update_ToOrcamentoAprovadoWithoutDataInicioGarantia_ShouldRequireGarantiaDate() {
             // Arrange
             Client client = validClient;
             Technician technician = validTechnician;
@@ -732,8 +732,8 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Histórico antigo de retirada pendente",
-                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.ORCAMENTO_APROVADO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
@@ -755,16 +755,16 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Cliente não retirou o aparelho há 3 meses",
-                    SituacaoServico.NAO_RETIRA_3_MESES,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.RESOLVIDO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
                     50.0,
-                    null,
-                    null,
-                    null,
-                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    LocalDate.now().plusMonths(3),
                     LocalDate.now(),
                     LocalDate.now(),
                     client,
@@ -772,15 +772,15 @@ class ServiceTest {
             );
 
             // Assert
-            assertEquals(SituacaoServico.NAO_RETIRA_3_MESES, service.getSituacao());
-            assertNull(service.getDataInicioGarantia());
+            assertEquals(SituacaoServico.RESOLVIDO, service.getSituacao());
+            assertNotNull(service.getDataInicioGarantia());
         }
     }
 
     @Nested
     class TransitionFlow {
         @Test
-        void update_AtendimentoToAprovacao_ShouldBeValidTransition() {
+        void update_AtendimentoToSemDefeito_ShouldBeValidTransition() {
             // Arrange
             Client client = validClient;
             Technician technician = validTechnician;
@@ -790,7 +790,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -802,8 +802,50 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Orçamento apresentado ao cliente para aprovação",
-                    SituacaoServico.AGUARDANDO_APROVACAO,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.SEM_DEFEITO,
+                    Periodo.TARDE,
+                    700.0,
+                    FormaPagamento.CREDITO,
+                    200.0,
+                    70.0,
+                    null,
+                    LocalDate.now(),
+                    null,
+                    null,
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            // Assert
+            assertEquals(SituacaoServico.SEM_DEFEITO, service.getSituacao());
+        }
+
+        @Test
+        void update_AprovacaoToOrcamentoAprovado_ShouldBeValidTransition() {
+            // Arrange
+            Client client = validClient;
+            Technician technician = validTechnician;
+
+            Service service = Service.create(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Notebook não liga mais",
+                    Periodo.MANHA,
+                    LocalDate.now(),
+                    client,
+                    technician
+            );
+
+            service.update(
+                    "Notebook",
+                    "Dell",
+                    "Filial 1",
+                    "Orçamento apresentado ao cliente para aprovação",
+                    SituacaoServico.AGUARDANDO_ORCAMENTO,
+                    Periodo.TARDE,
                     700.0,
                     FormaPagamento.CREDITO,
                     200.0,
@@ -818,34 +860,13 @@ class ServiceTest {
                     technician
             );
 
-            // Assert
-            assertEquals(SituacaoServico.AGUARDANDO_APROVACAO, service.getSituacao());
-        }
-
-        @Test
-        void update_AprovacaoToOrcamentoAprovado_ShouldBeValidTransition() {
-            // Arrange
-            Client client = validClient;
-            Technician technician = validTechnician;
-
-            Service service = Service.create(
-                    "Notebook",
-                    "Dell",
-                    "Filial 1",
-                    "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
-                    LocalDate.now(),
-                    client,
-                    technician
-            );
-
             service.update(
                     "Notebook",
                     "Dell",
                     "Filial 1",
-                    "Orçamento apresentado ao cliente para aprovação",
+                    "Orçamento aprovado pelo cliente",
                     SituacaoServico.AGUARDANDO_APROVACAO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     700.0,
                     FormaPagamento.CREDITO,
                     200.0,
@@ -867,7 +888,7 @@ class ServiceTest {
                     "Filial 1",
                     "Orçamento aprovado pelo cliente",
                     SituacaoServico.ORCAMENTO_APROVADO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     700.0,
                     FormaPagamento.CREDITO,
                     200.0,
@@ -897,7 +918,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -911,7 +932,7 @@ class ServiceTest {
                             "Filial 1",
                             "Tentativa de pular as etapas de aprovação",
                             SituacaoServico.ORCAMENTO_APROVADO,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             700.0,
                             FormaPagamento.CREDITO,
                             200.0,
@@ -942,7 +963,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -956,7 +977,7 @@ class ServiceTest {
                             "Filial 1",
                             "Atualização sem situação informada",
                             null,
-                            HorarioPrevisto.TARDE,
+                            Periodo.TARDE,
                             700.0,
                             FormaPagamento.CREDITO,
                             200.0,
@@ -990,7 +1011,7 @@ class ServiceTest {
                     "Dell",
                     "Filial 1",
                     "Notebook não liga mais",
-                    HorarioPrevisto.MANHA,
+                    Periodo.MANHA,
                     LocalDate.now(),
                     client,
                     technician
@@ -1003,8 +1024,8 @@ class ServiceTest {
                             "Dell",
                             "Filial 1",
                             "Curto",
-                            SituacaoServico.AGUARDANDO_APROVACAO,
-                            HorarioPrevisto.TARDE,
+                            SituacaoServico.SEM_DEFEITO,
+                            Periodo.TARDE,
                             700.0,
                             FormaPagamento.CREDITO,
                             200.0,
@@ -1036,8 +1057,8 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     "Histórico antigo de retirada pendente",
-                    SituacaoServico.AGUARDANDO_CLIENTE_RETIRAR,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.AGUARDANDO_APROVACAO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
@@ -1059,8 +1080,8 @@ class ServiceTest {
                     "LG",
                     "Filial 1",
                     null,
-                    SituacaoServico.GARANTIA,
-                    HorarioPrevisto.TARDE,
+                    SituacaoServico.ORCAMENTO_APROVADO,
+                    Periodo.TARDE,
                     500.0,
                     FormaPagamento.PIX,
                     100.0,
@@ -1076,7 +1097,7 @@ class ServiceTest {
             );
 
             // Assert
-            assertEquals(SituacaoServico.GARANTIA, service.getSituacao());
+            assertEquals(SituacaoServico.ORCAMENTO_APROVADO, service.getSituacao());
             assertFalse(service.getDescricao().contains("null"));
         }
 
@@ -1093,7 +1114,7 @@ class ServiceTest {
                             "Brastemp",
                             "Filial 1",
                             "",
-                            HorarioPrevisto.MANHA,
+                            Periodo.MANHA,
                             LocalDate.now(),
                             client,
                             technician
