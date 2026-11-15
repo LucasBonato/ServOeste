@@ -2,7 +2,7 @@ package com.serv.oeste.application.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.serv.oeste.domain.enums.FormaPagamento;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +35,7 @@ public record ServicoUpdateRequest(
         FormaPagamento formaPagamento,
 
         @NotNull(message = "O horário previsto é obrigatório")
-        HorarioPrevisto horarioPrevisto,
+        Periodo periodo,
 
         @PositiveOrZero(message = "O valor deve ser maior ou igual a zero")
         Double valor,

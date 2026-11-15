@@ -11,30 +11,28 @@ import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.exceptions.service.ServiceNotFoundException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
 public class ServiceService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceService.class);
-
     private final ClientService clientService;
     private final TechnicianService technicianService;
     private final IServiceRepository serviceRepository;
 
     public ServicoResponse fetchOneById(Integer id) {
-        LOGGER.debug("service.fetch-by-id.started id={}", id);
+        log.debug("service.fetch-by-id.started id={}", id);
         Service service = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.warn("service.fetch-by-id.not-found id={}", id);
+                    log.warn("service.fetch-by-id.not-found id={}", id);
                     return new ServiceNotFoundException();
                 });
 
-        LOGGER.info("service.fetch-by-id.succeeded id={}", id);
+        log.info("service.fetch-by-id.succeeded id={}", id);
 
         return new ServicoResponse(service);
     }
@@ -43,12 +41,12 @@ public class ServiceService {
             ServicoRequestFilter servicoRequestFilter,
             PageFilterRequest pageFilter
     ) {
-        LOGGER.debug("service.fetch-list.started filter={}", servicoRequestFilter);
+        log.debug("service.fetch-list.started filter={}", servicoRequestFilter);
         PageResponse<ServicoResponse> servicos = serviceRepository
                 .filter(servicoRequestFilter.toServiceFilter(), pageFilter.toPageFilter())
                 .map(ServicoResponse::new);
 
-        LOGGER.debug(
+        log.debug(
                 "service.fetch-list.completed totalElements={} totalPages={} filter={}",
                 servicos.getPage().totalElements(),
                 servicos.getPage().totalPages(),
@@ -59,7 +57,7 @@ public class ServiceService {
     }
 
     public ServicoResponse create(ServicoRequest servicoRequest, Integer clienteId) {
-        LOGGER.info("service.create.started clientId={} technicianId={}",
+        log.info("service.create.started clientId={} technicianId={}",
                 clienteId,
                 servicoRequest.idTecnico()
         );
@@ -71,7 +69,7 @@ public class ServiceService {
 
         Service novoServico = serviceRepository.save(servicoRequest.toDomain(cliente, tecnico));
 
-        LOGGER.info("service.create.completed id={} clientId={} technicianId={}",
+        log.info("service.create.completed id={} clientId={} technicianId={}",
                 novoServico.getId(),
                 clienteId,
                 servicoRequest.idTecnico()
@@ -79,17 +77,17 @@ public class ServiceService {
 
         return new ServicoResponse(novoServico);
     }
-    
+
     public ServicoResponse update(Integer id, ServicoUpdateRequest servicoUpdateRequest) {
-        LOGGER.info("service.update.started id={}", id);
+        log.info("service.update.started id={}", id);
         Service servico = serviceRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.warn("service.update.not-found id={}", id);
+                    log.warn("service.update.not-found id={}", id);
                     return new ServiceNotFoundException();
                 });
 
-        LOGGER.debug("service.update.fetch-related-entities id={} clientId={} technicianId={}",
+        log.debug("service.update.fetch-related-entities id={} clientId={} technicianId={}",
                 id,
                 servicoUpdateRequest.idCliente(),
                 servicoUpdateRequest.idTecnico()
@@ -104,7 +102,7 @@ public class ServiceService {
                 servicoUpdateRequest.filial(),
                 servicoUpdateRequest.descricao(),
                 servicoUpdateRequest.situacao(),
-                servicoUpdateRequest.horarioPrevisto(),
+                servicoUpdateRequest.periodo(),
                 servicoUpdateRequest.valor(),
                 servicoUpdateRequest.formaPagamento(),
                 servicoUpdateRequest.valorPecas(),
@@ -121,7 +119,7 @@ public class ServiceService {
 
         Service servicoUpdated = serviceRepository.save(servico);
 
-        LOGGER.info("service.update.completed id={} clientId={} technicianId={}",
+        log.info("service.update.completed id={} clientId={} technicianId={}",
                 id,
                 servicoUpdateRequest.idCliente(),
                 servicoUpdateRequest.idTecnico()
@@ -130,8 +128,8 @@ public class ServiceService {
     }
 
     public void deleteListByIds(List<Integer> ids) {
-        LOGGER.info("service.delete-list.started ids={}", ids);
+        log.info("service.delete-list.started ids={}", ids);
         serviceRepository.deleteAllById(ids);
-        LOGGER.info("service.delete-list.completed count={}", ids != null ? ids.size() : 0);
+        log.info("service.delete-list.completed count={}", ids != null ? ids.size() : 0);
     }
 }

@@ -1,7 +1,7 @@
 package com.serv.oeste.application.dtos.reponses;
 
 import com.serv.oeste.domain.entities.service.Service;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ public record ServicoResponse (
     String nomeTecnico,
     String equipamento,
     String filial,
-    HorarioPrevisto horarioPrevisto,
+    Periodo periodo,
     String marca,
     String descricao,
     String formaPagamento,
@@ -39,7 +39,7 @@ public record ServicoResponse (
                 (servico.getTecnico() != null) ? servico.getTecnico().getNome() + " " + servico.getTecnico().getSobrenome() : null,
                 servico.getEquipamento(),
                 servico.getFilial(),
-                servico.getHorarioPrevisto(),
+                servico.getPeriodo(),
                 servico.getMarca(),
                 servico.getDescricao(),
                 (servico.getFormaPagamento() != null) ? servico.getFormaPagamento().getFormaPagamento() : null,

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,7 +31,7 @@ public record ServicoRequest(
         LocalDate dataAtendimento,
 
         @NotNull(message = "O horário previsto é obrigatório")
-        HorarioPrevisto horarioPrevisto,
+        Periodo periodo,
 
         @Size(max = 500, message = "A descrição pode ter no máximo {max} caracteres")
         String descricao
@@ -42,7 +42,7 @@ public record ServicoRequest(
                 marca,
                 filial,
                 descricao,
-                horarioPrevisto,
+                periodo,
                 dataAtendimento,
                 cliente,
                 tecnico
