@@ -23,7 +23,6 @@ public record ServicoUpdateRequest(
         @NotBlank(message = "A marca é obrigatória")
         String marca,
 
-        @NotBlank(message = "A filial é obrigatória")
         String filial,
 
         @Size(max = 500, message = "A descrição pode ter no máximo {max} caracteres")
@@ -34,7 +33,6 @@ public record ServicoUpdateRequest(
 
         FormaPagamento formaPagamento,
 
-        @NotNull(message = "O horário previsto é obrigatório")
         Periodo periodo,
 
         @PositiveOrZero(message = "O valor deve ser maior ou igual a zero")

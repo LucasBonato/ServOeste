@@ -162,7 +162,7 @@ public class Service {
                 marca,
                 filial,
                 descricao,
-                inferSituacao(periodo, dataAtendimento, tecnico),
+                inferSituacao(dataAtendimento),
                 periodo,
                 dataAtendimento,
                 cliente,
@@ -351,10 +351,10 @@ public class Service {
         errors.throwIfAny(ServiceNotValidException::new);
     }
 
-    private static SituacaoServico inferSituacao(Periodo periodo, LocalDate dataAtendimento, Technician tecnico) {
-        if (periodo == null || (dataAtendimento == null && tecnico == null))
-            return SituacaoServico.AGUARDANDO_AGENDAMENTO;
-        return SituacaoServico.AGUARDANDO_ATENDIMENTO;
+    private static SituacaoServico inferSituacao(LocalDate dataAtendimento) {
+        return dataAtendimento == null
+            ? SituacaoServico.AGUARDANDO_AGENDAMENTO
+            : SituacaoServico.AGUARDANDO_ATENDIMENTO;
     }
 
     public Integer getId() {

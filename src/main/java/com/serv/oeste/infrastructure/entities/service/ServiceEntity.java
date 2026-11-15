@@ -105,7 +105,9 @@ public class ServiceEntity {
         this.dataAtendimentoPrevisto = service.getDataAtendimentoPrevisto();
         this.dataAtendimentoEfetiva = service.getDataAtendimentoEfetiva();
         this.cliente = new ClientEntity(service.getCliente());
-        this.tecnico = new TechnicianEntity(service.getTecnico());
+        this.tecnico = service.getTecnico() != null
+                ? new TechnicianEntity(service.getTecnico())
+                : null;
     }
 
     public Service toDomain() {
