@@ -67,6 +67,22 @@ flowchart TD
     7.2 -->|Novo defeito resolvido| 6[Resolvido]
 ```
 
+## Table of fields on service
+
+| #  | Código | Situação           | Cliente  | Equip. | Marca | Técnico | Período | Filial | Descr. | Dt. Prev. | Data Efetiva | Valor Serv. | Valor Peças | Valor Comis. | Forma Pgto. | Dt. Pgto. Comis. | Dt. Fech. | Dt. Ini. Garant. | Dt. Fim Garant. |
+| -- | ------ | ------------------ |---------| ------ | ----- | ------- | ------- | ------ | ------ | --------- | ------------ | ----------- | ----------- | ------------ | ----------- | ---------------- | --------- | ---------------- | --------------- |
+| 1  | 1      | Aguar. agend.      |  obgt.| obgt.  | obgt. | opcio.   | opcio.  | opcio. | obgt. | opcio.     | desab.       | desab.      | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 2  | 2      | Aguar. atend.      |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | desab.       | desab.      | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 3  | 2.1    | Cancelado          |  obgt.| obgt.  | obgt. | opcio.  | opcio.  | opcio. | opcio. | opcio.    | desab.       | opcio.      | opcio.      | opcio.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 4  | 2.2    | Sem defeito        |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | opcio.      | opcio.      | opcio.       | opcio.      | opcio.           | obgt.     | opcio.           | opcio.          |
+| 5  | 3      | Aguar. Orçamento   |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 6  | 4      | Aguard. aprov. cli |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 7  | 4.1    | Compra             |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | opcio.      | opcio.      | opcio.       | obgt.       | opcio.           | obgt.     | opcio.           | opcio.          |
+| 8  | 4.2    | Não aprov. cliente |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | desab.      | desab.           | obgt.     | desab.           | desab.          |
+| 9  | 5      | Aprovado           |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | opcio.      | opcio.           | desab.    | desab.           | desab.          |
+| 10 | 6      | Resolvido          |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | obgt.       | obgt.            | obgt.     | obgt.            | obgt.           |
+| 11 | 7      | Garantia           |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | obgt.       | obgt.            | obgt.     | obgt.            | obgt.  |
+
 ```text
    ┌────────────────┐       ┌────────────────┐        ┌───────────────┐
    │  FrontEnd App  │──────▶│   /auth/login  │───────▶│  AuthService  │
