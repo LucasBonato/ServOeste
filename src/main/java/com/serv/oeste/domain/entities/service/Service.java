@@ -313,40 +313,40 @@ public class Service {
             errors.add(ErrorFields.PERIODO, "O período é obrigatório");
 
         if (situacao.exigeValorServico() && valor == null)
-            errors.add(ErrorFields.SERVICO, "O Valor é obrigatório.");
+            errors.add(ErrorFields.VALOR, "O Valor é obrigatório.");
         if (valor != null && valor < 0)
-            errors.add(ErrorFields.SERVICO, "O Valor não pode ser negativo.");
+            errors.add(ErrorFields.VALOR, "O Valor não pode ser negativo.");
 
         if (situacao.exigeValorComissao() && valorComissao == null)
-            errors.add(ErrorFields.SERVICO, "O Valor da Comissão é obrigatório.");
+            errors.add(ErrorFields.VALORCOMISSAO, "O Valor da Comissão é obrigatório.");
         if (valorComissao != null && valorComissao < 0)
-            errors.add(ErrorFields.SERVICO, "O Valor da Comissão não pode ser negativo.");
+            errors.add(ErrorFields.VALORCOMISSAO, "O Valor da Comissão não pode ser negativo.");
 
         if (situacao.exigeValorPecas() && valorPecas == null)
-            errors.add(ErrorFields.SERVICO, "O Valor das Peças é obrigatório.");
+            errors.add(ErrorFields.VALORPECAS, "O Valor das Peças é obrigatório.");
         if (valorPecas != null && valorPecas < 0)
-            errors.add(ErrorFields.SERVICO, "O Valor das Peças não pode ser negativo.");
+            errors.add(ErrorFields.VALORPECAS, "O Valor das Peças não pode ser negativo.");
 
         if (situacao.exigeFormaPagamento() && formaPagamento == null)
-            errors.add(ErrorFields.SERVICO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.FORMAPAGAMENTO, "Forma de pagamento é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataFechamento() && dataFechamento == null)
-            errors.add(ErrorFields.DATA, "Data fechamento é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAFECHAMENTO, "Data fechamento é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataPagamentoComissao() && dataPagamentoComissao == null)
-            errors.add(ErrorFields.DATA, "Data Pagamento Comissao é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAPAGAMENTOCOMISSAO, "Data Pagamento Comissao é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataInicioGarantia() && dataInicioGarantia == null)
-            errors.add(ErrorFields.DATA, "Data Inicio Garantia é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAINICIOGARANTIA, "Data Inicio Garantia é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataFimGarantia() && dataFimGarantia == null)
-            errors.add(ErrorFields.DATA, "Data Fim Garantia é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAFIMGARANTIA, "Data Fim Garantia é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataAtendimentoPrevisto() && dataAtendimentoPrevisto == null)
-            errors.add(ErrorFields.DATA, "Data Atendimento Previsto é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAATENDIMENTOPREVISTO, "Data Atendimento Previsto é obrigatória para a situação " + situacao.getSituacao());
 
         if (situacao.exigeDataAtendimentoEfetivo() && dataAtendimentoEfetiva == null)
-            errors.add(ErrorFields.DATA, "Data Atendimento Efetivo é obrigatória para a situação " + situacao.getSituacao());
+            errors.add(ErrorFields.DATAATENDIMENTOEFETIVO, "Data Atendimento Efetivo é obrigatória para a situação " + situacao.getSituacao());
 
         errors.throwIfAny(ServiceNotValidException::new);
     }

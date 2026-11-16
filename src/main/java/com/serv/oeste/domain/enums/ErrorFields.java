@@ -21,7 +21,17 @@ public enum ErrorFields {
     SERVICO("servico"),
     USER("user"),
     AUTH("auth"),
-    SITUACAO("situacao");
+    SITUACAO("situacao"),
+    DATAFECHAMENTO("dataFechamento"),
+    DATAPAGAMENTOCOMISSAO("dataPagamentoComissao"),
+    DATAINICIOGARANTIA("dataInicioGarantia"),
+    DATAFIMGARANTIA("dataFimGarantia"),
+    DATAATENDIMENTOPREVISTO("dataAtendimentoPrevisto"),
+    DATAATENDIMENTOEFETIVO("dataAtendimentoEfetivo"),
+    VALOR("valor"),
+    VALORPECAS("valorPecas"),
+    VALORCOMISSAO("valorComissao"),
+    FORMAPAGAMENTO("formaPagamento");
 
     private final String fieldName;
 
