@@ -16,7 +16,7 @@ public record TecnicoRequest(
         String nome,
 
         @NotBlank(message = "Digite Nome e Sobrenome!")
-        @Size(min = 2, message = "O Sobrenome do técnico precisa ter no mínimo {minsd} caracteres!")
+        @Size(min = 2, message = "O Sobrenome do técnico precisa ter no mínimo {min} caracteres!")
         String sobrenome,
 
         @Pattern(regexp = "\\d{10}|", message = "Telefone fixo inválido")
