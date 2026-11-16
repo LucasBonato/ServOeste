@@ -16,8 +16,7 @@ import com.serv.oeste.domain.exceptions.technician.SpecialtyNotFoundException;
 import com.serv.oeste.domain.exceptions.technician.TechnicianNotFoundException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -27,35 +26,34 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TechnicianService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TechnicianService.class);
-
     private final ITechnicianRepository technicianRepository;
     private final ISpecialtyRepository specialtyRepository;
     private final Clock clock;
 
     public TecnicoWithSpecialityResponse fetchOneById(Integer id) {
-        LOGGER.debug("technician.fetch-by-id.started id={}", id);
+        log.debug("technician.fetch-by-id.started id={}", id);
         Technician technician = technicianRepository
                 .findByIdWithEspecialidades(id)
                 .orElseThrow(() -> {
-                    LOGGER.warn("technician.not-found id={}", id);
+                    log.warn("technician.not-found id={}", id);
                     return new TechnicianNotFoundException();
                 });
-        LOGGER.info("technician.fetch-by-id.succeeded id={} nome={}", id, technician.getNome());
+        log.info("technician.fetch-by-id.succeeded id={} nome={}", id, technician.getNome());
 
         return new TecnicoWithSpecialityResponse(technician);
     }
 
     public PageResponse<TecnicoResponse> fetchListByFilter(TecnicoRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
-        LOGGER.debug("technician.fetch-list.started filter={}", filtroRequest);
+        log.debug("technician.fetch-list.started filter={}", filtroRequest);
         PageResponse<TecnicoResponse> tecnicos = technicianRepository
                 .filter(filtroRequest.toTechnicianFilter(), pageFilterRequest.toPageFilter())
                 .map(TecnicoResponse::new);
 
-        LOGGER.debug(
+        log.debug(
                 "technician.fetch-list.completed totalElements={} totalPages={} filter={}",
                 tecnicos.getPage().totalElements(),
                 tecnicos.getPage().totalPages(),
@@ -67,7 +65,7 @@ public class TechnicianService {
 
     public List<TecnicoDisponibilidadeResponse> fetchListAvailability(Integer especialidadeId) {
         int intervaloDeDias = (LocalDate.now(clock).getDayOfWeek().getValue() > 4) ? 4 : 3;
-        LOGGER.debug("technician.fetch-availability.started interval={} specialtyId={}", intervaloDeDias, especialidadeId);
+        log.debug("technician.fetch-availability.started interval={} specialtyId={}", intervaloDeDias, especialidadeId);
 
         List<TechnicianAvailability> tecnicosRaw = technicianRepository.getTechnicianAvailabilityBySpecialty(intervaloDeDias, especialidadeId);
 
@@ -84,7 +82,7 @@ public class TechnicianService {
                     );
                 })
                 .toList();
-        LOGGER.info("technician.fetch-availability.completed count={} interval={} specialtyId={}",
+        log.info("technician.fetch-availability.completed count={} interval={} specialtyId={}",
                 tecnicos.size(),
                 intervaloDeDias,
                 especialidadeId
@@ -94,18 +92,18 @@ public class TechnicianService {
     }
 
     public TecnicoWithSpecialityResponse create(TecnicoRequest tecnicoRequest) {
-        LOGGER.info("technician.create.started nome={}", tecnicoRequest.nome());
+        log.info("technician.create.started nome={}", tecnicoRequest.nome());
 
         Technician newTechnician = technicianRepository.save(
                 tecnicoRequest.toTechnician(getEspecialidadesTecnico(tecnicoRequest.especialidades_Ids()))
         );
-        LOGGER.info("technician.create.completed id={} nome={}", newTechnician.getId(), newTechnician.getNome());
+        log.info("technician.create.completed id={} nome={}", newTechnician.getId(), newTechnician.getNome());
 
         return new TecnicoWithSpecialityResponse(newTechnician);
     }
 
     public TecnicoWithSpecialityResponse update(Integer id, TecnicoRequest tecnicoRequest) {
-        LOGGER.info("technician.update.started id={}", id);
+        log.info("technician.update.started id={}", id);
         Technician tecnico = getTecnicoById(id);
 
         tecnico.update(
@@ -118,22 +116,22 @@ public class TechnicianService {
         );
 
         Technician technicianUpdated = technicianRepository.save(tecnico);
-        LOGGER.info("technician.update.completed id={} nome={}", technicianUpdated.getId(), technicianUpdated.getNome());
+        log.info("technician.update.completed id={} nome={}", technicianUpdated.getId(), technicianUpdated.getNome());
 
         return new TecnicoWithSpecialityResponse(technicianUpdated);
     }
 
     public void disableListByIds(List<Integer> ids) {
-        LOGGER.info("technician.disable-list.started ids={}", ids);
+        log.info("technician.disable-list.started ids={}", ids);
 
         List<Technician> tecnicos = technicianRepository.findAllById(ids);
         tecnicos.forEach(Technician::disable);
 
         if (!tecnicos.isEmpty()) {
             technicianRepository.saveAll(tecnicos);
-            LOGGER.info("technician.disable-list.completed count={}", tecnicos.size());
+            log.info("technician.disable-list.completed count={}", tecnicos.size());
         } else {
-            LOGGER.warn("technician.disable-list.no-technicians-found ids={}", ids);
+            log.warn("technician.disable-list.no-technicians-found ids={}", ids);
         }
     }
 
@@ -141,7 +139,7 @@ public class TechnicianService {
         return technicianRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.warn("technician.not-found id={}", id);
+                    log.warn("technician.not-found id={}", id);
                     return new TechnicianNotFoundException();
                 });
     }
@@ -182,7 +180,7 @@ public class TechnicianService {
                 .toList();
 
         if (!missing.isEmpty()) {
-            LOGGER.warn("technician.specialties-not-found ids={}", missing);
+            log.warn("technician.specialties-not-found ids={}", missing);
             throw new SpecialtyNotFoundException();
         }
 

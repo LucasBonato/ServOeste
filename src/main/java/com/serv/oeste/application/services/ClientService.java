@@ -12,38 +12,37 @@ import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.domain.exceptions.client.ClientNotValidException;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClientService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientService.class);
-
     private final IClientRepository clientRepository;
     private final IServiceRepository serviceRepository;
 
     public ClienteResponse fetchOneById(Integer id) {
-        LOGGER.debug("client.fetch-by-id.started id={}", id);
+        log.debug("client.fetch-by-id.started id={}", id);
         Client client = getClienteById(id);
-        LOGGER.info("client.fetch-by-id.succeeded id={} nome={}", id, client.getNome());
+        log.info("client.fetch-by-id.succeeded id={} nome={}", id, client.getNome());
 
         return getClienteResponse(client);
     }
     
     public PageResponse<ClienteResponse> fetchListByFilter(ClienteRequestFilter filtroRequest, PageFilterRequest pageFilterRequest) {
-        LOGGER.debug("client.fetch-list.started filter={}", filtroRequest);
+        log.debug("client.fetch-list.started filter={}", filtroRequest);
         PageResponse<ClienteResponse> clientsResponse = clientRepository.filter(
                         filtroRequest.toClientFilter(),
                         pageFilterRequest.toPageFilter()
                 )
                 .map(ClienteResponse::new);
 
-        LOGGER.debug(
+        log.debug(
                 "client.fetch-list.completed totalElements={} totalPages={} filter={}",
                 clientsResponse.getPage().totalElements(),
                 clientsResponse.getPage().totalPages(),
@@ -54,17 +53,17 @@ public class ClientService {
     }
     
     public ClienteResponse create(ClienteRequest clienteRequest) {
-        LOGGER.info("client.create.started nome={}", clienteRequest.nome());
+        log.info("client.create.started nome={}", clienteRequest.nome());
 
         Client cliente = clientRepository.save(clienteRequest.toClient());
 
-        LOGGER.info("client.create.completed id={} nome={}", cliente.getId(), cliente.getNome());
+        log.info("client.create.completed id={} nome={}", cliente.getId(), cliente.getNome());
 
         return getClienteResponse(cliente);
     }
     
     public ClienteResponse update(Integer id, ClienteRequest clienteRequest) {
-        LOGGER.info("client.update.started id={}", id);
+        log.info("client.update.started id={}", id);
 
         Client cliente = getClienteById(id);
         cliente.update(
@@ -78,25 +77,25 @@ public class ClientService {
         );
 
         Client clientUpdated = clientRepository.save(cliente);
-        LOGGER.info("client.update.completed id={} nome={}", clientUpdated.getId(), clientUpdated.getNome());
+        log.info("client.update.completed id={} nome={}", clientUpdated.getId(), clientUpdated.getNome());
 
         return getClienteResponse(cliente);
     }
 
     public void deleteListByIds(List<Integer> ids) {
-        LOGGER.info("client.delete-list.started ids={}", ids);
+        log.info("client.delete-list.started ids={}", ids);
         if (ids == null || ids.isEmpty()) return;
 
         List<Client> clients = clientRepository.findAllByIds(ids);
         if (clients.isEmpty()) {
-            LOGGER.warn("client.delete-list.no-clients-found ids={}", ids);
+            log.warn("client.delete-list.no-clients-found ids={}", ids);
             return;
         }
 
         Set<Integer> blockedIds = serviceRepository.findAllClientIdsWithServices(ids);
 
         if (!blockedIds.isEmpty()) {
-            LOGGER.warn("client.delete-list.blocked-by-active-services blockedIds={}", blockedIds);
+            log.warn("client.delete-list.blocked-by-active-services blockedIds={}", blockedIds);
             throw new ClientNotValidException(
                     ErrorFields.CLIENTE,
                     "Os seguintes clientes não foram excluídos por possuírem serviços atrelados: " + blockedIds
@@ -104,14 +103,14 @@ public class ClientService {
         }
 
         clientRepository.deleteAllByIds(ids);
-        LOGGER.info("client.delete-list.completed count={}", ids.size());
+        log.info("client.delete-list.completed count={}", ids.size());
     }
 
     public Client getClienteById(Integer id) {
         return clientRepository
                 .findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.warn("client.not-found id={}", id);
+                    log.warn("client.not-found id={}", id);
                     return new ClientNotFoundException();
                 });
     }

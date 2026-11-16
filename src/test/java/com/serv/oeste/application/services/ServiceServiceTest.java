@@ -8,7 +8,7 @@ import com.serv.oeste.domain.entities.client.Client;
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.entities.technician.Technician;
 import com.serv.oeste.domain.enums.FormaPagamento;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.domain.exceptions.client.ClientNotFoundException;
 import com.serv.oeste.domain.exceptions.service.ServiceNotFoundException;
@@ -121,7 +121,7 @@ class ServiceServiceTest {
                     "Campinas",
                     "Erro no cartucho",
                     SituacaoServico.AGUARDANDO_ATENDIMENTO,
-                    HorarioPrevisto.TARDE,
+                    Periodo.TARDE,
                     160.00,
                     FormaPagamento.PIX,
                     100.00,

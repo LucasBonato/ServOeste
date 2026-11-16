@@ -5,8 +5,7 @@ import com.serv.oeste.domain.exceptions.auth.AuthTokenExpiredException;
 import com.serv.oeste.domain.exceptions.auth.AuthTokenNotValidException;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,11 +21,9 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     @ExceptionHandler(AuthTokenExpiredException.class)
     public ProblemDetail handleExpiredToken() {
         logDomainException("auth.token-expired", UNAUTHORIZED);
@@ -133,7 +130,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             span.setAttribute("enduser.id", userId);
         }
 
-        LOGGER.warn(
+        log.warn(
                 "exception.code={} status={} exceptionType={} traceId={} userId={} errors={}",
                 code,
                 status.value(),

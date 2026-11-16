@@ -1,12 +1,12 @@
 package com.serv.oeste.domain.enums;
 
-public enum HorarioPrevisto {
+public enum Periodo {
     MANHA("Manhã"),
     TARDE("Tarde");
 
     private final String value;
 
-    HorarioPrevisto(String value) {
+    Periodo(String value) {
         this.value = value;
     }
 

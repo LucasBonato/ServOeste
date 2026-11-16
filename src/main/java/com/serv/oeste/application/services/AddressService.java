@@ -12,30 +12,28 @@ import com.serv.oeste.domain.utils.StringUtils;
 import io.micrometer.observation.annotation.Observed;
 import io.micrometer.observation.annotation.ObservationKeyValue;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AddressService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddressService.class);
-
     private final ViaCepClient viaCepClient;
 
     @Observed(name = "address.lookup")
     public EnderecoResponse getFields(@ObservationKeyValue(key = "cep", value = "{cep}") String cep) {
-        LOGGER.debug("address.lookup.started cep={}", cep);
+        log.debug("address.lookup.started cep={}", cep);
         try {
             ViaCepResponse viaCep = viaCepClient.getCep(cep);
 
             if (viaCep == null || StringUtils.isBlank(viaCep.logradouro())) {
-                LOGGER.warn("address.lookup.no-result cep={}", cep);
+                log.warn("address.lookup.no-result cep={}", cep);
                 return new EnderecoResponse(null, null, null);
             }
 
-            LOGGER.info("address.lookup.succeeded cep={} cidade={} bairro={}",
+            log.info("address.lookup.succeeded cep={} cidade={} bairro={}",
                     cep,
                     viaCep.localidade(),
                     viaCep.bairro()
@@ -44,19 +42,19 @@ public class AddressService {
             return new EnderecoResponse(viaCep);
         }
         catch (HttpClientErrorException e) {
-            LOGGER.warn("address.lookup.invalid-cep cep={} status={}", cep, e.getStatusCode().value());
+            log.warn("address.lookup.invalid-cep cep={} status={}", cep, e.getStatusCode().value());
             throw new AddressNotValidException();
         }
         catch (HttpServerErrorException e) {
-            LOGGER.warn("address.lookup.external-server-down cep={} status={}", cep, e.getStatusCode().value());
+            log.warn("address.lookup.external-server-down cep={} status={}", cep, e.getStatusCode().value());
             throw new ExternalServerDownException(ErrorFields.CEP, "Servidor da ViaCep caiu.");
         }
         catch (ResourceAccessException e) {
-            LOGGER.warn("address.lookup.network-error cep={}", cep);
+            log.warn("address.lookup.network-error cep={}", cep);
             throw new ExternalNetworkException(ErrorFields.CEP, "Problema de rede ao acessar o serviço ViaCep");
         }
         catch (RestClientException e) {
-            LOGGER.warn("address.lookup.rest-client-error cep={}", cep);
+            log.warn("address.lookup.rest-client-error cep={}", cep);
             throw new RestTemplateException(ErrorFields.CEP, "Erro no cliente HTTP externo");
         }
     }

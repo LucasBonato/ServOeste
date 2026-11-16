@@ -9,17 +9,15 @@ import com.serv.oeste.domain.exceptions.specialty.SpecialtyProtectedException;
 import com.serv.oeste.domain.exceptions.technician.SpecialtyNotFoundException;
 import com.serv.oeste.domain.valueObjects.Specialty;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SpecialtyService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpecialtyService.class);
-
     private final ISpecialtyRepository specialtyRepository;
 
     public List<EspecialidadeResponse> findAll() {
@@ -29,13 +27,13 @@ public class SpecialtyService {
     }
 
     public EspecialidadeResponse create(SpecialtyRequest request) {
-        LOGGER.info(
+        log.info(
                 "specialty.create.started conhecimento={}",
                 request.conhecimento()
         );
 
         if (specialtyRepository.findByName(request.conhecimento()).isPresent()) {
-            LOGGER.error(
+            log.error(
                     "specialty.create.already-exists conhecimento={}",
                     request.conhecimento()
             );
@@ -44,7 +42,7 @@ public class SpecialtyService {
 
         Specialty specialty = specialtyRepository.save(Specialty.create(request.conhecimento()));
 
-        LOGGER.info(
+        log.info(
                 "specialty.create.completed specialtyId={} conhecimento={}",
                 specialty.id(),
                 specialty.conhecimento()
@@ -54,7 +52,7 @@ public class SpecialtyService {
     }
 
     public EspecialidadeResponse update(Integer id, SpecialtyRequest request) {
-        LOGGER.info(
+        log.info(
                 "specialty.update.started specialtyId={} newConhecimentoName={}",
                 id,
                 request.conhecimento()
@@ -62,7 +60,7 @@ public class SpecialtyService {
 
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.error(
+                    log.error(
                             "specialty.update.not-found specialtyId={}",
                             id
                     );
@@ -70,7 +68,7 @@ public class SpecialtyService {
                 });
 
         if (specialty.isOutros()) {
-            LOGGER.error(
+            log.error(
                     "specialty.update.blocked-outros specialtyId={} conhecimento={} newConhecimentoName={}",
                     id,
                     specialty.conhecimento(),
@@ -83,7 +81,7 @@ public class SpecialtyService {
                 !specialty.conhecimento().equalsIgnoreCase(request.conhecimento()) &&
                 specialtyRepository.findByName(request.conhecimento()).isPresent()
         ) {
-            LOGGER.error(
+            log.error(
                     "specialty.update.already-exists-name specialtyId={} conhecimento={} newConhecimentoName={}",
                     id,
                     specialty.conhecimento(),
@@ -94,7 +92,7 @@ public class SpecialtyService {
 
         specialty.rename(request.conhecimento());
 
-        LOGGER.info(
+        log.info(
                 "specialty.update.name-changed specialtyId={} newConhecimentoName={}",
                 id,
                 specialty.conhecimento()
@@ -102,7 +100,7 @@ public class SpecialtyService {
 
         specialty = specialtyRepository.save(specialty);
 
-        LOGGER.info(
+        log.info(
                 "specialty.update.completed specialtyId={} newConhecimentoName={}",
                 id,
                 specialty.conhecimento()
@@ -112,14 +110,14 @@ public class SpecialtyService {
     }
 
     public void deactivate(Integer id) {
-        LOGGER.info(
+        log.info(
                 "specialty.deactivate.started specialtyId={}",
                 id
         );
 
         Specialty specialty = specialtyRepository.findById(id)
                 .orElseThrow(() -> {
-                    LOGGER.error(
+                    log.error(
                             "specialty.deactivate.not-found specialtyId={}",
                             id
                     );
@@ -127,7 +125,7 @@ public class SpecialtyService {
                 });
 
         if (specialty.isOutros()) {
-            LOGGER.error(
+            log.error(
                     "specialty.deactivate.blocked-outros specialtyId={} conhecimento={}",
                     id,
                     specialty.conhecimento()
@@ -136,7 +134,7 @@ public class SpecialtyService {
         }
 
         if (specialtyRepository.countTechniciansBySpecialtyId(id) > 0) {
-            LOGGER.error(
+            log.error(
                     "specialty.deactivate.is-in-use specialtyId={} conhecimento={}",
                     id,
                     specialty.conhecimento()
@@ -146,7 +144,7 @@ public class SpecialtyService {
 
         specialty.deactivate();
         specialtyRepository.save(specialty);
-        LOGGER.info(
+        log.info(
                 "specialty.deactivate.completed specialtyId={} newConhecimentoName={} ativo={}",
                 id,
                 specialty.conhecimento(),

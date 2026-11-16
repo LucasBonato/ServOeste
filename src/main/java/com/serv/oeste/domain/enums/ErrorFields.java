@@ -15,13 +15,23 @@ public enum ErrorFields {
     MARCA("marca"),
     DESCRICAO("descricao"),
     FILIAL("filial"),
-    HORARIO("horario"),
+    PERIODO("periodo"),
     DATA("data"),
     CONHECIMENTO("conhecimento"),
     SERVICO("servico"),
     USER("user"),
     AUTH("auth"),
-    SITUACAO("situacao");
+    SITUACAO("situacao"),
+    DATAFECHAMENTO("dataFechamento"),
+    DATAPAGAMENTOCOMISSAO("dataPagamentoComissao"),
+    DATAINICIOGARANTIA("dataInicioGarantia"),
+    DATAFIMGARANTIA("dataFimGarantia"),
+    DATAATENDIMENTOPREVISTO("dataAtendimentoPrevisto"),
+    DATAATENDIMENTOEFETIVO("dataAtendimentoEfetivo"),
+    VALOR("valor"),
+    VALORPECAS("valorPecas"),
+    VALORCOMISSAO("valorComissao"),
+    FORMAPAGAMENTO("formaPagamento");
 
     private final String fieldName;
 

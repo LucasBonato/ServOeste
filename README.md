@@ -53,23 +53,35 @@ Architecture rules are enforced by **ArchUnit** (`CleanArchitectureTest`) to ens
 flowchart TD
     1[Aguardando agendamento] --> 2[Aguardando atendimento]
     2 -->|Problema identificado| 3[Aguardando orçamento]
-    2 -->|Sem defeito| 3.1["Sem defeito (fim)"]
-    2 -->|Cancelado| 3.2["Cancelado (fim)"]
+    2 -->|Técnico não encontrou defeito| 3.1["Sem defeito (fim)"]
+    2 -->|Cliente cancelou| 3.2["Cancelado (fim)"]
     
-    3 --> 4[Aguardando aprovação do cliente]
-    4 -->|Não aprovado| 5.1["Não aprovado pelo cliente (fim)"]
-    4 -->|Compra| 5.2["Compra (fim)"]
+    3 -->|Orçamento gerado| 4[Aguardando aprovação do cliente]
+    4 -->|Não aprovado pelo cliente| 5.1["Não aprovado pelo cliente (fim)"]
+    4 -->|Cliente optou por vender o produto| 5.2["Compra (fim)"]
     4 -->|Aprovado| 5.3[Orçamento aprovado]
     
-    5.3 --> 6[Aguardando cliente retirar]
-    6 -->|Não retira há 3 meses| 7.1[Não retira há 3 meses]
-    6 -->|Garantia| 7.2[Garantia]
-    
-    7.2 -->|Cortesia| 8[Cortesia]
-    7.2 -->|Resolvido| 9["Resolvido (fim)"]
-    8 --> 9["Resolvido (fim)"]
-    7.1 --> 9["Resolvido (fim)"]
+    5.3 -->|Cliente retirou| 6[Resolvido]
+    5.3 -->|Não retira há 3 meses| 6[Resolvido]
+    6 -->|Defeito dentro da Garantia| 7.2[Garantia]
+    7.2 -->|Novo defeito resolvido| 6[Resolvido]
 ```
+
+## Table of fields on service
+
+| #  | Código | Situação           | Cliente  | Equip. | Marca | Técnico | Período | Filial | Descr. | Dt. Prev. | Data Efetiva | Valor Serv. | Valor Peças | Valor Comis. | Forma Pgto. | Dt. Pgto. Comis. | Dt. Fech. | Dt. Ini. Garant. | Dt. Fim Garant. |
+| -- | ------ | ------------------ |---------| ------ | ----- | ------- | ------- | ------ | ------ | --------- | ------------ | ----------- | ----------- | ------------ | ----------- | ---------------- | --------- | ---------------- | --------------- |
+| 1  | 1      | Aguar. agend.      |  obgt.| obgt.  | obgt. | opcio.   | opcio.  | opcio. | obgt. | opcio.     | desab.       | desab.      | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 2  | 2      | Aguar. atend.      |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | desab.       | desab.      | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 3  | 2.1    | Cancelado          |  obgt.| obgt.  | obgt. | opcio.  | opcio.  | opcio. | opcio. | opcio.    | desab.       | opcio.      | opcio.      | opcio.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 4  | 2.2    | Sem defeito        |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | opcio.      | opcio.      | opcio.       | opcio.      | opcio.           | obgt.     | opcio.           | opcio.          |
+| 5  | 3      | Aguar. Orçamento   |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | desab.      | desab.       | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 6  | 4      | Aguard. aprov. cli |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | desab.      | desab.           | desab.    | desab.           | desab.          |
+| 7  | 4.1    | Compra             |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | opcio.      | opcio.      | opcio.       | obgt.       | opcio.           | obgt.     | opcio.           | opcio.          |
+| 8  | 4.2    | Não aprov. cliente |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | desab.      | desab.           | obgt.     | desab.           | desab.          |
+| 9  | 5      | Aprovado           |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | opcio. | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | opcio.      | opcio.           | desab.    | desab.           | desab.          |
+| 10 | 6      | Resolvido          |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | obgt.       | obgt.            | obgt.     | obgt.            | obgt.           |
+| 11 | 7      | Garantia           |  obgt.| obgt.  | obgt. | obgt.   | obgt.   | obgt.  | obgt.  | obgt.     | obgt.        | obgt.       | obgt.       | obgt.        | obgt.       | obgt.            | obgt.     | obgt.            | obgt.  |
 
 ```text
    ┌────────────────┐       ┌────────────────┐        ┌───────────────┐

@@ -23,10 +23,10 @@ public record ClienteRequest(
         @NotBlank(message = "O Endereço é obrigatório!")
         String endereco,
 
-        @NotBlank(message = "O Município é obrigatório!")
+        @NotBlank(message = "O Bairro é obrigatório!")
         String bairro,
 
-        @NotBlank(message = "O Bairro é obrigatório!")
+        @NotBlank(message = "O Município é obrigatório!")
         String municipio
 ) {
     public Client toClient() {

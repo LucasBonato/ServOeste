@@ -2,7 +2,7 @@ package com.serv.oeste.infrastructure.entities.service;
 
 import com.serv.oeste.domain.entities.service.Service;
 import com.serv.oeste.domain.enums.FormaPagamento;
-import com.serv.oeste.domain.enums.HorarioPrevisto;
+import com.serv.oeste.domain.enums.Periodo;
 import com.serv.oeste.domain.enums.SituacaoServico;
 import com.serv.oeste.infrastructure.entities.client.ClientEntity;
 import com.serv.oeste.infrastructure.entities.technician.TechnicianEntity;
@@ -40,7 +40,7 @@ public class ServiceEntity {
 
     @Column(name = "Horario_Previsto")
     @Enumerated(EnumType.STRING)
-    private HorarioPrevisto horarioPrevisto;
+    private Periodo periodo;
 
     @Column(name = "Valor")
     private Double valor;
@@ -92,7 +92,7 @@ public class ServiceEntity {
         this.filial = service.getFilial();
         this.descricao = service.getDescricao();
         this.situacao = service.getSituacao();
-        this.horarioPrevisto = service.getHorarioPrevisto();
+        this.periodo = service.getPeriodo();
         this.valor = service.getValor();
         this.formaPagamento = service.getFormaPagamento();
         this.valorPecas = service.getValorPecas();
@@ -105,7 +105,9 @@ public class ServiceEntity {
         this.dataAtendimentoPrevisto = service.getDataAtendimentoPrevisto();
         this.dataAtendimentoEfetiva = service.getDataAtendimentoEfetiva();
         this.cliente = new ClientEntity(service.getCliente());
-        this.tecnico = new TechnicianEntity(service.getTecnico());
+        this.tecnico = service.getTecnico() != null
+                ? new TechnicianEntity(service.getTecnico())
+                : null;
     }
 
     public Service toDomain() {
@@ -116,7 +118,7 @@ public class ServiceEntity {
                 this.filial,
                 this.descricao,
                 this.situacao,
-                this.horarioPrevisto,
+                this.periodo,
                 this.valor,
                 this.formaPagamento,
                 this.valorPecas,
